@@ -1,3 +1,9 @@
+import 'dart:async';
+
+import 'package:Varithms/size_config.dart';
+import 'package:Varithms/welcome.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -5,57 +11,89 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            SizeConfig().init(constraints, orientation);
+            return MaterialApp(
+              title: 'Varithms',
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+              ),
+              home: SplashScreen(),
+            );
+          },
+        );
+      },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+class SplashScreen extends StatefulWidget {
+  SplashScreen({Key key, this.title}) : super(key: key);
   final String title;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    startTime();
+  }
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  startTime() async {
+    return new Timer(new Duration(milliseconds: 3950), navigator);
+  }
+
+  navigator() {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+      return WelcomeScreen();
+    }));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      backgroundColor: Color(0xFF2D3E50),
+      body: Stack(
+        children: <Widget>[
+          Center(
+            child: SizedBox(
+              height: 250,
+              width: 180,
+              child: Image.asset('assets/v2.png'),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+          ),
+          Positioned(
+            top: 630,
+            left: 85,
+            child: SizedBox(
+              width: 290.0,
+              child: TyperAnimatedTextKit(
+                  speed: new Duration(milliseconds: 350),
+                  onTap: () {
+                    print("Tap Event");
+                  },
+                  text: [
+                    "Varithms",
+                  ],
+                  textStyle: TextStyle(
+                      fontSize: 60.0,
+                      fontFamily: "Livvic",
+                      color: Colors.white,
+                      letterSpacing: 10
+                  ),
+                  textAlign: TextAlign.start,
+                  alignment: AlignmentDirectional
+                      .topStart // or Alignment.topLeft
+              ),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
