@@ -39,6 +39,7 @@ dependencies:
   flutter_tindercard: 0.1.9
   carousel_slider: 2.2.1
   flutter_custom_clippers: 1.1.1
+  flutter_webview_plugin: ^0.3.10+1
 
 dev_dependencies:
   flutter_test:

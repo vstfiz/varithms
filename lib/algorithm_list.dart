@@ -161,29 +161,65 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                       children:
                           List.generate(globals.algoList.length, (int index) {
                         Algorithms algorithm = globals.algoList[index];
-                        return Stack(
-                          children: <Widget>[
-                            Container(
+                        return Container(
+                          margin: EdgeInsets.symmetric(
+                              vertical: 25, horizontal: 20),
                               height: 270,
-                              margin:
-                                  EdgeInsets.only(left: 10, right: 10, top: 80),
+                          width: 320,
                               child: Card(
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)),
-                                elevation: 20,
-                                color: Colors.white,
-                                child: Center(
-                                  child: Text(
-                                    "Algorithm Details",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
+                                    borderRadius: BorderRadius.circular(25)
+                                ),
+                                elevation: 8,
+                                child: Stack(
+                                  children: <Widget>[
+                                    Positioned(
+                                        top: 10,
+                                        left: 10,
+                                        child: Container(
+                                          width: 50,
+                                          height: 80,
+                                          child: Text(
+                                            "",
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 10,
+                                                fontFamily: "Livvic"),
+                                            softWrap: true,
+                                          ),
+                                        )),
+                                    Positioned(
+                                      left: 20,
+                                      top: 170,
+                                      child: SizedBox(
+                                        width: 310,
+                                        child: Divider(
+                                          color: Colors.grey[650],
+                                          thickness: 2.0,
+                                        ),
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 190,
+                                      right: 40,
+                                      child: Container(
+                                        width: 55,
+                                        height: 55,
+                                        decoration: BoxDecoration(
+                                          color: Colors.lightBlueAccent,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: IconButton(
+                                            icon: Icon(Icons.chevron_right,
+                                              color: Colors.black,),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
-                            ),
-                            Container(
-                              height: 100,
-                            )
-                          ],
                         );
                       }),
                     ),

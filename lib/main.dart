@@ -1,11 +1,8 @@
 import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
-import 'package:Varithms/fill_details.dart';
-import 'package:Varithms/fire_auth.dart';
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
-import 'package:Varithms/sign_up.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/welcome.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -48,7 +45,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return FillDetails();
+                  return Login();
                 },
               ),
             );
