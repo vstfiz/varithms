@@ -1,3 +1,6 @@
+import 'package:Varithms/globals.dart' as globals;
+
+
 class Strings {
   Strings._();
 
@@ -10,7 +13,7 @@ various algorithms.''';
 
   static const String getStartedButton = 'Get Started';
 
-  static const String greetingMessage = 'Hi Vivek!';
+  static String greetingMessage = "Hi, " + globals.user.name.toString() + " !";
   static const String whatLearnToday = 'Curious about an algorithm?';
   static const String searchHere = 'Search here';
   static const String lessons = 'Algorithms';

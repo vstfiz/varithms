@@ -1,3 +1,4 @@
+import 'package:Varithms/globals.dart' as globals;
 import 'package:flutter/cupertino.dart';
 
 class SizeConfig {
@@ -20,11 +21,13 @@ class SizeConfig {
       isPortrait = true;
       if (_screenWidth < 450) {
         isMobilePortrait = true;
+        globals.isPortrait = true;
       }
     } else {
       _screenWidth = constraints.maxHeight;
       _screenHeight = constraints.maxWidth;
       isPortrait = false;
+      globals.isPortrait = false;
       isMobilePortrait = false;
     }
 

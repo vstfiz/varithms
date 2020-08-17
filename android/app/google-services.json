@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "731937585222",
+    "firebase_url": "https://varithms7354.firebaseio.com",
+    "project_id": "varithms7354",
+    "storage_bucket": "varithms7354.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:731937585222:android:51b8cc1349f5198dc1f247",
+        "android_client_info": {
+          "package_name": "tech.vstfiz.varithms"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "731937585222-ae1le2o3ke9nquh4p4np2uv238h4btuc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.vstfiz.varithms",
+            "certificate_hash": "b20f917cb5f4ea8e7fbb38acf55608f56771bc61"
+          }
+        },
+        {
+          "client_id": "731937585222-p6fg96i9i40glnfiiifb410mao3qrm9t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhBvZtvKbNDUQ9YdMiriwoQQPhq_Vx-1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "731937585222-p6fg96i9i40glnfiiifb410mao3qrm9t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,16 +1,33 @@
 import 'dart:async';
 
+import 'package:Varithms/dashboard.dart';
+import 'package:Varithms/fill_details.dart';
+import 'package:Varithms/fire_auth.dart';
+import 'package:Varithms/globals.dart' as globals;
+import 'package:Varithms/responsiveui.dart';
+import 'package:Varithms/sign_up.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/welcome.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+import 'login.dart';
+
+void main() => runApp(Phoenix(child: MyApp()));
+
+bool firstRun = true;
+bool userValue;
+FirebaseUser user;
+final FirebaseAuth auth = FirebaseAuth.instance;
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    globals.cont = context;
     return LayoutBuilder(
       builder: (context, constraints) {
         return OrientationBuilder(
@@ -21,7 +38,19 @@ class MyApp extends StatelessWidget {
               theme: ThemeData(
                 primarySwatch: Colors.blue,
               ),
-              home: SplashScreen(),
+              home: StreamBuilder(
+                stream: auth.onAuthStateChanged,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    user = snapshot.data;
+                    globals.user.email = user.email;
+                    globals.user.dp = user.photoUrl;
+                    globals.user.uid = user.uid;
+                    globals.user.name = user.displayName;
+                  }
+                  return FillDetails();
+                },
+              ),
             );
           },
         );
@@ -42,7 +71,26 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    print(auth.currentUser().toString());
+    getDarkMode();
+    getFirstRun();
     startTime();
+  }
+
+  getDarkMode() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    globals.darkModeOn = sharedPreferences.getBool("darkMode");
+    if (globals.darkModeOn == null) {
+      globals.darkModeOn = false;
+    }
+  }
+
+  getFirstRun() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    firstRun = sharedPreferences.getBool("firstRun");
+    if (firstRun == null) {
+      firstRun = true;
+    }
   }
 
   startTime() async {
@@ -50,51 +98,186 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   navigator() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WelcomeScreen();
-    }));
+    if (firstRun) {
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+        return WelcomeScreen();
+      }));
+    }
+    else {
+      if (globals.user.email != null && globals.user.email != "") {
+        print(globals.user.email);
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return DashBoard();
+        }));
+      }
+      else {
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+          return Login();
+        }));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2D3E50),
-      body: Stack(
-        children: <Widget>[
-          Center(
-            child: SizedBox(
-              height: 250,
-              width: 180,
-              child: Image.asset('assets/v2.png'),
-            ),
-          ),
-          Positioned(
-            top: 630,
-            left: 85,
-            child: SizedBox(
-              width: 290.0,
-              child: TyperAnimatedTextKit(
-                  speed: new Duration(milliseconds: 350),
-                  onTap: () {
-                    print("Tap Event");
-                  },
-                  text: [
-                    "Varithms",
-                  ],
-                  textStyle: TextStyle(
-                      fontSize: 60.0,
-                      fontFamily: "Livvic",
-                      color: Colors.white,
-                      letterSpacing: 10
-                  ),
-                  textAlign: TextAlign.start,
-                  alignment: AlignmentDirectional
-                      .topStart // or Alignment.topLeft
-              ),
-            ),
-          ),
-        ],
+      backgroundColor: globals.darkModeOn ? Colors.black : Color(0xFF2D3E50),
+      body: ResponsiveWidget(
+        portraitLayout: globals.darkModeOn
+            ? PortraitStackDark(context)
+            : PortraitStackLight(context),
+        landscapeLayout: globals.darkModeOn
+            ? LandscapeStackDark(context)
+            : LandscapeStackLight(context),
       ),
+    );
+  }
+
+  Widget PortraitStackLight(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            height: 250,
+            width: 180,
+            child: Image.asset('assets/v2.png'),
+          ),
+        ),
+        Positioned(
+          top: 630,
+          left: 45,
+          child: SizedBox(
+            width: 340.0,
+            child: TyperAnimatedTextKit(
+                speed: new Duration(milliseconds: 350),
+                text: [
+                  "Varithms",
+                ],
+                textStyle: TextStyle(
+                    fontSize: 60.0,
+                    fontFamily: "Aquire",
+                    color: Colors.white,
+                    letterSpacing: 10
+                ),
+                textAlign: TextAlign.start,
+                alignment: AlignmentDirectional
+                    .topStart // or Alignment.topLeft
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget PortraitStackDark(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            height: 250,
+            width: 180,
+            child: Image.asset('assets/v1.png'),
+          ),
+        ),
+        Positioned(
+          top: 630,
+          left: 45,
+          child: SizedBox(
+            width: 340.0,
+            child: TyperAnimatedTextKit(
+                speed: new Duration(milliseconds: 350),
+                text: [
+                  "Varithms",
+                ],
+                textStyle: TextStyle(
+                    fontSize: 60.0,
+                    fontFamily: "Aquire",
+                    color: Colors.white,
+                    letterSpacing: 10
+                ),
+                textAlign: TextAlign.start,
+                alignment: AlignmentDirectional
+                    .topStart // or Alignment.topLeft
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget LandscapeStackLight(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: 50,
+          left: 330,
+          child: SizedBox(
+            height: 180,
+            width: 250,
+            child: Image.asset('assets/v2.png'),
+          ),
+        ),
+        Positioned(
+          top: 300,
+          left: 300,
+          child: SizedBox(
+            width: 340.0,
+            child: TyperAnimatedTextKit(
+                speed: new Duration(milliseconds: 350),
+                text: [
+                  "Varithms",
+                ],
+                textStyle: TextStyle(
+                    fontSize: 60.0,
+                    fontFamily: "Aquire",
+                    color: Colors.white,
+                    letterSpacing: 10
+                ),
+                textAlign: TextAlign.start,
+                alignment: AlignmentDirectional
+                    .topStart // or Alignment.topLeft
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget LandscapeStackDark(BuildContext context) {
+    return Stack(
+      children: <Widget>[
+        Positioned(
+          top: 50,
+          left: 330,
+          child: SizedBox(
+            height: 180,
+            width: 250,
+            child: Image.asset('assets/v2.png'),
+          ),
+        ),
+        Positioned(
+          top: 300,
+          left: 300,
+          child: SizedBox(
+            width: 340.0,
+            child: TyperAnimatedTextKit(
+                speed: new Duration(milliseconds: 350),
+                text: [
+                  "Varithms",
+                ],
+                textStyle: TextStyle(
+                    fontSize: 60.0,
+                    fontFamily: "Aquire",
+                    color: Colors.white,
+                    letterSpacing: 10
+                ),
+                textAlign: TextAlign.start,
+                alignment: AlignmentDirectional
+                    .topStart // or Alignment.topLeft
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,10 +1,29 @@
-import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
 import 'package:Varithms/styling.dart' as style;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class WelcomeScreen extends StatelessWidget {
+import 'login.dart';
+
+
+class WelcomeScreen extends StatefulWidget {
+  @override
+  _WelcomeScreenState createState() => _WelcomeScreenState();
+}
+
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    setFirstRun();
+  }
+
+  setFirstRun() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setBool("firstRun", false);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,7 +109,7 @@ class ButtonWidget extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => DashBoard()));
+            context, MaterialPageRoute(builder: (context) => Login()));
       },
       child: Align(
         alignment: Alignment.bottomCenter,

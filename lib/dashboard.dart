@@ -1,10 +1,21 @@
+import 'dart:async';
+
+import 'package:Varithms/algorithm_list.dart';
 import 'package:Varithms/responsiveui.dart';
+import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
 import 'package:Varithms/styling.dart';
+import 'package:Varithms/firebase_database.dart' as fdb;
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'images.dart';
+import 'package:Varithms/globals.dart' as globals;
 
 class DashBoard extends StatefulWidget {
   @override
@@ -13,179 +24,296 @@ class DashBoard extends StatefulWidget {
 
 class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
+  bool progressIndicator = true;
+  double val = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    algoTypeFetch();
+    progressInc();
+  }
+
+  algoT() async {
+    fdb.FirebaseDB.getAlgotype().whenComplete(() {
+      setState(() {
+        progressIndicator = false;
+      });
+    });
+  }
+
+  algoTypeFetch() async {
+    return Timer(new Duration(milliseconds: 1000), algoT);
+  }
+
+  void progressInc() async {
+    if (val < 1.0) {
+      setState(() {
+        val += 0.01;
+      });
+    }
+    wait();
+  }
+
+  wait() async {
+    return Timer(new Duration(milliseconds: 10), progressInc);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.appBackgroundColor,
-      body: SafeArea(
-        bottom: false,
-        left: true,
-        right: true,
-        top: false,
-        child: SingleChildScrollView(
-            child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
+//    progressInc();
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+          statusBarColor: Color(0xD02D3E50),
+          statusBarBrightness: Brightness.light
+      ),
+      child: Scaffold(
+//      appBar: new AppBar(
+//        backgroundColor: Color(0xFF2D3E50),
+//        automaticallyImplyLeading: false,
+//      ),
+        backgroundColor:
+        progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
+        body: SafeArea(
+          bottom: false,
+          left: true,
+          right: true,
+          top: true,
+          child: progressIndicator
+              ? Stack(children: <Widget>[
+            Opacity(
+              opacity: 0.4,
+              child: SizedBox(
+                height: MediaQuery
+                    .of(context)
+                    .size
+                    .height,
+                width: MediaQuery
+                    .of(context)
+                    .size
+                    .width,
+                child: Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('assets/s2.png'),
+                          fit: BoxFit.cover)),
                 ),
               ),
-              constraints: BoxConstraints(
-                  maxHeight: 40 *
-                      (SizeConfig.isMobilePortrait
-                          ? SizeConfig.heightMultiplier
-                          : SizeConfig.widthMultiplier)),
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  FractionallySizedBox(
-                    heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
-                    alignment: Alignment.bottomCenter,
-                    child: Tabs(),
-                  ),
-                  ResponsiveWidget(
-                    portraitLayout: TopContainerPortrait(),
-                    landscapeLayout: TopContainerLandscape(),
-                  ),
-                ],
-              ),
             ),
-            Container(
-              constraints:
-                  BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
-              decoration: BoxDecoration(
-                color: AppTheme.appBackgroundColor,
+            Center(
+              child: SizedBox(
+                height: 200,
+                width: 200,
+                child: Card(
+                    elevation: 8,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    child: SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: LiquidCircularProgressIndicator(
+                        value: val,
+                        // Defaults to 0.5.
+                        valueColor:
+                        AlwaysStoppedAnimation(Colors.blueAccent),
+                        // Defaults to the current Theme's accentColor.
+                        backgroundColor: Colors.white,
+                        // Defaults to the current Theme's backgroundColor.
+                        borderColor: Color(0xFF2D3E50),
+                        borderWidth: 5.0,
+                        direction: Axis.vertical,
+                        // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+                        center: Text("Loading..."),
+                      ),
+                    )),
               ),
+            )
+          ])
+              : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.0 * SizeConfig.widthMultiplier,
-                      vertical: 1 * SizeConfig.heightMultiplier,
-                    ),
-                    child: Text(
-                      Strings.popular,
-                      style: Theme.of(context).textTheme.title,
-                    ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: <Widget>[
-                          PortraitCard(
-                            imagePath: Images.graphicDesigner,
-                            lessonName: Strings.graphicDesigner,
-                            numberOfCourses: "23",
-                          ),
-                          PortraitCard(
-                            imagePath: Images.swimming,
-                            lessonName: Strings.swimming,
-                            numberOfCourses: "6",
-                          ),
-                        ],
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.vertical(
+                        bottom:
+                        Radius.circular(3.0 * SizeConfig.heightMultiplier),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 2.0 * SizeConfig.widthMultiplier,
-                      vertical: 1 * SizeConfig.heightMultiplier,
+                    constraints: BoxConstraints(
+                        maxHeight: 40 *
+                            (SizeConfig.isMobilePortrait
+                                ? SizeConfig.heightMultiplier
+                                : SizeConfig.widthMultiplier)),
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: <Widget>[
+                        FractionallySizedBox(
+                          heightFactor:
+                          SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                          alignment: Alignment.bottomCenter,
+                          child: Tabs(),
+                        ),
+                        ResponsiveWidget(
+                          portraitLayout: TopContainerPortrait(),
+                          landscapeLayout: TopContainerLandscape(),
+                        ),
+                      ],
                     ),
-                    child: Text(
-                      Strings.joinAWorkshop,
-                      style: Theme.of(context).textTheme.title,
-                    ),
                   ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
+                  Container(
+                    constraints: BoxConstraints(
+                        maxHeight: 100 * SizeConfig.heightMultiplier),
+                    decoration: BoxDecoration(
+                      color: AppTheme.appBackgroundColor,
+                    ),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          PortraitCard(
-                            imagePath: Images.graphicDesigner,
-                            lessonName: Strings.graphicDesigner,
-                            numberOfCourses: "23",
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 2.0 * SizeConfig.widthMultiplier,
+                              vertical: 1 * SizeConfig.heightMultiplier,
+                            ),
+                            child: Text(
+                              Strings.popular,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .title,
+                            ),
                           ),
-                          PortraitCard(
-                            imagePath: Images.swimming,
-                            lessonName: Strings.swimming,
-                            numberOfCourses: "6",
+                          AlgorithmCards(context),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 2.0 * SizeConfig.widthMultiplier,
+                              vertical: 1 * SizeConfig.heightMultiplier,
+                            ),
+                            child: Text(
+                              Strings.joinAWorkshop,
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .title,
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
+                          AlgorithmCards(context),
+                        ]),
                   ),
                 ],
-              ),
-            ),
-          ],
-        )),
+              )),
+        ),
       ),
     );
   }
-}
 
-class PortraitCard extends StatelessWidget {
-  final String imagePath, lessonName, numberOfCourses;
-
-  const PortraitCard(
-      {Key key, this.imagePath, this.lessonName, this.numberOfCourses})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 3 * SizeConfig.widthMultiplier),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(
-          Radius.circular(3 * SizeConfig.heightMultiplier),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            flex: 8,
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(
-                Radius.circular(3 * SizeConfig.heightMultiplier),
-              ),
-              child: AspectRatio(
-                aspectRatio: 0.8,
-                child: Image.asset(
-                  imagePath,
-                  fit: BoxFit.fitHeight,
+  Widget AlgorithmCards(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+          height: 295.0,
+          viewportFraction: 0.95,
+          enableInfiniteScroll: true,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayAnimationDuration: new Duration(milliseconds: 500)),
+      items: globals.algoTypeList.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return FlatButton(
+              onPressed: () {
+                globals.selectedAlgoTypeName = i.name;
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return AlgorithmsList();
+                    },
+                  ),
+                );
+              },
+              child: Container(
+                width: 360,
+                margin: EdgeInsets.symmetric(
+                    horizontal: 1 * SizeConfig.widthMultiplier),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(3 * SizeConfig.heightMultiplier),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(3 * SizeConfig.heightMultiplier),
+                        ),
+                        child: AspectRatio(
+                            aspectRatio: 3,
+                            child: CachedNetworkImage(
+                              imageUrl: i.imageUrl,
+                              placeholder: (context, url) =>
+                                  Center(
+                                    child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                5)),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 20.0 * SizeConfig.widthMultiplier),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            i.name,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 5.0 * SizeConfig.widthMultiplier,
+                                bottom: 10),
+                            child: Text(
+                              i.noOfAlgorithms + " Courses",
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .subtitle,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(2.0 * SizeConfig.widthMultiplier),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  lessonName,
-                  style: Theme.of(context)
-                      .textTheme
-                      .display1
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  "$numberOfCourses Courses",
-                  style: Theme.of(context).textTheme.subtitle,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }
@@ -201,7 +329,7 @@ class Tabs extends StatelessWidget {
                 color: AppTheme.selectedTabBackgroundColor,
                 borderRadius: BorderRadius.vertical(
                     bottom:
-                        Radius.circular(3.0 * SizeConfig.heightMultiplier))),
+                    Radius.circular(4.0 * SizeConfig.heightMultiplier))),
             child: Align(
               alignment: Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
               child: Text(
@@ -220,7 +348,7 @@ class Tabs extends StatelessWidget {
                 color: AppTheme.unSelectedTabBackgroundColor,
                 borderRadius: BorderRadius.vertical(
                     bottom:
-                        Radius.circular(3.0 * SizeConfig.heightMultiplier))),
+                    Radius.circular(3.0 * SizeConfig.heightMultiplier))),
             child: Align(
               alignment: Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
               child: Text(
@@ -241,6 +369,15 @@ class TopContainerPortrait extends StatefulWidget {
 }
 
 class _TopContainerPortraitState extends State<TopContainerPortrait> {
+  darkValueUpdate() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    bool temp = sharedPreferences.getBool("darkMode");
+    if (temp == null) {
+      temp = false;
+    }
+    sharedPreferences.setBool("darkMode", !temp);
+  }
+
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
@@ -287,6 +424,10 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                               color: Colors.white,
                             ),
                             iconSize: 8 * SizeConfig.imageSizeMultiplier,
+                            onPressed: () {
+                              darkValueUpdate();
+                              Phoenix.rebirth(globals.cont);
+                            },
                           )
                         ],
                       ),
@@ -321,7 +462,7 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(
-                          Radius.circular(24),
+                          Radius.circular(45),
                         ),
                       ),
                       child: Row(
@@ -340,7 +481,9 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                                   border: InputBorder.none,
                                   hintText: Strings.searchHere,
                                 ),
-                                style: Theme.of(context).textTheme.display2,
+                                style: TextStyle(color: Colors.grey[500],
+                                    fontSize: 20,
+                                    fontFamily: "Livvic"),
                               ),
                             ),
                           ),
@@ -352,22 +495,33 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                   Expanded(
                     flex: 2,
                     child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 1 * SizeConfig.heightMultiplier),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                              3.0 * SizeConfig.heightMultiplier),
-                          bottomLeft: Radius.circular(
-                              3.0 * SizeConfig.heightMultiplier),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 1 * SizeConfig.heightMultiplier),
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                                4.0 * SizeConfig.heightMultiplier),
+                            bottomLeft: Radius.circular(
+                                4.0 * SizeConfig.heightMultiplier),
+                          ),
                         ),
-                      ),
-                      child: Icon(
-                        Icons.settings,
-                        color: Colors.white,
-                        size: 6 * SizeConfig.imageSizeMultiplier,
-                      ),
+                        child: IconButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) {
+                                  return Settings();
+                                },
+                              ),
+                            );
+                          },
+                          icon: Icon(
+                            Icons.settings,
+                            color: Colors.white,
+                            size: 6 * SizeConfig.imageSizeMultiplier,
+                          ),
+                        )
                     ),
                   ),
                 ],
@@ -512,18 +666,21 @@ class TopContainerLandscape extends StatelessWidget {
 class ProfileImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.all(
-          Radius.circular(4.0),
-        ),
-        color: Colors.pinkAccent.withOpacity(0.4),
-      ),
-//      child: Image.asset(
-//        Images.profileImage,
-//        width: 10 * SizeConfig.imageSizeMultiplier,
-//        height: 10 * SizeConfig.imageSizeMultiplier,
-//      ),
+    return CachedNetworkImage(
+      imageBuilder: (context, imageProvider) =>
+          Container(
+            width: 50.0,
+            height: 50.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+            ),
+          ),
+      placeholder: (context, url) => CircularProgressIndicator(),
+      errorWidget: (context, url, error) => Icon(Icons.error),
+      imageUrl: globals.user.dp,
+      width: 10 * SizeConfig.imageSizeMultiplier,
+      height: 10 * SizeConfig.imageSizeMultiplier,
     );
   }
 }
