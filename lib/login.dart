@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/responsiveui.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,6 +15,24 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  bool isSignUp = false;
+  bool isPhone = false;
+  bool isProgress = false;
+  bool otpSent = false;
+  TextEditingController _usernameController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+  TextEditingController _cnfPasswordController = new TextEditingController();
+  TextEditingController _mobileController = new TextEditingController();
+  TextEditingController _otpController = new TextEditingController();
+
+  Future<void> wait() async {
+    return Timer(new Duration(milliseconds: 1000), () {
+      setState(() {
+        isProgress = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -60,7 +81,9 @@ class _LoginState extends State<Login> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25)),
               elevation: 15,
-              child: Text("Information Dialog"),
+              child: isProgress
+                  ? _inProgress()
+                  : isPhone ? _phoneLogin() : isSignUp ? _signUp() : _login(),
             ),
           ),
         ),
@@ -183,6 +206,14 @@ class _LoginState extends State<Login> {
                       color: Color(0xFF02BD7E),
                       borderRadius: BorderRadius.circular(10)),
                   child: FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        isProgress = true;
+                      });
+                      wait().whenComplete(() {
+                        isPhone = true;
+                      });
+                    },
                     child: Row(
                       children: <Widget>[
                         Container(
@@ -219,14 +250,56 @@ class _LoginState extends State<Login> {
               width: 340,
               child: Column(
                 children: <Widget>[
-                  Text(
+                  isSignUp
+                      ? SizedBox(
+                    height: 30,
+                  )
+                      : Text(
                     "Don't have an account?",
                     style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Livvic",
                         fontSize: 25),
                   ),
-                  FlatButton(
+                  isSignUp
+                      ? Container(
+                    width: 250,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: Color(0xFF2D3E50),
+                    ),
+                    child: FlatButton(
+                      onPressed: () {
+                        setState(() {
+                          isProgress = true;
+                        });
+                        wait();
+                        setState(() {
+                          isSignUp = false;
+                          isPhone = false;
+                        });
+                      },
+                      child: Text(
+                        "Sign In with E-mail",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: "Livvic",
+                            fontSize: 25),
+                      ),
+                    ),
+                  )
+                      : FlatButton(
+                    onPressed: () {
+                      setState(() {
+                        isProgress = true;
+                      });
+                      wait();
+                      setState(() {
+                        isSignUp = true;
+                        isPhone = false;
+                      });
+                    },
                     child: Text(
                       "Sign Up",
                       style: TextStyle(
@@ -239,6 +312,239 @@ class _LoginState extends State<Login> {
               ),
             )),
       ],
+    );
+  }
+
+  Widget _phoneLogin() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: otpSent ? 20 : 60, horizontal: 15),
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Container(
+//                width: 25,
+                child: CountryCodePicker(
+                  initialSelection: 'IN',
+                  favorite: ['+91', 'IN'],
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Container(
+                width: 210,
+                child: TextField(
+                  style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                  controller: _mobileController,
+                  decoration: InputDecoration(hintText: "Phone", filled: true),
+                ),
+              )
+            ],
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          otpSent
+              ? Container(
+            width: 290,
+            child: TextField(
+              obscureText: true,
+              controller: _otpController,
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              decoration: InputDecoration(
+                  hintText: "4-Digit OTP",
+                  prefixIcon: Icon(Icons.vpn_key),
+                  filled: true),
+            ),
+          )
+              : SizedBox(),
+          otpSent
+              ? Container(
+            margin: EdgeInsets.only(left: 150),
+            child: FlatButton(
+              child: Text(
+                "Resend OTP",
+                style: TextStyle(
+                    fontSize: 18,
+                    fontFamily: "Livvic",
+                    color: Colors.blue),
+              ),
+            ),
+          )
+              : SizedBox(),
+          SizedBox(
+            height: 30,
+          ),
+          Container(
+            width: 150,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15), color: Colors.blue),
+            child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  otpSent = true;
+                });
+              },
+              child: otpSent
+                  ? Text(
+                "Login",
+                style: TextStyle(
+                    fontFamily: "Livvic",
+                    fontSize: 22,
+                    color: Colors.white),
+              )
+                  : Text(
+                "Send OTP",
+                style: TextStyle(
+                    fontFamily: "Livvic",
+                    fontSize: 22,
+                    color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _signUp() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 12.5, horizontal: 15),
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: 290,
+            child: TextField(
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              controller: _usernameController,
+              decoration: InputDecoration(
+                  hintText: "E-mail",
+                  prefixIcon: Icon(Icons.people),
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 290,
+            child: TextField(
+              obscureText: true,
+              controller: _passwordController,
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              decoration: InputDecoration(
+                  hintText: "Password",
+                  prefixIcon: Icon(Icons.lock),
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 290,
+            child: TextField(
+              obscureText: true,
+              controller: _cnfPasswordController,
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              decoration: InputDecoration(
+                  hintText: "Confirm Password",
+                  prefixIcon: Icon(Icons.lock),
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25), color: Colors.blue),
+            child: FlatButton(
+              child: Text(
+                "Sign Up",
+                style: TextStyle(
+                    fontFamily: "Livvic", fontSize: 22, color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _login() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: 290,
+            child: TextField(
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              controller: _usernameController,
+              decoration: InputDecoration(
+                  hintText: "E-mail",
+                  prefixIcon: Icon(Icons.people),
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 290,
+            child: TextField(
+              obscureText: true,
+              controller: _passwordController,
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              decoration: InputDecoration(
+                  hintText: "Password",
+                  prefixIcon: Icon(Icons.lock),
+                  filled: true),
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 150),
+            child: FlatButton(
+              child: Text(
+                "Forgot Password?",
+                style: TextStyle(
+                    fontSize: 20, fontFamily: "Livvic", color: Colors.blue),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 100,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25), color: Colors.blue),
+            child: FlatButton(
+              child: Text(
+                "Login",
+                style: TextStyle(
+                    fontFamily: "Livvic", fontSize: 22, color: Colors.white),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _inProgress() {
+    return Center(
+      child: Container(
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator(
+          backgroundColor: Colors.grey,
+          valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+        ),
+      ),
     );
   }
 
@@ -301,11 +607,5 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
-  }
-
-  Widget _facebookSignIn(BuildContext context) {}
-
-  Widget _googleSignIn(BuildContext context) {
-    return null;
   }
 }

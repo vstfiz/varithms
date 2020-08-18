@@ -33,4 +33,18 @@ class FirebaseDB {
     }
     return globals.algoList;
   }
+
+  static Future<List<Algorithms>> getAlgosForDashboard() async {
+    Firestore firestore = Firestore.instance;
+    var ref = firestore.collection('algorithms');
+    QuerySnapshot querySnapshot = await ref.limit(15)
+        .getDocuments();
+    List<DocumentSnapshot> ds = querySnapshot.documents;
+    for (var doc in ds) {
+      Algorithms algorithms = new Algorithms(doc['difficulty'], doc['content'],
+          doc['name'], doc['noOfLearners'], doc['imageUrl'], doc['category']);
+      globals.algoListForDashboard.add(algorithms);
+    }
+    return globals.algoListForDashboard;
+  }
 }

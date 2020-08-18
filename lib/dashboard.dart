@@ -1,12 +1,13 @@
 import 'dart:async';
 
 import 'package:Varithms/algorithm_list.dart';
+import 'package:Varithms/firebase_database.dart' as fdb;
+import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
 import 'package:Varithms/styling.dart';
-import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -14,8 +15,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'package:Varithms/globals.dart' as globals;
 
 class DashBoard extends StatefulWidget {
   @override
@@ -34,11 +33,17 @@ class _DashBoardState extends State<DashBoard>
     progressInc();
   }
 
-  algoT() async {
-    fdb.FirebaseDB.getAlgotype().whenComplete(() {
+  algoFetch() async {
+    fdb.FirebaseDB.getAlgosForDashboard().whenComplete(() {
       setState(() {
         progressIndicator = false;
       });
+    });
+  }
+
+  algoT() async {
+    fdb.FirebaseDB.getAlgotype().whenComplete(() {
+      algoFetch();
     });
   }
 
@@ -68,10 +73,6 @@ class _DashBoardState extends State<DashBoard>
           statusBarBrightness: Brightness.light
       ),
       child: Scaffold(
-//      appBar: new AppBar(
-//        backgroundColor: Color(0xFF2D3E50),
-//        automaticallyImplyLeading: false,
-//      ),
         backgroundColor:
         progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
         body: SafeArea(
@@ -184,7 +185,7 @@ class _DashBoardState extends State<DashBoard>
                                   .title,
                             ),
                           ),
-                          AlgorithmCards(context),
+                          AlgorithmTypeCards(context),
                           Padding(
                             padding: EdgeInsets.symmetric(
                               horizontal: 2.0 * SizeConfig.widthMultiplier,
@@ -208,7 +209,7 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
-  Widget AlgorithmCards(BuildContext context) {
+  Widget AlgorithmTypeCards(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
           height: 295.0,
@@ -298,6 +299,115 @@ class _DashBoardState extends State<DashBoard>
                                 bottom: 10),
                             child: Text(
                               i.noOfAlgorithms + " Courses",
+                              style: Theme
+                                  .of(context)
+                                  .textTheme
+                                  .subtitle,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget AlgorithmCards(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+          height: 295.0,
+          viewportFraction: 0.95,
+          enableInfiniteScroll: true,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayAnimationDuration: new Duration(milliseconds: 500)),
+      items: globals.algoListForDashboard.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return FlatButton(
+              onPressed: () {
+                globals.selectedAlgoTypeName = i.name;
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return AlgorithmsList();
+                    },
+                  ),
+                );
+              },
+              child: Container(
+                width: 360,
+                margin: EdgeInsets.symmetric(
+                    horizontal: 1 * SizeConfig.widthMultiplier),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(3 * SizeConfig.heightMultiplier),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(3 * SizeConfig.heightMultiplier),
+                        ),
+                        child: AspectRatio(
+                            aspectRatio: 3,
+                            child: CachedNetworkImage(
+                              imageUrl: i.imageUrl,
+                              placeholder: (context, url) =>
+                                  Center(
+                                    child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                5)),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 20.0 * SizeConfig.widthMultiplier),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            i.name,
+                            style: Theme
+                                .of(context)
+                                .textTheme
+                                .display1
+                                .copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(
+                                left: 5.0 * SizeConfig.widthMultiplier,
+                                bottom: 10),
+                            child: Text(
+                              " Courses",
                               style: Theme
                                   .of(context)
                                   .textTheme
