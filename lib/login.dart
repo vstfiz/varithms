@@ -19,6 +19,7 @@ class _LoginState extends State<Login> {
   bool isPhone = false;
   bool isProgress = false;
   bool otpSent = false;
+  bool forgotPassword = false;
   TextEditingController _usernameController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
   TextEditingController _cnfPasswordController = new TextEditingController();
@@ -81,7 +82,7 @@ class _LoginState extends State<Login> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25)),
               elevation: 15,
-              child: isProgress
+              child: forgotPassword ? _forgotPassword() : isProgress
                   ? _inProgress()
                   : isPhone ? _phoneLogin() : isSignUp ? _signUp() : _login(),
             ),
@@ -212,6 +213,8 @@ class _LoginState extends State<Login> {
                       });
                       wait().whenComplete(() {
                         isPhone = true;
+                        isSignUp = false;
+                        forgotPassword = false;
                       });
                     },
                     child: Row(
@@ -250,7 +253,7 @@ class _LoginState extends State<Login> {
               width: 340,
               child: Column(
                 children: <Widget>[
-                  isSignUp
+                  isSignUp || forgotPassword
                       ? SizedBox(
                     height: 30,
                   )
@@ -261,7 +264,7 @@ class _LoginState extends State<Login> {
                         fontFamily: "Livvic",
                         fontSize: 25),
                   ),
-                  isSignUp
+                  isSignUp || forgotPassword
                       ? Container(
                     width: 250,
                     height: 50,
@@ -278,6 +281,7 @@ class _LoginState extends State<Login> {
                         setState(() {
                           isSignUp = false;
                           isPhone = false;
+                          forgotPassword = false;
                         });
                       },
                       child: Text(
@@ -298,6 +302,7 @@ class _LoginState extends State<Login> {
                       setState(() {
                         isSignUp = true;
                         isPhone = false;
+                        forgotPassword = false;
                       });
                     },
                     child: Text(
@@ -474,6 +479,46 @@ class _LoginState extends State<Login> {
     );
   }
 
+  Widget _forgotPassword() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 50, horizontal: 15),
+      child: Column(
+        children: <Widget>[
+          Container(
+            width: 290,
+            child: TextField(
+              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+              controller: _usernameController,
+              decoration: InputDecoration(
+                  hintText: "E-mail",
+                  prefixIcon: Icon(Icons.people),
+                  filled: true),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            width: 200,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25), color: Colors.blue),
+            child: FlatButton(
+              child: Text(
+                "Send Recocery\nLink", textAlign: TextAlign.center,
+                softWrap: true,
+                style: TextStyle(
+                  fontFamily: "Livvic", fontSize: 22, color: Colors.white,),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _login() {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20, horizontal: 15),
@@ -508,6 +553,15 @@ class _LoginState extends State<Login> {
           Container(
             margin: EdgeInsets.only(left: 150),
             child: FlatButton(
+              onPressed: () {
+                setState(() {
+                  isProgress = true;
+                });
+                wait();
+                setState(() {
+                  forgotPassword = true;
+                });
+              },
               child: Text(
                 "Forgot Password?",
                 style: TextStyle(
