@@ -82,9 +82,13 @@ class _LoginState extends State<Login> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(25)),
               elevation: 15,
-              child: forgotPassword ? _forgotPassword() : isProgress
+              child: isProgress
                   ? _inProgress()
-                  : isPhone ? _phoneLogin() : isSignUp ? _signUp() : _login(),
+                  : forgotPassword
+                  ? _forgotPassword()
+                  : isPhone
+                  ? _phoneLogin()
+                  : isSignUp ? _signUp() : _login(),
             ),
           ),
         ),
@@ -507,10 +511,14 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
               child: Text(
-                "Send Recocery\nLink", textAlign: TextAlign.center,
+                "Send Recocery\nLink",
+                textAlign: TextAlign.center,
                 softWrap: true,
                 style: TextStyle(
-                  fontFamily: "Livvic", fontSize: 22, color: Colors.white,),
+                  fontFamily: "Livvic",
+                  fontSize: 22,
+                  color: Colors.white,
+                ),
               ),
             ),
           )
@@ -556,6 +564,7 @@ class _LoginState extends State<Login> {
               onPressed: () {
                 setState(() {
                   isProgress = true;
+                  print(isProgress);
                 });
                 wait();
                 setState(() {
