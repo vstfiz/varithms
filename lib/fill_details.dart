@@ -5,9 +5,25 @@ class FillDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       body: Stack(
         children: <Widget>[
+          Opacity(
+            opacity: 0.1,
+            child: Container(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/back_login.png"),
+                      fit: BoxFit.contain)),
+            ),
+          ),
           Center(
               child: Container(
             height: 270,

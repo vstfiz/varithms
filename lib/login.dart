@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
+import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/responsiveui.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,12 +41,14 @@ class _LoginState extends State<Login> {
       onWillPop: () {},
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Builder(
-          builder: (context) =>
-              ResponsiveWidget(
-                portraitLayout: PortraitStack(context),
-                landscapeLayout: PortraitStack(context),
-              ),
+        body: SingleChildScrollView(
+          child: Builder(
+            builder: (context) =>
+                ResponsiveWidget(
+                  portraitLayout: PortraitStack(context),
+                  landscapeLayout: PortraitStack(context),
+                ),
+          ),
         ),
       ),
     );
@@ -332,7 +335,6 @@ class _LoginState extends State<Login> {
           Row(
             children: <Widget>[
               Container(
-//                width: 25,
                 child: CountryCodePicker(
                   initialSelection: 'IN',
                   favorite: ['+91', 'IN'],
@@ -341,13 +343,39 @@ class _LoginState extends State<Login> {
               SizedBox(
                 width: 10,
               ),
-              Container(
-                width: 210,
-                child: TextField(
-                  style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                  controller: _mobileController,
-                  decoration: InputDecoration(hintText: "Phone", filled: true),
-                ),
+              Stack(
+                children: <Widget>[
+                  Container(
+                    width: 210,
+                    child: Card(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)
+                      ),
+                      child: TextField(
+                        enabled: !otpSent,
+                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                        controller: _mobileController,
+                        decoration: InputDecoration(hintText: "Phone",
+                          prefixIcon: Icon(Icons.phone),
+                          contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  otpSent ? Positioned(
+                    right: 0,
+                    child: IconButton(
+                      icon: Icon(Icons.edit),
+                      onPressed: () {
+                        setState(() {
+                          otpSent = false;
+                        });
+                      },
+                    ),
+                  ) : SizedBox()
+                ],
               )
             ],
           ),
@@ -357,14 +385,22 @@ class _LoginState extends State<Login> {
           otpSent
               ? Container(
             width: 290,
-            child: TextField(
-              obscureText: true,
-              controller: _otpController,
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              decoration: InputDecoration(
-                  hintText: "4-Digit OTP",
-                  prefixIcon: Icon(Icons.vpn_key),
-                  filled: true),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                obscureText: true,
+                controller: _otpController,
+                keyboardType: TextInputType.number,
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                decoration: InputDecoration(
+                    hintText: "4-Digit OTP",
+                    prefixIcon: Icon(Icons.vpn_key),
+                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    border: InputBorder.none),
+              ),
             ),
           )
               : SizedBox(),
@@ -383,7 +419,7 @@ class _LoginState extends State<Login> {
           )
               : SizedBox(),
           SizedBox(
-            height: 30,
+            height: 10,
           ),
           Container(
             width: 150,
@@ -424,53 +460,78 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           Container(
             width: 290,
-            child: TextField(
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              controller: _usernameController,
-              decoration: InputDecoration(
-                  hintText: "E-mail",
-                  prefixIcon: Icon(Icons.people),
-                  filled: true),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                controller: _usernameController,
+                decoration: InputDecoration(
+                    hintText: "E-mail",
+                    prefixIcon: Icon(Icons.people),
+                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    border: InputBorder.none),
+              ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Container(
             width: 290,
-            child: TextField(
-              obscureText: true,
-              controller: _passwordController,
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              decoration: InputDecoration(
-                  hintText: "Password",
-                  prefixIcon: Icon(Icons.lock),
-                  filled: true),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                obscureText: true,
+                controller: _passwordController,
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                decoration: InputDecoration(
+                    hintText: "Password",
+                    prefixIcon: Icon(Icons.lock),
+                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    border: InputBorder.none),
+              ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 10,
           ),
           Container(
             width: 290,
-            child: TextField(
-              obscureText: true,
-              controller: _cnfPasswordController,
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              decoration: InputDecoration(
-                  hintText: "Confirm Password",
-                  prefixIcon: Icon(Icons.lock),
-                  filled: true),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                obscureText: true,
+                controller: _cnfPasswordController,
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                decoration: InputDecoration(
+                    hintText: "Confirm Password",
+                    prefixIcon: Icon(Icons.lock),
+                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    border: InputBorder.none),
+              ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 15,
           ),
           Container(
             width: 100,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
+              onPressed: () {
+                Navigator.push(context,
+                    new MaterialPageRoute(builder: (context) => FillDetails()));
+              },
               child: Text(
                 "Sign Up",
                 style: TextStyle(
@@ -490,13 +551,20 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           Container(
             width: 290,
-            child: TextField(
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              controller: _usernameController,
-              decoration: InputDecoration(
-                  hintText: "E-mail",
-                  prefixIcon: Icon(Icons.people),
-                  filled: true),
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                controller: _usernameController,
+                decoration: InputDecoration(
+                    hintText: "E-mail",
+                    prefixIcon: Icon(Icons.people),
+                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    border: InputBorder.none),
+              ),
             ),
           ),
           SizedBox(
@@ -534,13 +602,22 @@ class _LoginState extends State<Login> {
         children: <Widget>[
           Container(
             width: 290,
-            child: TextField(
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              controller: _usernameController,
-              decoration: InputDecoration(
+            child: Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)
+              ),
+              child: TextField(
+                style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                controller: _usernameController,
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                  border: InputBorder.none,
                   hintText: "E-mail",
                   prefixIcon: Icon(Icons.people),
-                  filled: true),
+//                  filled: true
+                ),
+              ),
             ),
           ),
           SizedBox(
@@ -548,15 +625,21 @@ class _LoginState extends State<Login> {
           ),
           Container(
             width: 290,
-            child: TextField(
-              obscureText: true,
-              controller: _passwordController,
-              style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-              decoration: InputDecoration(
-                  hintText: "Password",
-                  prefixIcon: Icon(Icons.lock),
-                  filled: true),
-            ),
+              child: Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25)
+                ),
+                child: TextField(
+                  obscureText: true,
+                  controller: _passwordController,
+                  style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Password",
+                      prefixIcon: Icon(Icons.lock)),
+                ),
+              )
           ),
           Container(
             margin: EdgeInsets.only(left: 150),
@@ -579,7 +662,7 @@ class _LoginState extends State<Login> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: 15,
           ),
           Container(
             width: 100,
