@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
+import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/size_config.dart';
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return Login();
+                  return FillDetails();
                 },
               ),
             );
