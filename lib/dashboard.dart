@@ -33,6 +33,7 @@ class _DashBoardState extends State<DashBoard>
     progressInc();
   }
 
+
   algoFetch() async {
     fdb.FirebaseDB.getAlgosForDashboard().whenComplete(() {
       setState(() {

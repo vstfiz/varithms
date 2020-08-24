@@ -5,31 +5,24 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final GoogleSignIn _googleSignIn = GoogleSignIn();
-FirebaseAuth _auth = FirebaseAuth.instance;
+FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseUser user;
-String your_client_id = "226970795296107";
-String your_redirect_url =
+String yourClientId = "226970795296107";
+String yourRedirectUrl =
     "https://www.facebook.com/connect/login_success.html";
 
 Future<FirebaseUser> signInWithGoogle() async {
-  // hold the instance of the authenticated user
-
-  // flag to check whether we're signed in already
   bool isSignedIn = await _googleSignIn.isSignedIn();
   if (isSignedIn) {
-    // if so, return the current user
-    user = await _auth.currentUser();
+    user = await auth.currentUser();
   } else {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
     await googleUser.authentication;
-    // get the credentials to (access / id token)
-    // to sign in via Firebase Authentication
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-    user = (await _auth.signInWithCredential(credential)).user;
+    user = (await auth.signInWithCredential(credential)).user;
   }
-
   return user;
 }
 
@@ -41,22 +34,36 @@ Future<FirebaseUser> signInWithFacebook(BuildContext context) async {
         builder: (context) =>
             CustomWebView(
               selectedUrl:
-              'https://www.facebook.com/dialog/oauth?client_id=$your_client_id&redirect_uri=$your_redirect_url&response_type=token&scope=email,public_profile,',
+              'https://www.facebook.com/dialog/oauth?client_id=$yourClientId&redirect_uri=$yourRedirectUrl&response_type=token&scope=email,public_profile,',
             ),
         maintainState: true),);
   if (result != null) {
     try {
       final facebookAuthCred =
       FacebookAuthProvider.getCredential(accessToken: result);
-      final user =
-      await _auth.signInWithCredential(facebookAuthCred);
+      AuthResult authResult = await auth.signInWithCredential(facebookAuthCred);
+      user = authResult.user;
     } catch (e) {}
   }
 }
 
+Future<FirebaseUser> signUpWithEmail(String email, String password) async {
+  AuthResult sUser = await auth.createUserWithEmailAndPassword(
+      email: email, password: password);
+  user = sUser.user;
+  return sUser.user;
+}
+
+Future<FirebaseUser> signInWithEmail(String email, String password) async {
+  AuthResult result = await auth.signInWithEmailAndPassword(
+      email: email, password: password);
+  user = result.user;
+  return result.user;
+}
+
 Future<FirebaseUser> signOutWithGoogle() async {
   await _googleSignIn.signOut();
-  await _auth.signOut();
+  await auth.signOut();
   return null;
 }
 

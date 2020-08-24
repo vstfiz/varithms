@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/fill_details.dart';
+import 'package:Varithms/fire_auth.dart';
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/size_config.dart';
@@ -20,7 +21,6 @@ void main() => runApp(Phoenix(child: MyApp()));
 bool firstRun = true;
 bool userValue;
 FirebaseUser user;
-final FirebaseAuth auth = FirebaseAuth.instance;
 
 class MyApp extends StatelessWidget {
   @override

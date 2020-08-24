@@ -7,12 +7,28 @@ import 'algorithm.dart';
 import 'algorithm_type.dart';
 
 User user = new User("", "", "", "", "", "", "");
+User mainUser = new User(
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "");
 
 double width(double width) {}
 
 double height(double height) {}
 bool darkModeOn = false;
 bool isPortrait;
+bool isOtpLogin = false;
+bool isEmailLogin = false;
+bool isFireLogin = false;
+TextEditingController usernameController = new TextEditingController();
+TextEditingController passwordController = new TextEditingController();
+TextEditingController cnfPasswordController = new TextEditingController();
+TextEditingController mobileController = new TextEditingController();
+TextEditingController otpController = new TextEditingController();
 
 BuildContext cont;
 List<AlgorithmTypes> algoTypeList = new List<AlgorithmTypes>();

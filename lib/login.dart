@@ -2,11 +2,15 @@ import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/fill_details.dart';
+import 'package:Varithms/main.dart' as main;
 import 'package:Varithms/responsiveui.dart';
 import 'package:country_code_picker/country_code_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:Varithms/firebase_database.dart' as fdb;
+import 'package:Varithms/globals.dart' as globals;
 
 import 'fire_auth.dart';
 
@@ -19,13 +23,9 @@ class _LoginState extends State<Login> {
   bool isSignUp = false;
   bool isPhone = false;
   bool isProgress = false;
+  bool loginProgress = false;
   bool otpSent = false;
   bool forgotPassword = false;
-  TextEditingController _usernameController = new TextEditingController();
-  TextEditingController _passwordController = new TextEditingController();
-  TextEditingController _cnfPasswordController = new TextEditingController();
-  TextEditingController _mobileController = new TextEditingController();
-  TextEditingController _otpController = new TextEditingController();
 
   Future<void> wait() async {
     return Timer(new Duration(milliseconds: 1000), () {
@@ -55,275 +55,275 @@ class _LoginState extends State<Login> {
   }
 
   Widget PortraitStack(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Opacity(
-          opacity: 0.1,
-          child: Container(
-            height: MediaQuery
-                .of(context)
-                .size
-                .height,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width,
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/back_login.png"),
-                    fit: BoxFit.contain)),
-          ),
-        ),
-        Positioned(
-          top: 150,
-          left: 30,
-          right: 30,
-          child: Container(
-            height: 300,
-            width: 300,
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)),
-              elevation: 15,
-              child: isProgress
-                  ? _inProgress()
-                  : forgotPassword
-                  ? _forgotPassword()
-                  : isPhone
-                  ? _phoneLogin()
-                  : isSignUp ? _signUp() : _login(),
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Stack(
+        children: <Widget>[
+          Opacity(
+            opacity: 0.1,
+            child: Container(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .height,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage("assets/back_login.png"),
+                      fit: BoxFit.contain)),
             ),
           ),
-        ),
-        Row(
-          children: <Widget>[
-            Container(
-              width: 150,
-              margin: EdgeInsets.only(left: 30, top: 500),
-              child: Divider(
-                thickness: 2,
-                color: Colors.black,
+          Positioned(
+            top: 150,
+            left: 30,
+            right: 30,
+            child: Container(
+              height: 300,
+              width: 300,
+              child: Card(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25)),
+                elevation: 15,
+                child: isProgress
+                    ? _inProgress()
+                    : forgotPassword
+                    ? _forgotPassword()
+                    : isPhone
+                    ? _phoneLogin()
+                    : isSignUp ? _signUp() : _login(),
               ),
             ),
-            Container(
-              margin: EdgeInsets.only(left: 15, top: 500),
-              child: Text(
-                "OR",
-                style: TextStyle(fontSize: 25),
+          ),
+          Row(
+            children: <Widget>[
+              Container(
+                width: 150,
+                margin: EdgeInsets.only(left: 30, top: 500),
+                child: Divider(
+                  thickness: 2,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            Container(
-              width: 150,
-              margin: EdgeInsets.only(left: 15, top: 500),
-              child: Divider(
-                thickness: 2,
-                color: Colors.black,
+              Container(
+                margin: EdgeInsets.only(left: 15, top: 500),
+                child: Text(
+                  "OR",
+                  style: TextStyle(fontSize: 25),
+                ),
               ),
-            ),
-          ],
-        ),
-        Positioned(
-          top: 580,
-          left: 50,
-          right: 50,
-          child: Container(
+              Container(
+                width: 150,
+                margin: EdgeInsets.only(left: 15, top: 500),
+                child: Divider(
+                  thickness: 2,
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            top: 580,
+            left: 50,
+            right: 50,
+            child: Container(
 //            color: Colors.white,
-            width: 260,
-            child: Column(
-              children: <Widget>[
-                Container(
-                  decoration: BoxDecoration(
-                      color: Colors.grey,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: FlatButton(
-                    onPressed: () {
-                      signInWithGoogle().whenComplete(() {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return DashBoard();
-                        }));
-                      });
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/google.png'))),
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Text(
-                          "Sign  In  With  Google",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Livvic",
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xFF3B5998),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: FlatButton(
-                    onPressed: () {
-                      signInWithFacebook(context).whenComplete(() {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return DashBoard();
-                        }));
-                      });
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/facebook.png'))),
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Text(
-                          "Sign  In  With  Facebook",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Livvic",
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      color: Color(0xFF02BD7E),
-                      borderRadius: BorderRadius.circular(10)),
-                  child: FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        isProgress = true;
-                      });
-                      wait().whenComplete(() {
-                        isPhone = true;
-                        isSignUp = false;
-                        forgotPassword = false;
-                      });
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage('assets/phone.png'))),
-                        ),
-                        SizedBox(
-                          width: 30,
-                        ),
-                        Text(
-                          "Sign  In  With  Phone",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Livvic",
-                              fontSize: 22),
-                        )
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        Positioned(
-            bottom: 30,
-            left: 10,
-            right: 10,
-            child: SizedBox(
-              height: 80,
-              width: 340,
+              width: 260,
               child: Column(
                 children: <Widget>[
-                  isSignUp || forgotPassword
-                      ? SizedBox(
-                    height: 30,
-                  )
-                      : Text(
-                    "Don't have an account?",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Livvic",
-                        fontSize: 25),
-                  ),
-                  isSignUp || forgotPassword
-                      ? Container(
-                    width: 250,
-                    height: 50,
+                  Container(
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: Color(0xFF2D3E50),
-                    ),
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(10)),
                     child: FlatButton(
+                      onPressed: () {
+                        signInWithGoogle().whenComplete(() {
+                          checkFillUps();
+                        });
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/google.png'))),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Sign  In  With  Google",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "Livvic",
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF3B5998),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: FlatButton(
+                      onPressed: () {
+                        signInWithFacebook(context).whenComplete(() async {
+                          await fdb.FirebaseDB.getUserDetails(
+                              user.uid, context);
+                        });
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/facebook.png'))),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Sign  In  With  Facebook",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "Livvic",
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Color(0xFF02BD7E),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: FlatButton(
+                      onPressed: () {
+                        setState(() {
+                          isProgress = true;
+                        });
+                        wait().whenComplete(() {
+                          isPhone = true;
+                          isSignUp = false;
+                          forgotPassword = false;
+                        });
+                      },
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage('assets/phone.png'))),
+                          ),
+                          SizedBox(
+                            width: 30,
+                          ),
+                          Text(
+                            "Sign  In  With  Phone",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: "Livvic",
+                                fontSize: 22),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+              bottom: 30,
+              left: 10,
+              right: 10,
+              child: SizedBox(
+                height: 80,
+                width: 340,
+                child: Column(
+                  children: <Widget>[
+                    isSignUp || forgotPassword
+                        ? SizedBox(
+                      height: 30,
+                    )
+                        : Text(
+                      "Don't have an account?",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Livvic",
+                          fontSize: 25),
+                    ),
+                    isSignUp || forgotPassword
+                        ? Container(
+                      width: 250,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: Color(0xFF2D3E50),
+                      ),
+                      child: FlatButton(
+                        onPressed: () {
+                          setState(() {
+                            isProgress = true;
+                          });
+                          wait();
+                          setState(() {
+                            isSignUp = false;
+                            isPhone = false;
+                            forgotPassword = false;
+                          });
+                        },
+                        child: Text(
+                          "Sign In with E-mail",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: "Livvic",
+                              fontSize: 25),
+                        ),
+                      ),
+                    )
+                        : FlatButton(
                       onPressed: () {
                         setState(() {
                           isProgress = true;
                         });
                         wait();
                         setState(() {
-                          isSignUp = false;
+                          isSignUp = true;
                           isPhone = false;
                           forgotPassword = false;
                         });
                       },
                       child: Text(
-                        "Sign In with E-mail",
+                        "Sign Up",
                         style: TextStyle(
-                            color: Colors.white,
+                            color: Colors.blueAccent,
                             fontFamily: "Livvic",
                             fontSize: 25),
                       ),
-                    ),
-                  )
-                      : FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        isProgress = true;
-                      });
-                      wait();
-                      setState(() {
-                        isSignUp = true;
-                        isPhone = false;
-                        forgotPassword = false;
-                      });
-                    },
-                    child: Text(
-                      "Sign Up",
-                      style: TextStyle(
-                          color: Colors.blueAccent,
-                          fontFamily: "Livvic",
-                          fontSize: 25),
-                    ),
-                  )
-                ],
-              ),
-            )),
-      ],
+                    )
+                  ],
+                ),
+              )),
+        ],
+      ),
     );
   }
 
@@ -350,13 +350,14 @@ class _LoginState extends State<Login> {
                     child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)
-                      ),
+                          borderRadius: BorderRadius.circular(25)),
                       child: TextField(
                         enabled: !otpSent,
                         style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                        controller: _mobileController,
-                        decoration: InputDecoration(hintText: "Phone",
+                        controller: globals.mobileController,
+                        keyboardType: TextInputType.phone,
+                        decoration: InputDecoration(
+                          hintText: "Phone",
                           prefixIcon: Icon(Icons.phone),
                           contentPadding: EdgeInsets.only(right: 5.0, top: 8),
                           border: InputBorder.none,
@@ -364,7 +365,8 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-                  otpSent ? Positioned(
+                  otpSent
+                      ? Positioned(
                     right: 0,
                     child: IconButton(
                       icon: Icon(Icons.edit),
@@ -374,7 +376,8 @@ class _LoginState extends State<Login> {
                         });
                       },
                     ),
-                  ) : SizedBox()
+                  )
+                      : SizedBox()
                 ],
               )
             ],
@@ -388,12 +391,11 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 obscureText: true,
-                controller: _otpController,
-                keyboardType: TextInputType.number,
+                controller: globals.otpController,
+                keyboardType: TextInputType.phone,
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
                 decoration: InputDecoration(
                     hintText: "4-Digit OTP",
@@ -427,9 +429,17 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(15), color: Colors.blue),
             child: FlatButton(
               onPressed: () {
-                setState(() {
-                  otpSent = true;
-                });
+                if (otpSent) {
+                  globals.isOtpLogin = true;
+                  Navigator.push(
+                      context,
+                      new MaterialPageRoute(
+                          builder: (context) => FillDetails()));
+                } else {
+                  setState(() {
+                    otpSent = true;
+                  });
+                }
               },
               child: otpSent
                   ? Text(
@@ -463,11 +473,10 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                controller: _usernameController,
+                controller: globals.usernameController,
                 decoration: InputDecoration(
                     hintText: "E-mail",
                     prefixIcon: Icon(Icons.people),
@@ -484,11 +493,10 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 obscureText: true,
-                controller: _passwordController,
+                controller: globals.passwordController,
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
                 decoration: InputDecoration(
                     hintText: "Password",
@@ -506,11 +514,10 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 obscureText: true,
-                controller: _cnfPasswordController,
+                controller: globals.cnfPasswordController,
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
                 decoration: InputDecoration(
                     hintText: "Confirm Password",
@@ -523,12 +530,21 @@ class _LoginState extends State<Login> {
           SizedBox(
             height: 15,
           ),
-          Container(
+          loginProgress ? _inProgress() : Container(
             width: 100,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
-              onPressed: () {
+              onPressed: () async {
+                setState(() {
+                  loginProgress = true;
+                });
+                print("fgghh value :- " +
+                    globals.usernameController.text.toString());
+                FirebaseUser nUser = await signUpWithEmail(
+                    globals.usernameController.text.toString(),
+                    globals.passwordController.text.toString());
+                print("login uid : " + user.uid);
                 Navigator.push(context,
                     new MaterialPageRoute(builder: (context) => FillDetails()));
               },
@@ -554,11 +570,10 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                controller: _usernameController,
+                controller: globals.usernameController,
                 decoration: InputDecoration(
                     hintText: "E-mail",
                     prefixIcon: Icon(Icons.people),
@@ -605,11 +620,10 @@ class _LoginState extends State<Login> {
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25)
-              ),
+                  borderRadius: BorderRadius.circular(25)),
               child: TextField(
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                controller: _usernameController,
+                controller: globals.usernameController,
                 decoration: InputDecoration(
                   contentPadding: EdgeInsets.only(right: 5.0, top: 8),
                   border: InputBorder.none,
@@ -624,23 +638,21 @@ class _LoginState extends State<Login> {
             height: 20,
           ),
           Container(
-            width: 290,
+              width: 290,
               child: Card(
                 elevation: 10,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25)
-                ),
+                    borderRadius: BorderRadius.circular(25)),
                 child: TextField(
                   obscureText: true,
-                  controller: _passwordController,
+                  controller: globals.passwordController,
                   style: TextStyle(fontFamily: "Livvic", fontSize: 25),
                   decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: "Password",
                       prefixIcon: Icon(Icons.lock)),
                 ),
-              )
-          ),
+              )),
           Container(
             margin: EdgeInsets.only(left: 150),
             child: FlatButton(
@@ -664,11 +676,21 @@ class _LoginState extends State<Login> {
           SizedBox(
             height: 15,
           ),
-          Container(
+          loginProgress ? _inProgress() : Container(
             width: 100,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
+              onPressed: () async {
+                setState(() {
+                  loginProgress = true;
+                });
+                globals.isEmailLogin = true;
+                await signInWithEmail(globals.usernameController.text,
+                    globals.passwordController.text).whenComplete(() {
+                  fdb.FirebaseDB.getUserDetails(user.uid, context);
+                });
+              },
               child: Text(
                 "Login",
                 style: TextStyle(
@@ -707,8 +729,6 @@ class _LoginState extends State<Login> {
           Center(
             child: Text("SCreen Start"),
           ),
-//                  _googleSignIn(context),
-//                  _facebookSignIn(context),
           Positioned(
               bottom: 20,
               left: 10,
@@ -753,5 +773,9 @@ class _LoginState extends State<Login> {
         ],
       ),
     );
+  }
+
+  Future<void> checkFillUps() async {
+    await fdb.FirebaseDB.getUserDetails(globals.user.uid, context);
   }
 }
