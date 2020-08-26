@@ -67,17 +67,15 @@ class _FillDetailsState extends State<FillDetails> {
   }
 
   Future<String> uploadImage() async {
+    print("image upload running");
     final StorageReference ref = FirebaseStorage.instance.ref().child(
         'users/${globals.mainUser.uid}/${DateTime
             .now()
             .millisecondsSinceEpoch}.jpg');
     final StorageUploadTask uploadTask = ref.put(_image);
     await uploadTask.onComplete;
-    ref.getDownloadURL().then((url) {
-      setState(() {
-        uploadedImageUrl = url;
-      });
-    });
+    var uri = await ref.getDownloadURL();
+    uploadedImageUrl = uri.toString();
     print(uploadedImageUrl);
   }
 
@@ -286,16 +284,6 @@ class _FillDetailsState extends State<FillDetails> {
               ),
             ),
           ),
-          Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-                color: Colors.black,
-                image: DecorationImage(
-                    image: targetPath == null
-                        ? AssetImage(null)
-                        : AssetImage(targetPath))),
-          ),
           Positioned(
             top: 75,
             left: (MediaQuery
@@ -308,7 +296,7 @@ class _FillDetailsState extends State<FillDetails> {
               width: 150,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.blue,
+                color: Colors.grey[700],
               ),
               child: FlatButton(
                   onPressed: () {
@@ -378,7 +366,6 @@ class _FillDetailsState extends State<FillDetails> {
                             showDialog(context: context,
                                 builder: (context) => _loadingDialog());
                             if (_image == null) {
-                              await uploadImage();
                               fdb.FirebaseDB.createUser(
                                   _nameController.text,
                                   _emailController.text,
@@ -523,81 +510,26 @@ class _FillDetailsState extends State<FillDetails> {
   }
 
   Widget _loadingDialog() {
-    Function m = () {
-      Navigator.pop(context);
-    };
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       backgroundColor: Colors.white,
       content: Container(
-        height: 200,
-        child: Stack(
-          children: <Widget>[
-            Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
-              child: Text("Choose Image Source",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontFamily: "Livvic", fontSize: 25)),
-            ),
-            Column(
+          height: 60,
+          child: Center(
+            child: Row(
               children: <Widget>[
-                SizedBox(
-                  height: 60,
-                ),
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    getCameraImage();
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Camera",
-                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                      )
-                    ],
-                  ),
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                 ),
                 SizedBox(
-                  height: 20,
+                  width: 20,
                 ),
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    getGalleryImage();
-                  },
-                  child: Row(
-                    children: <Widget>[
-                      Icon(
-                        Icons.add,
-                        color: Colors.grey,
-                        size: 30,
-                      ),
-                      SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        "Gallery",
-                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
-                      )
-                    ],
-                  ),
-                )
+                Text("Uploading Data...", style: TextStyle(
+                    fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
               ],
-            )
-          ],
-        ),
-      ),
+            ),
+          )
+      )
     );
   }
 

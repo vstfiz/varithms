@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/fire_auth.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
@@ -14,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'dashboard.dart';
 import 'login.dart';
 
 void main() => runApp(Phoenix(child: MyApp()));
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return FillDetails();
+                  return DashBoard();
                 },
               ),
             );
@@ -105,9 +105,6 @@ class _SplashScreenState extends State<SplashScreen> {
       if (globals.user.email != null && globals.user.email != "") {
         fdb.FirebaseDB.getUserDetails(globals.user.uid, context);
         print(globals.user.email);
-//        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-//          return DashBoard();
-//        }));
       }
       else {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -123,8 +120,8 @@ class _SplashScreenState extends State<SplashScreen> {
       backgroundColor: globals.darkModeOn ? Colors.black : Color(0xFF2D3E50),
       body: ResponsiveWidget(
         portraitLayout: globals.darkModeOn
-            ? PortraitStackDark(context)
-            : PortraitStackLight(context),
+            ? portraitStackDark(context)
+            : portraitStackLight(context),
         landscapeLayout: globals.darkModeOn
             ? LandscapeStackDark(context)
             : LandscapeStackLight(context),
@@ -132,7 +129,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Widget PortraitStackLight(BuildContext context) {
+  Widget portraitStackLight(BuildContext context) {
     return Stack(
       children: <Widget>[
         Center(
@@ -168,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Widget PortraitStackDark(BuildContext context) {
+  Widget portraitStackDark(BuildContext context) {
     return Stack(
       children: <Widget>[
         Center(

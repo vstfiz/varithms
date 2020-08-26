@@ -15,12 +15,12 @@ various algorithms.''';
 
   static String greetingMessage = "Hi, " + globals.mainUser.name.toString() +
       " !";
-  static const String whatLearnToday = 'Curious about an algorithm?';
+
+//  static const String whatLearnToday = 'Curious about an algorithm?';
   static const String searchHere = 'Search here';
-  static const String lessons = 'Algorithms';
+
+//  static const String lessons = 'Algorithms';
   static const String myClasses = 'My Algorithms';
-  static const String popular = 'Popular';
-  static const String joinAWorkshop = 'Learn an Algo';
   static const String graphicDesigner = 'Sorting Algorithm';
   static const String swimming = 'Sorting';
   static const String cycling = 'Cycling';

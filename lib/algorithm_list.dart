@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:Varithms/algorithm.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
+import 'package:Varithms/rating_bar.dart';
 import 'package:Varithms/size_config.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -119,27 +121,36 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
         : WillPopScope(
             onWillPop: () {},
             child: Scaffold(
-//        appBar: AppBar(
-//          backgroundColor: Color(0xFF2D3E50),
-//          automaticallyImplyLeading: false,
-//        ),
+              appBar: AppBar(
+                backgroundColor: Color(0xFF2D3E50),
+                title: Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  child: Text(globals.selectedAlgoTypeName, style: TextStyle(
+                      fontFamily: "Livvic", fontSize: 30, color: Colors.white),
+                    textAlign: TextAlign.center,),
+                ),
+                automaticallyImplyLeading: false,
+              ),
               backgroundColor: Color(0xFF2D3E50),
               body: Stack(
                 children: <Widget>[
-                  Positioned(
-                      left: 10,
-                      top: 60,
-                      right: 10,
-                      child: SizedBox(
-                        height: 30,
-                        width: 340,
-                        child: Center(
-                          child: Text(
-                            globals.selectedAlgoTypeName,
-                            style: TextStyle(fontSize: 35, color: Colors.white),
-                          ),
-                        ),
-                      )),
+//                  Positioned(
+//                      left: 10,
+//                      top: 60,
+//                      right: 10,
+//                      child: SizedBox(
+//                        height: 30,
+//                        width: 340,
+//                        child: Center(
+//                          child: Text(
+//                            globals.selectedAlgoTypeName,
+//                            style: TextStyle(fontSize: 35, color: Colors.white),
+//                          ),
+//                        ),
+//                      )),
                   Positioned(
                     top: SizeConfig.heightMultiplier * 44,
                     height: SizeConfig.heightMultiplier * 56,
@@ -156,7 +167,7 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(top: 130, left: 10, right: 10),
+                    margin: EdgeInsets.only(top: 10, left: 10, right: 10),
                     child: ListView(
                       children:
                           List.generate(globals.algoList.length, (int index) {
@@ -174,20 +185,98 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                 child: Stack(
                                   children: <Widget>[
                                     Positioned(
-                                        top: 10,
-                                        left: 10,
+                                      top: 20,
+                                      left: 15,
+                                      child: CachedNetworkImage(
+                                        imageBuilder: (context,
+                                            imageProvider) =>
+                                            Container(
+                                              width: 90.0,
+                                              height: 90.0,
+                                              decoration: BoxDecoration(
+                                                borderRadius: BorderRadius
+                                                    .circular(15),
+                                                image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            ),
+                                        placeholder: (context, url) =>
+                                            CircularProgressIndicator(),
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
+                                        imageUrl: algorithm.imageUrl,
+                                        width: 10 *
+                                            SizeConfig.imageSizeMultiplier,
+                                        height: 10 *
+                                            SizeConfig.imageSizeMultiplier,
+                                      ),
+                                    ),
+                                    Positioned(
+                                        top: 20,
+                                        left: 120,
                                         child: Container(
-                                          width: 50,
-                                          height: 80,
+                                          width: 185,
+                                          height: 100,
                                           child: Text(
-                                            "",
+                                            algorithm.name,
                                             style: TextStyle(
                                                 color: Colors.black,
-                                                fontSize: 10,
+                                                fontSize: 35,
                                                 fontFamily: "Livvic"),
                                             softWrap: true,
                                           ),
                                         )),
+                                    Positioned(
+                                      left: 20,
+                                      top: 120,
+                                      child: Text("Progress : " +
+                                          algorithm.progress.toString() + "%",
+                                        style: TextStyle(fontFamily: "Livvic",
+                                            color: Colors.black,
+                                            fontSize: 20),),
+                                    ),
+                                    Positioned(
+                                      right: 15,
+                                      top: 125,
+                                      child: RatingBar(
+                                        itemSize: 20,
+                                        unratedColor: Colors.grey,
+                                        initialRating: algorithm.difficulty
+                                            .toDouble(),
+                                        minRating: algorithm.difficulty
+                                            .toDouble(),
+                                        maxRating: algorithm.difficulty
+                                            .toDouble(),
+                                        direction: Axis.horizontal,
+                                        allowHalfRating: true,
+                                        itemCount: 5,
+                                        itemPadding: EdgeInsets.symmetric(
+                                            horizontal: 1.0),
+                                        itemBuilder: (context, _) =>
+                                            Icon(
+                                              Icons.star,
+                                              color: Colors.blue,
+                                            ),
+                                        onRatingUpdate: (rating) {
+                                          print(rating);
+                                        },
+                                      ),
+                                    ),
+                                    Positioned(
+                                      top: 150,
+                                      left: 20,
+                                      child: SizedBox(
+                                        width: 310,
+                                        child: LinearProgressIndicator(
+                                          backgroundColor: Colors.grey,
+                                          valueColor: AlwaysStoppedAnimation<
+                                              Color>(Colors.blue),
+                                          value: algorithm.progress.toDouble() /
+                                              100.0,
+                                        ),
+                                      ),
+                                    ),
                                     Positioned(
                                       left: 20,
                                       top: 170,

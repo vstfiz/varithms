@@ -34,7 +34,11 @@ class FirebaseDB {
     List<DocumentSnapshot> ds = querySnapshot.documents;
     for (var doc in ds) {
       Algorithms algorithms = new Algorithms(doc['difficulty'], doc['content'],
-          doc['name'], doc['noOfLearners'], doc['imageUrl'], doc['category']);
+          doc['name'],
+          doc['noOfLearners'],
+          doc['imageUrl'],
+          doc['category'],
+          doc['progress']);
       globals.algoList.add(algorithms);
     }
     return globals.algoList;
@@ -47,7 +51,11 @@ class FirebaseDB {
     List<DocumentSnapshot> ds = querySnapshot.documents;
     for (var doc in ds) {
       Algorithms algorithms = new Algorithms(doc['difficulty'], doc['content'],
-          doc['name'], doc['noOfLearners'], doc['imageUrl'], doc['category']);
+          doc['name'],
+          doc['noOfLearners'],
+          doc['imageUrl'],
+          doc['category'],
+          doc['progress']);
       globals.algoListForDashboard.add(algorithms);
     }
     return globals.algoListForDashboard;
@@ -81,6 +89,14 @@ class FirebaseDB {
 
   static Future<bool> createUser(name, mail, gender, phone, iAmA,
       imageUrl) async {
+    globals.mainUser = new User(
+        name,
+        "",
+        phone,
+        mail,
+        gender,
+        imageUrl,
+        globals.user.uid);
     Firestore firestore = Firestore.instance;
     var ref = firestore.collection('users');
     Map<String, String> userData = new Map<String, String>();

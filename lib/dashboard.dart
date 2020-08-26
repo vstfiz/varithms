@@ -26,12 +26,12 @@ class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   bool progressIndicator = true;
   double val = 0.0;
+  BuildContext dialogContext;
 
   @override
   void initState() {
     super.initState();
     algoTypeFetch();
-//    getUserDetails();
     progressInc();
   }
 
@@ -75,138 +75,143 @@ class _DashBoardState extends State<DashBoard>
           statusBarColor: Color(0xD02D3E50),
           statusBarBrightness: Brightness.light
       ),
-      child: Scaffold(
-        backgroundColor:
-        progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
-        body: SafeArea(
-          bottom: false,
-          left: true,
-          right: true,
-          top: true,
-          child: progressIndicator
-              ? Stack(children: <Widget>[
-            Opacity(
-              opacity: 0.4,
-              child: SizedBox(
-                height: MediaQuery
-                    .of(context)
-                    .size
-                    .height,
-                width: MediaQuery
-                    .of(context)
-                    .size
-                    .width,
-                child: Container(
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('assets/s2.png'),
-                          fit: BoxFit.cover)),
+      child: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+          backgroundColor:
+          progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
+          body: SafeArea(
+            bottom: false,
+            left: true,
+            right: true,
+            top: true,
+            child: progressIndicator
+                ? Stack(children: <Widget>[
+              Opacity(
+                opacity: 0.4,
+                child: SizedBox(
+                  height: MediaQuery
+                      .of(context)
+                      .size
+                      .height,
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('assets/s2.png'),
+                            fit: BoxFit.cover)),
+                  ),
                 ),
               ),
-            ),
-            Center(
-              child: SizedBox(
-                height: 200,
-                width: 200,
-                child: Card(
-                    elevation: 8,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15)),
-                    child: SizedBox(
-                      height: 150,
-                      width: 150,
-                      child: LiquidCircularProgressIndicator(
-                        value: val,
-                        // Defaults to 0.5.
-                        valueColor:
-                        AlwaysStoppedAnimation(Colors.blueAccent),
-                        // Defaults to the current Theme's accentColor.
-                        backgroundColor: Colors.white,
-                        // Defaults to the current Theme's backgroundColor.
-                        borderColor: Color(0xFF2D3E50),
-                        borderWidth: 5.0,
-                        direction: Axis.vertical,
-                        // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
-                        center: Text("Loading..."),
-                      ),
-                    )),
-              ),
-            )
-          ])
-              : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.vertical(
-                        bottom:
-                        Radius.circular(3.0 * SizeConfig.heightMultiplier),
-                      ),
-                    ),
-                    constraints: BoxConstraints(
-                        maxHeight: 40 *
-                            (SizeConfig.isMobilePortrait
-                                ? SizeConfig.heightMultiplier
-                                : SizeConfig.widthMultiplier)),
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: <Widget>[
-                        FractionallySizedBox(
-                          heightFactor:
-                          SizeConfig.isMobilePortrait ? 0.25 : 0.35,
-                          alignment: Alignment.bottomCenter,
-                          child: Tabs(),
+              Center(
+                child: Container(
+                  height: 300,
+                  width: 300,
+                  child: AlertDialog(
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      content: Container(
+                        height: 150,
+                        width: 150,
+                        child: LiquidCircularProgressIndicator(
+                          value: val,
+                          // Defaults to 0.5.
+                          valueColor:
+                          AlwaysStoppedAnimation(Colors.blueAccent),
+                          // Defaults to the current Theme's accentColor.
+                          backgroundColor: Colors.white,
+                          // Defaults to the current Theme's backgroundColor.
+                          borderColor: Color(0xFF2D3E50),
+                          borderWidth: 5.0,
+                          direction: Axis.vertical,
+                          // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+                          center: Text("Loading..."),
                         ),
-                        ResponsiveWidget(
-                          portraitLayout: TopContainerPortrait(),
-                          landscapeLayout: TopContainerLandscape(),
+                      )),
+                ),
+              )
+            ])
+                : SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(
+                          bottom:
+                          Radius.circular(3.0 * SizeConfig.heightMultiplier),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    constraints: BoxConstraints(
-                        maxHeight: 100 * SizeConfig.heightMultiplier),
-                    decoration: BoxDecoration(
-                      color: AppTheme.appBackgroundColor,
-                    ),
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      ),
+                      constraints: BoxConstraints(
+                          maxHeight: 40 *
+                              (SizeConfig.isMobilePortrait
+                                  ? SizeConfig.heightMultiplier
+                                  : SizeConfig.widthMultiplier)),
+                      child: Stack(
+                        fit: StackFit.expand,
                         children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 2.0 * SizeConfig.widthMultiplier,
-                              vertical: 1 * SizeConfig.heightMultiplier,
-                            ),
-                            child: Text(
-                              Strings.popular,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .title,
-                            ),
+                          FractionallySizedBox(
+                            heightFactor:
+                            SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                            alignment: Alignment.bottomCenter,
+                            child: Tabs(),
                           ),
-                          AlgorithmTypeCards(context),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 2.0 * SizeConfig.widthMultiplier,
-                              vertical: 1 * SizeConfig.heightMultiplier,
-                            ),
-                            child: Text(
-                              Strings.joinAWorkshop,
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .title,
-                            ),
+                          ResponsiveWidget(
+                            portraitLayout: TopContainerPortrait(),
+                            landscapeLayout: TopContainerLandscape(),
                           ),
-                          AlgorithmCards(context),
-                        ]),
-                  ),
-                ],
-              )),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      constraints: BoxConstraints(
+                          maxHeight: 100 * SizeConfig.heightMultiplier),
+                      decoration: BoxDecoration(
+                        color: AppTheme.appBackgroundColor,
+                      ),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 28.0 * SizeConfig.widthMultiplier,
+                                vertical: 3 * SizeConfig.heightMultiplier,
+                              ),
+                              child: Text(
+                                "Algorithm Types",
+                                style: TextStyle(
+                                  fontFamily: "Livvic",
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                            AlgorithmTypeCards(context),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.0 * SizeConfig.widthMultiplier,
+                                vertical: 3 * SizeConfig.heightMultiplier,
+                              ),
+                              child: Text(
+                                "Learn an Algorithm",
+                                style: TextStyle(
+                                  fontFamily: "Livvic",
+                                  fontSize: 30,
+                                ),
+                              ),
+                            ),
+                            AlgorithmCards(context),
+                          ]),
+                    ),
+                  ],
+                )),
+          ),
         ),
       ),
     );
@@ -220,7 +225,7 @@ class _DashBoardState extends State<DashBoard>
           enableInfiniteScroll: true,
           enlargeCenterPage: true,
           autoPlay: true,
-          autoPlayAnimationDuration: new Duration(milliseconds: 500)),
+          autoPlayAnimationDuration: new Duration(milliseconds: 1000)),
       items: globals.algoTypeList.map((i) {
         return Builder(
           builder: (BuildContext context) {
@@ -279,38 +284,37 @@ class _DashBoardState extends State<DashBoard>
                     SizedBox(
                       height: 30,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20.0 * SizeConfig.widthMultiplier),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            i.name,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .display1
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 5.0 * SizeConfig.widthMultiplier,
-                                bottom: 10),
-                            child: Text(
-                              i.noOfAlgorithms + " Courses",
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .subtitle,
-                            ),
-                          )
-                        ],
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.name,
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                      ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.noOfAlgorithms + " Courses",
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
+                    SizedBox(
+                      height: 5,
+                    )
                   ],
                 ),
               ),
@@ -329,7 +333,7 @@ class _DashBoardState extends State<DashBoard>
           enableInfiniteScroll: true,
           enlargeCenterPage: true,
           autoPlay: true,
-          autoPlayAnimationDuration: new Duration(milliseconds: 500)),
+          autoPlayAnimationDuration: new Duration(milliseconds: 300)),
       items: globals.algoListForDashboard.map((i) {
         return Builder(
           builder: (BuildContext context) {
@@ -345,7 +349,7 @@ class _DashBoardState extends State<DashBoard>
                 );
               },
               child: Container(
-                width: 360,
+//                width: 360,
                 margin: EdgeInsets.symmetric(
                     horizontal: 1 * SizeConfig.widthMultiplier),
                 decoration: BoxDecoration(
@@ -388,37 +392,20 @@ class _DashBoardState extends State<DashBoard>
                     SizedBox(
                       height: 30,
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                          left: 20.0 * SizeConfig.widthMultiplier),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            i.name,
-                            style: Theme
-                                .of(context)
-                                .textTheme
-                                .display1
-                                .copyWith(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                left: 5.0 * SizeConfig.widthMultiplier,
-                                bottom: 10),
-                            child: Text(
-                              " Courses",
-                              style: Theme
-                                  .of(context)
-                                  .textTheme
-                                  .subtitle,
-                            ),
-                          )
-                        ],
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.name,
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
                       ),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                   ],
                 ),
@@ -446,10 +433,11 @@ class Tabs extends StatelessWidget {
             child: Align(
               alignment: Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
               child: Text(
-                Strings.lessons,
+                "Algorithms",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 2 * SizeConfig.textMultiplier,
+                  fontFamily: "Livvic",
+                  fontSize: 3 * SizeConfig.textMultiplier,
                 ),
               ),
             ),
@@ -548,9 +536,10 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                     Expanded(
                       child: Center(
                         child: Text(
-                          Strings.whatLearnToday,
+                          "Curious about an algorithm ?",
                           style: TextStyle(
                             color: Colors.white,
+                            fontFamily: "Livvic",
                             fontSize: 3.5 * SizeConfig.textMultiplier,
                           ),
                         ),
@@ -739,8 +728,9 @@ class TopContainerLandscape extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Text(
-                      Strings.whatLearnToday,
+                      "Curious about an algorithm ?",
                       style: TextStyle(
+                        fontFamily: "Livvic",
                         color: Colors.white,
                         fontSize: 3.5 * SizeConfig.textMultiplier,
                       ),
@@ -775,6 +765,7 @@ class TopContainerLandscape extends StatelessWidget {
     );
   }
 }
+
 
 class ProfileImage extends StatelessWidget {
   @override
