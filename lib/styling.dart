@@ -43,41 +43,41 @@ class AppTheme {
   );
 
   static final TextStyle titleLight = TextStyle(
-    color: Colors.white,
-    fontSize: 3.5 * SizeConfig.textMultiplier,
-  );
+      color: Colors.white,
+      fontSize: 3.5 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle subTitleLight = TextStyle(
-    color: subTitleTextColor,
-    fontSize: 2 * SizeConfig.textMultiplier,
-    height: 1.5,
-  );
+      color: subTitleTextColor,
+      fontSize: 2 * SizeConfig.textMultiplier,
+      height: 1.5,
+      fontFamily: "Livvic");
 
   static final TextStyle buttonLight = TextStyle(
-    color: Colors.white,
-    fontSize: 2.5 * SizeConfig.textMultiplier,
-  );
+      color: Colors.white,
+      fontSize: 2.5 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle greetingLight = TextStyle(
-    color: Colors.white,
-    fontSize: 2.0 * SizeConfig.textMultiplier,
-  );
+      color: Colors.white,
+      fontSize: 2.0 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle searchLight = TextStyle(
-    color: Colors.white,
-    fontSize: 2.3 * SizeConfig.textMultiplier,
-  );
+      color: Colors.white,
+      fontSize: 2.3 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle _selectedTabLight = TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    fontSize: 2 * SizeConfig.textMultiplier,
-  );
+      color: Colors.white,
+      fontWeight: FontWeight.bold,
+      fontSize: 2 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle _unSelectedTabLight = TextStyle(
-    color: Colors.grey,
-    fontSize: 2 * SizeConfig.textMultiplier,
-  );
+      color: Colors.grey,
+      fontSize: 2 * SizeConfig.textMultiplier,
+      fontFamily: "Livvic");
 
   static final TextStyle titleDark = titleLight.copyWith(color: Colors.white);
 

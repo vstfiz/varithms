@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/fire_auth.dart';
+import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/size_config.dart';
@@ -103,10 +103,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
     else {
       if (globals.user.email != null && globals.user.email != "") {
+        fdb.FirebaseDB.getUserDetails(globals.user.uid, context);
         print(globals.user.email);
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return DashBoard();
-        }));
+//        Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+//          return DashBoard();
+//        }));
       }
       else {
         Navigator.of(context).push(MaterialPageRoute(builder: (context) {

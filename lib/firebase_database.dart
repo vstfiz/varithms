@@ -64,14 +64,23 @@ class FirebaseDB {
       Navigator.push(
           context, new MaterialPageRoute(builder: (context) => FillDetails()));
     } else {
+      DocumentSnapshot document = ds.single;
+      globals.mainUser = new User(
+          document['name'],
+          document['country'],
+          document['phone'],
+          document['email'],
+          document['gender'],
+          document['displayUrl'],
+          document['uid']);
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
         return DashBoard();
       }));
     }
-//    globals.mainUser = new User(ref['name'], ref['country'], ref['mobile'], email, gender, dp, uid)
   }
 
-  static Future<bool> createUser(name, mail, gender, phone, iAmA) async {
+  static Future<bool> createUser(name, mail, gender, phone, iAmA,
+      imageUrl) async {
     Firestore firestore = Firestore.instance;
     var ref = firestore.collection('users');
     Map<String, String> userData = new Map<String, String>();
@@ -81,7 +90,7 @@ class FirebaseDB {
     userData.putIfAbsent('phone', () => phone);
     userData.putIfAbsent('profession', () => iAmA);
     userData.putIfAbsent('uid', () => globals.user.uid);
-    userData.putIfAbsent('displayUrl', () => globals.user.dp);
+    userData.putIfAbsent('displayUrl', () => imageUrl);
     userData.forEach((String k, String v) =>
         print("k is: " + k + "v is  : " + v));
     ref.add(userData);

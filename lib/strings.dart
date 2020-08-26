@@ -13,7 +13,8 @@ various algorithms.''';
 
   static const String getStartedButton = 'Get Started';
 
-  static String greetingMessage = "Hi, " + globals.user.name.toString() + " !";
+  static String greetingMessage = "Hi, " + globals.mainUser.name.toString() +
+      " !";
   static const String whatLearnToday = 'Curious about an algorithm?';
   static const String searchHere = 'Search here';
   static const String lessons = 'Algorithms';

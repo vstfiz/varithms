@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:Varithms/custom_drop_down.dart' as cdd;
 import 'package:Varithms/dashboard.dart';
@@ -6,18 +7,27 @@ import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 
 class FillDetails extends StatefulWidget {
   _FillDetailsState createState() => _FillDetailsState();
 }
 
 class _FillDetailsState extends State<FillDetails> {
+  File _image;
   List<cdd.DropdownMenuItem> gender = new List<cdd.DropdownMenuItem>();
   String dropdownValue;
   String dropdownValuePerson;
+  bool isUploading = false;
+  String uploadedImageUrl;
+  String targetPath = "/temp/";
+  String defaultImageUrl =
+      "https://varithms.tech/storage/assets/display_picture_defaults/";
   TextEditingController _nameController = new TextEditingController();
   TextEditingController _phoneController = new TextEditingController();
   TextEditingController _emailController = new TextEditingController();
@@ -33,6 +43,42 @@ class _FillDetailsState extends State<FillDetails> {
           toastLength: Toast.LENGTH_LONG);
     }
     return result;
+  }
+
+  Future getCameraImage() async {
+    final picker = ImagePicker();
+    final pickedFile =
+    await picker.getImage(source: ImageSource.camera, imageQuality: 50);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+    print("Path Value : " + _image.path);
+  }
+
+  Future getGalleryImage() async {
+    final picker = ImagePicker();
+    final pickedFile =
+    await picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+
+    setState(() {
+      _image = File(pickedFile.path);
+    });
+  }
+
+  Future<String> uploadImage() async {
+    final StorageReference ref = FirebaseStorage.instance.ref().child(
+        'users/${globals.mainUser.uid}/${DateTime
+            .now()
+            .millisecondsSinceEpoch}.jpg');
+    final StorageUploadTask uploadTask = ref.put(_image);
+    await uploadTask.onComplete;
+    ref.getDownloadURL().then((url) {
+      setState(() {
+        uploadedImageUrl = url;
+      });
+    });
+    print(uploadedImageUrl);
   }
 
   @override
@@ -240,25 +286,70 @@ class _FillDetailsState extends State<FillDetails> {
               ),
             ),
           ),
+          Container(
+            width: 150,
+            height: 150,
+            decoration: BoxDecoration(
+                color: Colors.black,
+                image: DecorationImage(
+                    image: targetPath == null
+                        ? AssetImage(null)
+                        : AssetImage(targetPath))),
+          ),
           Positioned(
             top: 75,
             left: (MediaQuery
                 .of(context)
                 .size
                 .width / 2) - 75,
-            child: Container(
+            child: _image == null
+                ? Container(
               height: 150,
               width: 150,
-              child: CircleAvatar(
-                backgroundColor: Colors.black,
-                child: FlatButton(
-                  child: Center(
-                    child: Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+              child: FlatButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) =>
+                          _sourcePickerDialog(context),
+                    );
+                  },
+                  child: Icon(
+                    Icons.camera_alt,
+                    color: Colors.white,
+                  )),
+            )
+                : Container(
+              height: 150,
+              width: 150,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  image: DecorationImage(
+                    image: Image
+                        .file(_image)
+                        .image,
+                    fit: BoxFit.cover,
+                  )),
+              child: Stack(
+                children: <Widget>[
+                  Opacity(
+                    opacity: _image == null ? 0.0 : 0.4,
+                    child: Container(
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.grey),
                     ),
                   ),
-                ),
+                  Center(
+                    child: Icon(
+                      Icons.edit,
+                      color: Colors.white,
+                    ),
+                  )
+                ],
               ),
             ),
           ),
@@ -274,7 +365,7 @@ class _FillDetailsState extends State<FillDetails> {
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20), color: Colors.blue),
               child: FlatButton(
-                onPressed: () {
+                onPressed: () async {
                   print(_nameController.text.toString());
                   if (_nameController.text != "" &&
                       _nameController.text != null) {
@@ -284,18 +375,43 @@ class _FillDetailsState extends State<FillDetails> {
                           if (dropdownValuePerson != "" &&
                               dropdownValuePerson != null) {
                             print("reached");
-                            fdb.FirebaseDB.createUser(
-                                _nameController.text,
-                                _emailController.text,
-                                dropdownValue,
-                                _phoneController.text,
-                                dropdownValuePerson)
-                                .whenComplete(() {
-                              Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (context) => DashBoard()));
-                            });
+                            showDialog(context: context,
+                                builder: (context) => _loadingDialog());
+                            if (_image == null) {
+                              await uploadImage();
+                              fdb.FirebaseDB.createUser(
+                                  _nameController.text,
+                                  _emailController.text,
+                                  dropdownValue,
+                                  _phoneController.text,
+                                  dropdownValuePerson,
+                                  defaultImageUrl +
+                                      _nameController.text
+                                          .substring(0, 1)
+                                          .toUpperCase() +
+                                      ".png")
+                                  .whenComplete(() {
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) => DashBoard()));
+                              });
+                            } else {
+                              await uploadImage();
+                              fdb.FirebaseDB.createUser(
+                                  _nameController.text,
+                                  _emailController.text,
+                                  dropdownValue,
+                                  _phoneController.text,
+                                  dropdownValuePerson,
+                                  uploadedImageUrl)
+                                  .whenComplete(() {
+                                Navigator.push(
+                                    context,
+                                    new MaterialPageRoute(
+                                        builder: (context) => DashBoard()));
+                              });
+                            }
                           } else {
                             print("b1");
                           }
@@ -325,11 +441,164 @@ class _FillDetailsState extends State<FillDetails> {
     );
   }
 
-  void invokeToast() {}
+  Widget _sourcePickerDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      backgroundColor: Colors.white,
+      content: Container(
+        height: 200,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: Text("Choose Image Source",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: "Livvic", fontSize: 25)),
+            ),
+            Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 60,
+                ),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    getCameraImage();
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Camera",
+                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    getGalleryImage();
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.add,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Gallery",
+                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   bool validatePhone(String phone) {
     RegExp regExp = new RegExp(r'(^(?:[+0]9)?[0-9]{10,12}$)');
     return regExp.hasMatch(phone);
+  }
+
+  Widget _loadingDialog() {
+    Function m = () {
+      Navigator.pop(context);
+    };
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      backgroundColor: Colors.white,
+      content: Container(
+        height: 200,
+        child: Stack(
+          children: <Widget>[
+            Positioned(
+              top: 0,
+              right: 0,
+              left: 0,
+              child: Text("Choose Image Source",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontFamily: "Livvic", fontSize: 25)),
+            ),
+            Column(
+              children: <Widget>[
+                SizedBox(
+                  height: 60,
+                ),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    getCameraImage();
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.camera_alt,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Camera",
+                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                      )
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    getGalleryImage();
+                  },
+                  child: Row(
+                    children: <Widget>[
+                      Icon(
+                        Icons.add,
+                        color: Colors.grey,
+                        size: 30,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Text(
+                        "Gallery",
+                        style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _landscapeStack(BuildContext context) {}

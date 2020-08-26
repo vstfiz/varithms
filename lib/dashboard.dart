@@ -16,6 +16,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -30,6 +31,7 @@ class _DashBoardState extends State<DashBoard>
   void initState() {
     super.initState();
     algoTypeFetch();
+//    getUserDetails();
     progressInc();
   }
 
@@ -789,7 +791,7 @@ class ProfileImage extends StatelessWidget {
           ),
       placeholder: (context, url) => CircularProgressIndicator(),
       errorWidget: (context, url, error) => Icon(Icons.error),
-      imageUrl: globals.user.dp,
+      imageUrl: globals.mainUser.dp,
       width: 10 * SizeConfig.imageSizeMultiplier,
       height: 10 * SizeConfig.imageSizeMultiplier,
     );
