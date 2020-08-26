@@ -96,13 +96,19 @@ class _FillDetailsState extends State<FillDetails> {
         return Future<bool>.value(true);
       },
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Builder(
-            builder: (context) =>
-                ResponsiveWidget(
-                  portraitLayout: _portraitStack(context),
-                  landscapeLayout: _landscapeStack(context),
-                ),
+        body: SafeArea(
+          bottom: false,
+          top: true,
+          right: true,
+          left: true,
+          child: SingleChildScrollView(
+            child: Builder(
+              builder: (context) =>
+                  ResponsiveWidget(
+                    portraitLayout: _portraitStack(context),
+                    landscapeLayout: _landscapeStack(context),
+                  ),
+            ),
           ),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/fire_auth.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
@@ -13,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'dashboard.dart';
 import 'login.dart';
 
 void main() => runApp(Phoenix(child: MyApp()));
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return DashBoard();
+                  return FillDetails();
                 },
               ),
             );
