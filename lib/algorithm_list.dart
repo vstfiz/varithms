@@ -10,7 +10,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
-import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class AlgorithmsList extends StatefulWidget {
   @override
@@ -37,7 +36,7 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
   }
 
   algoFetch() async {
-    return Timer(new Duration(milliseconds: 1000), algoT);
+    return Timer(new Duration(milliseconds: 1500), algoT);
   }
 
   void progressInc() async {
@@ -53,6 +52,31 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
     return Timer(new Duration(milliseconds: 10), progressInc);
   }
 
+  Widget _loadingDialog() {
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0)),
+        backgroundColor: Colors.white,
+        content: Container(
+            height: 60,
+            child: Center(
+              child: Row(
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("Loading Data...", style: TextStyle(
+                      fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
+                ],
+              ),
+            )
+        )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return progressIndicator
@@ -63,11 +87,12 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                 child: WillPopScope(
                   onWillPop: () {},
                   child: Scaffold(
+
 //              appBar: AppBar(
 //                backgroundColor: Color(0xFF2D3E50),
 //                automaticallyImplyLeading: false,
 //              ),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Colors.grey,
                     body: Stack(
                       children: <Widget>[
                         Positioned(
@@ -90,36 +115,16 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                 ),
               ),
               Center(
-                child: Container(
-                  height: 200,
-                  width: 200,
-                  child: Card(
-                      elevation: 15,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      child: Container(
-                        height: 100,
-                        width: 100,
-                        child: LiquidCircularProgressIndicator(
-                          value: val,
-                          // Defaults to 0.5.
-                          valueColor: AlwaysStoppedAnimation(Colors.blueAccent),
-                          // Defaults to the current Theme's accentColor.
-                          backgroundColor: Colors.white,
-                          // Defaults to the current Theme's backgroundColor.
-                          borderColor: Color(0xFF2D3E50),
-                          borderWidth: 5.0,
-                          direction: Axis.vertical,
-                          // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
-                          center: Text("Loading..."),
-                        ),
-                      )),
-                ),
+                  child: _loadingDialog()
               )
             ],
           )
-        : WillPopScope(
-            onWillPop: () {},
+        :
+    WillPopScope(
+      onWillPop: () {
+        Navigator.pop(context);
+        return Future<bool>.value(false);
+      },
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Color(0xFF2D3E50),

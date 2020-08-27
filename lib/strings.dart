@@ -20,7 +20,7 @@ various algorithms.''';
   static const String searchHere = 'Search here';
 
 //  static const String lessons = 'Algorithms';
-  static const String myClasses = 'My Algorithms';
+//  static const String myClasses = 'My Algorithms';
   static const String graphicDesigner = 'Sorting Algorithm';
   static const String swimming = 'Sorting';
   static const String cycling = 'Cycling';

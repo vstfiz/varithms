@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:Varithms/algorithm_list.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
+import 'package:Varithms/rating_bar.dart';
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
@@ -13,10 +14,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'algorithm.dart';
 
+bool isMyAlgorithms = false;
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -25,14 +27,29 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   bool progressIndicator = true;
+  bool myAlgoProgress = false;
   double val = 0.0;
-  BuildContext dialogContext;
 
   @override
   void initState() {
     super.initState();
     algoTypeFetch();
     progressInc();
+  }
+
+  myAlgoT() async {
+    fdb.FirebaseDB.getAlgos("Randomized Algorithms").whenComplete(() {
+      print("Length :" + globals.algoList.length.toString());
+      setState(() {
+        isMyAlgorithms = true;
+        myAlgoProgress = true;
+      });
+      myAlgoUpdate();
+    });
+  }
+
+  myAlgoFetch() async {
+    return Timer(new Duration(milliseconds: 1000), myAlgoT);
   }
 
 
@@ -51,7 +68,7 @@ class _DashBoardState extends State<DashBoard>
   }
 
   algoTypeFetch() async {
-    return Timer(new Duration(milliseconds: 1000), algoT);
+    return Timer(new Duration(milliseconds: 1500), algoT);
   }
 
   void progressInc() async {
@@ -67,8 +84,26 @@ class _DashBoardState extends State<DashBoard>
     return Timer(new Duration(milliseconds: 10), progressInc);
   }
 
+  darkValueUpdate() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    bool temp = sharedPreferences.getBool("darkMode");
+    if (temp == null) {
+      temp = false;
+    }
+    sharedPreferences.setBool("darkMode", !temp);
+  }
+
+  myAlgoUpdate() async {
+    return Timer(new Duration(milliseconds: 1000), hideDialog);
+  }
+
+  hideDialog() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+//    _loadingMethod();
 //    progressInc();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -87,129 +122,76 @@ class _DashBoardState extends State<DashBoard>
             left: true,
             right: true,
             top: true,
-            child: progressIndicator
+            child:
+            progressIndicator
                 ? Stack(children: <Widget>[
               Opacity(
-                opacity: 0.4,
-                child: SizedBox(
-                  height: MediaQuery
-                      .of(context)
-                      .size
-                      .height,
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  child: Container(
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: AssetImage('assets/s2.png'),
-                            fit: BoxFit.cover)),
+                  opacity: 0.5,
+                  child: SingleChildScrollView(
+                    child: ResponsiveWidget(
+                      portraitLayout: _portraitStack(),
+                      landscapeLayout: _landscapeStack(),
                   ),
-                ),
+                  )
+//                SizedBox(
+//                  height: MediaQuery
+//                      .of(context)
+//                      .size
+//                      .height,
+//                  width: MediaQuery
+//                      .of(context)
+//                      .size
+//                      .width,
+//                  child: Container(
+//                    decoration: BoxDecoration(
+//                        image: DecorationImage(
+//                            image: AssetImage('assets/s2.png'),
+//                            fit: BoxFit.cover)),
+//                  ),
+//                ),
               ),
               Center(
-                child: Container(
-                  height: 300,
-                  width: 300,
-                  child: AlertDialog(
-                      elevation: 8,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)),
-                      content: Container(
-                        height: 150,
-                        width: 150,
-                        child: LiquidCircularProgressIndicator(
-                          value: val,
-                          // Defaults to 0.5.
-                          valueColor:
-                          AlwaysStoppedAnimation(Colors.blueAccent),
-                          // Defaults to the current Theme's accentColor.
-                          backgroundColor: Colors.white,
-                          // Defaults to the current Theme's backgroundColor.
-                          borderColor: Color(0xFF2D3E50),
-                          borderWidth: 5.0,
-                          direction: Axis.vertical,
-                          // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
-                          center: Text("Loading..."),
-                        ),
-                      )),
-                ),
+                child: _loadingDialog(),
               )
+
+//              Center(
+//                child: Container(
+//                  height: 300,
+//                  width: 300,
+//                  child: AlertDialog(
+//                      elevation: 8,
+//                      shape: RoundedRectangleBorder(
+//                          borderRadius: BorderRadius.circular(15)),
+//                      content: Container(
+//                        height: 150,
+//                        width: 150,
+//                        child: LiquidCircularProgressIndicator(
+//                          value: val,
+//                          // Defaults to 0.5.
+//                          valueColor:
+//                          AlwaysStoppedAnimation(Colors.blueAccent),
+//                          // Defaults to the current Theme's accentColor.
+//                          backgroundColor: Colors.white,
+//                          // Defaults to the current Theme's backgroundColor.
+//                          borderColor: Color(0xFF2D3E50),
+//                          borderWidth: 5.0,
+//                          direction: Axis.vertical,
+//                          // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+//                          center: Text("Loading..."),
+//                        ),
+//                      )),
+//                ),
+//              )
             ])
-                : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(
-                          bottom:
-                          Radius.circular(3.0 * SizeConfig.heightMultiplier),
-                        ),
-                      ),
-                      constraints: BoxConstraints(
-                          maxHeight: 40 *
-                              (SizeConfig.isMobilePortrait
-                                  ? SizeConfig.heightMultiplier
-                                  : SizeConfig.widthMultiplier)),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: <Widget>[
-                          FractionallySizedBox(
-                            heightFactor:
-                            SizeConfig.isMobilePortrait ? 0.25 : 0.35,
-                            alignment: Alignment.bottomCenter,
-                            child: Tabs(),
-                          ),
-                          ResponsiveWidget(
-                            portraitLayout: TopContainerPortrait(),
-                            landscapeLayout: TopContainerLandscape(),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(
-                      constraints: BoxConstraints(
-                          maxHeight: 100 * SizeConfig.heightMultiplier),
-                      decoration: BoxDecoration(
-                        color: AppTheme.appBackgroundColor,
-                      ),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 28.0 * SizeConfig.widthMultiplier,
-                                vertical: 3 * SizeConfig.heightMultiplier,
-                              ),
-                              child: Text(
-                                "Algorithm Types",
-                                style: TextStyle(
-                                  fontFamily: "Livvic",
-                                  fontSize: 30,
-                                ),
-                              ),
-                            ),
-                            AlgorithmTypeCards(context),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.0 * SizeConfig.widthMultiplier,
-                                vertical: 3 * SizeConfig.heightMultiplier,
-                              ),
-                              child: Text(
-                                "Learn an Algorithm",
-                                style: TextStyle(
-                                  fontFamily: "Livvic",
-                                  fontSize: 30,
-                                ),
-                              ),
-                            ),
-                            AlgorithmCards(context),
-                          ]),
-                    ),
-                  ],
+                :
+            SingleChildScrollView(
+                child: ResponsiveWidget(
+                  portraitLayout: isMyAlgorithms
+                      ? _portraitMyAlgoStack()
+                      : _portraitStack(),
+                  landscapeLayout: isMyAlgorithms
+                      ? _landscapeMyAlgoStack()
+                      : _landscapeStack(),
                 )),
           ),
         ),
@@ -217,270 +199,403 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
-  Widget AlgorithmTypeCards(BuildContext context) {
-    return CarouselSlider(
-      options: CarouselOptions(
-          height: 295.0,
-          viewportFraction: 0.95,
-          enableInfiniteScroll: true,
-          enlargeCenterPage: true,
-          autoPlay: true,
-          autoPlayAnimationDuration: new Duration(milliseconds: 1000)),
-      items: globals.algoTypeList.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return FlatButton(
-              onPressed: () {
-                globals.selectedAlgoTypeName = i.name;
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return AlgorithmsList();
-                    },
-                  ),
-                );
-              },
-              child: Container(
-                width: 360,
-                margin: EdgeInsets.symmetric(
-                    horizontal: 1 * SizeConfig.widthMultiplier),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(3 * SizeConfig.heightMultiplier),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 8,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3 * SizeConfig.heightMultiplier),
-                        ),
-                        child: AspectRatio(
-                            aspectRatio: 3,
-                            child: CachedNetworkImage(
-                              imageUrl: i.imageUrl,
-                              placeholder: (context, url) =>
-                                  Center(
-                                    child: SizedBox(
-                                      height: 30,
-                                      width: 30,
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                5)),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            )),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      width: 360,
-                      child: Text(
-                        i.name,
-                        style: TextStyle(
-                            fontFamily: "Livvic",
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      width: 360,
-                      child: Text(
-                        i.noOfAlgorithms + " Courses",
-                        style: TextStyle(
-                            fontFamily: "Livvic",
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 5,
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      }).toList(),
-    );
-  }
-
-  Widget AlgorithmCards(BuildContext context) {
-    return CarouselSlider(
-      options: CarouselOptions(
-          height: 295.0,
-          viewportFraction: 0.95,
-          enableInfiniteScroll: true,
-          enlargeCenterPage: true,
-          autoPlay: true,
-          autoPlayAnimationDuration: new Duration(milliseconds: 300)),
-      items: globals.algoListForDashboard.map((i) {
-        return Builder(
-          builder: (BuildContext context) {
-            return FlatButton(
-              onPressed: () {
-                globals.selectedAlgoTypeName = i.name;
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return AlgorithmsList();
-                    },
-                  ),
-                );
-              },
-              child: Container(
-//                width: 360,
-                margin: EdgeInsets.symmetric(
-                    horizontal: 1 * SizeConfig.widthMultiplier),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(3 * SizeConfig.heightMultiplier),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 8,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(3 * SizeConfig.heightMultiplier),
-                        ),
-                        child: AspectRatio(
-                            aspectRatio: 3,
-                            child: CachedNetworkImage(
-                              imageUrl: i.imageUrl,
-                              placeholder: (context, url) =>
-                                  Center(
-                                    child: SizedBox(
-                                      height: 30,
-                                      width: 30,
-                                      child: Card(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                                5)),
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                            )),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      width: 360,
-                      child: Text(
-                        i.name,
-                        style: TextStyle(
-                            fontFamily: "Livvic",
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      }).toList(),
-    );
-  }
-}
-
-class Tabs extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget _portraitMyAlgoStack() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                color: AppTheme.selectedTabBackgroundColor,
-                borderRadius: BorderRadius.vertical(
-                    bottom:
-                    Radius.circular(4.0 * SizeConfig.heightMultiplier))),
-            child: Align(
-              alignment: Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
-              child: Text(
-                "Algorithms",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontFamily: "Livvic",
-                  fontSize: 3 * SizeConfig.textMultiplier,
-                ),
-              ),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              bottom:
+              Radius.circular(3.0 * SizeConfig.heightMultiplier),
             ),
           ),
-        ),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                color: AppTheme.unSelectedTabBackgroundColor,
-                borderRadius: BorderRadius.vertical(
-                    bottom:
-                    Radius.circular(3.0 * SizeConfig.heightMultiplier))),
-            child: Align(
-              alignment: Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
-              child: Text(
-                Strings.myClasses,
-                style: Theme.of(context).textTheme.body2,
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor:
+                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
               ),
-            ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints: BoxConstraints(
+              maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: Color(0xFFFFF7BC),
+          ),
+          child: ListView(
+            children:
+            List.generate(globals.algoList.length, (int index) {
+              Algorithms algorithm = globals.algoList[index];
+              return Container(
+                margin: EdgeInsets.symmetric(
+                    vertical: 25, horizontal: 20),
+                height: 270,
+                width: 320,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)
+                  ),
+                  elevation: 8,
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        top: 20,
+                        left: 15,
+                        child: CachedNetworkImage(
+                          imageBuilder: (context,
+                              imageProvider) =>
+                              Container(
+                                width: 90.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius
+                                      .circular(15),
+                                  image: DecorationImage(
+                                      image: imageProvider,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          imageUrl: algorithm.imageUrl,
+                          width: 10 *
+                              SizeConfig.imageSizeMultiplier,
+                          height: 10 *
+                              SizeConfig.imageSizeMultiplier,
+                        ),
+                      ),
+                      Positioned(
+                          top: 20,
+                          left: 120,
+                          child: Container(
+                            width: 185,
+                            height: 100,
+                            child: Text(
+                              algorithm.name,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 35,
+                                  fontFamily: "Livvic"),
+                              softWrap: true,
+                            ),
+                          )),
+                      Positioned(
+                        left: 20,
+                        top: 120,
+                        child: Text("Progress : " +
+                            algorithm.progress.toString() + "%",
+                          style: TextStyle(fontFamily: "Livvic",
+                              color: Colors.black,
+                              fontSize: 20),),
+                      ),
+                      Positioned(
+                        right: 15,
+                        top: 125,
+                        child: RatingBar(
+                          itemSize: 20,
+                          unratedColor: Colors.grey,
+                          initialRating: algorithm.difficulty
+                              .toDouble(),
+                          minRating: algorithm.difficulty
+                              .toDouble(),
+                          maxRating: algorithm.difficulty
+                              .toDouble(),
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(
+                              horizontal: 1.0),
+                          itemBuilder: (context, _) =>
+                              Icon(
+                                Icons.star,
+                                color: Colors.blue,
+                              ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: 150,
+                        left: 20,
+                        child: SizedBox(
+                          width: 310,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Colors.grey,
+                            valueColor: AlwaysStoppedAnimation<
+                                Color>(Colors.blue),
+                            value: algorithm.progress.toDouble() /
+                                100.0,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 20,
+                        top: 170,
+                        child: SizedBox(
+                          width: 310,
+                          child: Divider(
+                            color: Colors.grey[650],
+                            thickness: 2.0,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 190,
+                        right: 40,
+                        child: Container(
+                          width: 55,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            color: Colors.lightBlueAccent,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: IconButton(
+                              icon: Icon(Icons.chevron_right,
+                                color: Colors.black,),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
           ),
         ),
       ],
     );
   }
-}
 
-class TopContainerPortrait extends StatefulWidget {
-  @override
-  _TopContainerPortraitState createState() => _TopContainerPortraitState();
-}
+  Widget _landscapeMyAlgoStack() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              bottom:
+              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+            ),
+          ),
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor:
+                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
+              ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints: BoxConstraints(
+              maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: AppTheme.appBackgroundColor,
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 28.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Algorithm Types",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmTypeCards(context),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Learn an Algorithm",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmCards(context),
+              ]),
+        ),
+      ],
+    );
 
-class _TopContainerPortraitState extends State<TopContainerPortrait> {
-  darkValueUpdate() async {
-    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    bool temp = sharedPreferences.getBool("darkMode");
-    if (temp == null) {
-      temp = false;
-    }
-    sharedPreferences.setBool("darkMode", !temp);
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _topContainerLandscape(BuildContext context) {
+    return FractionallySizedBox(
+      heightFactor: 0.75,
+      alignment: Alignment.topCenter,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.vertical(
+            bottom: Radius.circular(24.0),
+          ),
+          color: AppTheme.topBarBackgroundColor,
+        ),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                  left: 2.0 * SizeConfig.heightMultiplier,
+                  right: 2.0 * SizeConfig.heightMultiplier,
+                  top: 1.0 * SizeConfig.heightMultiplier,
+                ),
+                child: Row(
+                  children: <Widget>[
+                    _profileImage(context),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 1 * SizeConfig.heightMultiplier,
+                        ),
+                        child: Text(
+                          Strings.greetingMessage,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 2.5 * SizeConfig.textMultiplier,
+                              fontFamily: "Livvic"
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 2 * SizeConfig.heightMultiplier),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(24),
+                          ),
+                        ),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(
+                              Icons.search,
+                              size: 3 * SizeConfig.heightMultiplier,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 1 * SizeConfig.heightMultiplier,
+                                ),
+                                child: TextField(
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: Strings.searchHere,
+                                  ),
+                                  style: Theme
+                                      .of(context)
+                                      .textTheme
+                                      .display2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                    Icon(
+                      Icons.blur_on,
+                      color: Colors.white,
+                      size: 8 * SizeConfig.imageSizeMultiplier,
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: 2.0 * SizeConfig.heightMultiplier,
+                    bottom: 1.5 * SizeConfig.heightMultiplier),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      "Curious about an algorithm ?",
+                      style: TextStyle(
+                        fontFamily: "Livvic",
+                        color: Colors.white,
+                        fontSize: 3.5 * SizeConfig.textMultiplier,
+                      ),
+                    ),
+                    Spacer(),
+                    Container(
+                      width: 10 * SizeConfig.heightMultiplier,
+                      padding: EdgeInsets.symmetric(
+                          vertical: 1 * SizeConfig.heightMultiplier),
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(
+                              3.0 * SizeConfig.heightMultiplier),
+                          bottomLeft: Radius.circular(
+                              3.0 * SizeConfig.heightMultiplier),
+                        ),
+                      ),
+                      child: Icon(
+                        Icons.settings,
+                        color: Colors.white,
+                        size: 6 * SizeConfig.imageSizeMultiplier,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _topContainerPortrait(BuildContext context) {
     return FractionallySizedBox(
       heightFactor: 0.8,
       alignment: Alignment.topCenter,
@@ -504,7 +619,7 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                     Expanded(
                       child: Row(
                         children: <Widget>[
-                          ProfileImage(),
+                          _profileImage(context),
                           Expanded(
                             child: Padding(
                               padding: EdgeInsets.symmetric(
@@ -513,8 +628,9 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
                               child: Text(
                                 Strings.greetingMessage,
                                 style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 2.0 * SizeConfig.textMultiplier,
+                                    color: Colors.white,
+                                    fontSize: 2.5 * SizeConfig.textMultiplier,
+                                    fontFamily: "Livvic"
                                 ),
                               ),
                             ),
@@ -634,142 +750,178 @@ class _TopContainerPortraitState extends State<TopContainerPortrait> {
       ),
     );
   }
-}
 
-class TopContainerLandscape extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return FractionallySizedBox(
-      heightFactor: 0.75,
-      alignment: Alignment.topCenter,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(
-            bottom: Radius.circular(24.0),
-          ),
-          color: AppTheme.topBarBackgroundColor,
-        ),
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 2.0 * SizeConfig.heightMultiplier,
-                  right: 2.0 * SizeConfig.heightMultiplier,
-                  top: 1.0 * SizeConfig.heightMultiplier,
-                ),
-                child: Row(
-                  children: <Widget>[
-                    ProfileImage(),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 1 * SizeConfig.heightMultiplier,
-                        ),
-                        child: Text(
-                          Strings.greetingMessage,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 2.0 * SizeConfig.textMultiplier,
-                          ),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 2 * SizeConfig.heightMultiplier),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(24),
-                          ),
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.search,
-                              size: 3 * SizeConfig.heightMultiplier,
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 1 * SizeConfig.heightMultiplier,
-                                ),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: Strings.searchHere,
-                                  ),
-                                  style: Theme.of(context).textTheme.display2,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Spacer(),
-                    Icon(
-                      Icons.blur_on,
-                      color: Colors.white,
-                      size: 8 * SizeConfig.imageSizeMultiplier,
-                    )
-                  ],
-                ),
+  Widget _loadingDialog() {
+    return AlertDialog(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0)),
+        backgroundColor: Colors.white,
+        content: Container(
+            height: 60,
+            child: Center(
+              child: Row(
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Text("Loading Data...", style: TextStyle(
+                      fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
+                ],
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.only(
-                    left: 2.0 * SizeConfig.heightMultiplier,
-                    bottom: 1.5 * SizeConfig.heightMultiplier),
-                child: Row(
-                  children: <Widget>[
-                    Text(
-                      "Curious about an algorithm ?",
-                      style: TextStyle(
-                        fontFamily: "Livvic",
-                        color: Colors.white,
-                        fontSize: 3.5 * SizeConfig.textMultiplier,
-                      ),
-                    ),
-                    Spacer(),
-                    Container(
-                      width: 10 * SizeConfig.heightMultiplier,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 1 * SizeConfig.heightMultiplier),
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(
-                              3.0 * SizeConfig.heightMultiplier),
-                          bottomLeft: Radius.circular(
-                              3.0 * SizeConfig.heightMultiplier),
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.settings,
-                        color: Colors.white,
-                        size: 6 * SizeConfig.imageSizeMultiplier,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+            )
+        )
     );
   }
-}
 
+  Widget _tabs(BuildContext context) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: FlatButton(
+            onPressed: () {
+              setState(() {
+                isMyAlgorithms = false;
+              });
+              print(isMyAlgorithms);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: isMyAlgorithms
+                      ? AppTheme.unSelectedTabBackgroundColor
+                      : AppTheme.selectedTabBackgroundColor,
+                  borderRadius: BorderRadius.vertical(
+                      bottom:
+                      Radius.circular(4.0 * SizeConfig.heightMultiplier))),
+              child: Align(
+                alignment: Alignment(
+                    0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
+                child: Text(
+                  "Algorithms",
+                  style: TextStyle(
+                    color: isMyAlgorithms ? Colors.black : Colors.white,
+                    fontFamily: "Livvic",
+                    fontSize: 3 * SizeConfig.textMultiplier,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: FlatButton(
+            onPressed: () {
+              showDialog(
+                  context: context, builder: (context) => _loadingDialog());
+              myAlgoT();
 
-class ProfileImage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+//              myAlgoUpdate();
+              print(isMyAlgorithms);
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                  color: isMyAlgorithms
+                      ? AppTheme.selectedTabBackgroundColor
+                      : AppTheme.unSelectedTabBackgroundColor,
+                  borderRadius: BorderRadius.vertical(
+                      bottom:
+                      Radius.circular(3.0 * SizeConfig.heightMultiplier))),
+              child: Align(
+                alignment: Alignment(
+                    0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
+                child: Text(
+                  "My Algortihms",
+                  style: TextStyle(fontSize: isMyAlgorithms ? 25 : 20,
+                      fontFamily: "Livvic",
+                      color: isMyAlgorithms ? Colors.white : Colors.black),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _portraitStack() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              bottom:
+              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+            ),
+          ),
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor:
+                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
+              ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints: BoxConstraints(
+              maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: AppTheme.appBackgroundColor,
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 28.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Algorithm Types",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmTypeCards(context),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Learn an Algorithm",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmCards(context),
+              ]),
+        ),
+      ],
+    );
+  }
+
+  Widget _profileImage(BuildContext context) {
     return CachedNetworkImage(
       imageBuilder: (context, imageProvider) =>
           Container(
@@ -785,6 +937,282 @@ class ProfileImage extends StatelessWidget {
       imageUrl: globals.mainUser.dp,
       width: 10 * SizeConfig.imageSizeMultiplier,
       height: 10 * SizeConfig.imageSizeMultiplier,
+    );
+  }
+
+  Widget _landscapeStack() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(
+              bottom:
+              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+            ),
+          ),
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor:
+                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
+              ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints: BoxConstraints(
+              maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: AppTheme.appBackgroundColor,
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 28.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Algorithm Types",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmTypeCards(context),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Learn an Algorithm",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                    ),
+                  ),
+                ),
+                _algorithmCards(context),
+              ]),
+        ),
+      ],
+    );
+  }
+
+  Widget _algorithmTypeCards(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+          height: 295.0,
+          viewportFraction: 0.95,
+          enableInfiniteScroll: true,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayAnimationDuration: new Duration(milliseconds: 1000)),
+      items: globals.algoTypeList.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return FlatButton(
+              onPressed: () {
+                globals.selectedAlgoTypeName = i.name;
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return AlgorithmsList();
+                    },
+                  ),
+                );
+              },
+              child: Container(
+                width: 360,
+                margin: EdgeInsets.symmetric(
+                    horizontal: 1 * SizeConfig.widthMultiplier),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(3 * SizeConfig.heightMultiplier),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(3 * SizeConfig.heightMultiplier),
+                        ),
+                        child: AspectRatio(
+                            aspectRatio: 3,
+                            child: CachedNetworkImage(
+                              imageUrl: i.imageUrl,
+                              placeholder: (context, url) =>
+                                  Center(
+                                    child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                5)),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.name,
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.noOfAlgorithms + " Courses",
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 5,
+                    )
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _algorithmCards(BuildContext context) {
+    return CarouselSlider(
+      options: CarouselOptions(
+          height: 295.0,
+          viewportFraction: 0.95,
+          enableInfiniteScroll: true,
+          enlargeCenterPage: true,
+          autoPlay: true,
+          autoPlayAnimationDuration: new Duration(milliseconds: 300)),
+      items: globals.algoListForDashboard.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return FlatButton(
+              onPressed: () {
+                globals.selectedAlgoTypeName = i.name;
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return AlgorithmsList();
+                    },
+                  ),
+                );
+              },
+              child: Container(
+//                width: 360,
+                margin: EdgeInsets.symmetric(
+                    horizontal: 1 * SizeConfig.widthMultiplier),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(3 * SizeConfig.heightMultiplier),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 8,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(3 * SizeConfig.heightMultiplier),
+                        ),
+                        child: AspectRatio(
+                            aspectRatio: 3,
+                            child: CachedNetworkImage(
+                              imageUrl: i.imageUrl,
+                              placeholder: (context, url) =>
+                                  Center(
+                                    child: SizedBox(
+                                      height: 30,
+                                      width: 30,
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                5)),
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    ),
+                                  ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            )),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      width: 360,
+                      child: Text(
+                        i.name,
+                        style: TextStyle(
+                            fontFamily: "Livvic",
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
     );
   }
 }
