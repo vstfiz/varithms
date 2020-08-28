@@ -45,7 +45,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return WelcomeScreen();
+                  return Login();
                 },
               ),
             );

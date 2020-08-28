@@ -9,6 +9,7 @@ import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
 import 'package:Varithms/styling.dart';
+import 'package:Varithms/user_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
@@ -532,14 +533,20 @@ class _DashBoardState extends State<DashBoard>
                         padding: EdgeInsets.symmetric(
                           horizontal: 1 * SizeConfig.heightMultiplier,
                         ),
-                        child: Text(
-                          Strings.greetingMessage,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 2.5 * SizeConfig.textMultiplier,
-                              fontFamily: "Livvic"
-                          ),
-                        ),
+                          child: FlatButton(
+                            onPressed: () {
+                              Navigator.push(context, new MaterialPageRoute(
+                                  builder: (context) => UserProfile()));
+                            },
+                            child: Text(
+                              Strings.greetingMessage,
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 2.5 * SizeConfig.textMultiplier,
+                                  fontFamily: "Livvic"
+                              ),
+                            ),
+                          )
                       ),
                     ),
                     Expanded(
@@ -967,6 +974,14 @@ class _DashBoardState extends State<DashBoard>
           Container(
             width: 50.0,
             height: 50.0,
+            child: FlatButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) =>
+                        UserProfile()
+                ));
+              },
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
               image: DecorationImage(image: imageProvider, fit: BoxFit.cover),

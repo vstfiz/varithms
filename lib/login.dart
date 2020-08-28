@@ -178,8 +178,9 @@ class _LoginState extends State<Login> {
                         borderRadius: BorderRadius.circular(10)),
                     child: FlatButton(
                       onPressed: () {
+                        globals.isEmailLogin = true;
                         signInWithGoogle().whenComplete(() {
-                          checkFillUps();
+                          fdb.FirebaseDB.getUserDetails(user.uid, context);
                         });
                       },
                       child: Row(
@@ -573,6 +574,7 @@ class _LoginState extends State<Login> {
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
               onPressed: () async {
+                globals.isEmailLogin = true;
                 setState(() {
                   loginProgress = true;
                 });
