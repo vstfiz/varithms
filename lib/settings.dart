@@ -333,7 +333,31 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 820,
+            top: 680,
+            child: Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              child: Text("Mini Project III year", style: TextStyle(
+                color: Colors.grey, fontFamily: "Livvic", fontSize: 25,),
+                textAlign: TextAlign.center,),
+            ),
+          ),
+          Positioned(
+            top: 700,
+            child: Container(
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
+              child: Text("Vstfiz Tech Pvt Ltd", style: TextStyle(
+                color: Colors.grey, fontFamily: "Livvic", fontSize: 25,),
+                textAlign: TextAlign.center,),
+            ),
+          ),
+          Positioned(
+            top: 800,
             left: 0,
             right: 0,
             child: Container(
@@ -342,7 +366,7 @@ class _SettingsState extends State<Settings> {
                   .size
                   .width - 40,
               margin: EdgeInsets.only(left: 20, right: 20),
-              height: 50,
+              height: 70,
               decoration: BoxDecoration(
                   color: Color(0xFF2D3E50),
                   borderRadius: BorderRadius.circular(20)),
@@ -355,7 +379,7 @@ class _SettingsState extends State<Settings> {
                 child: Text(
                   "Logout",
                   style: TextStyle(
-                      color: Colors.white, fontFamily: "Livvic", fontSize: 25),
+                    color: Colors.white, fontFamily: "Livvic", fontSize: 30,),
                 ),
               ),
             ),
