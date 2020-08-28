@@ -38,7 +38,10 @@ class _UserProfileState extends State<UserProfile> {
       bottom: false,
       left: true,
       child: WillPopScope(
-        onWillPop: () {},
+        onWillPop: () {
+          Navigator.pop(context);
+          return Future<bool>.value(false);
+        },
         child: Scaffold(
           backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
           body: isLoading

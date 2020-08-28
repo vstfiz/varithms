@@ -89,11 +89,46 @@ class _FillDetailsState extends State<FillDetails> {
     }
   }
 
+  Future<void> exitDialog() {
+    return showDialog<void>(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              title: Text(
+                "Exit", style: TextStyle(fontSize: 30, fontFamily: "Livvic"),),
+              content: Text("Do you want to exit ?",
+                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: Text("Exit", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                )
+              ],
+            )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        return Future<bool>.value(true);
+        exitDialog();
+        return Future<bool>.value(false);
       },
       child: Scaffold(
         body: SafeArea(
