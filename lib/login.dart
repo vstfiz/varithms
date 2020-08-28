@@ -2,15 +2,15 @@ import 'dart:async';
 
 import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/fill_details.dart';
-import 'package:Varithms/main.dart' as main;
+import 'package:Varithms/firebase_database.dart' as fdb;
+import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/responsiveui.dart';
 import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:Varithms/firebase_database.dart' as fdb;
-import 'package:Varithms/globals.dart' as globals;
 
 import 'fire_auth.dart';
 
@@ -35,10 +35,47 @@ class _LoginState extends State<Login> {
     });
   }
 
+  Future<void> exitDialog() {
+    return showDialog<void>(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              title: Text(
+                "Exit", style: TextStyle(fontSize: 30, fontFamily: "Livvic"),),
+              content: Text("Do you want to exit ?",
+                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: Text("Exit", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                )
+              ],
+            )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () {},
+      onWillPop: () {
+        exitDialog();
+        return Future<bool>.value(false);
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(

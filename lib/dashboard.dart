@@ -101,6 +101,40 @@ class _DashBoardState extends State<DashBoard>
     Navigator.pop(context);
   }
 
+  Future<void> exitDialog() {
+    return showDialog<void>(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)
+              ),
+              title: Text(
+                "Exit", style: TextStyle(fontSize: 30, fontFamily: "Livvic"),),
+              content: Text("Do you want to exit ?",
+                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Cancel", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    SystemNavigator.pop();
+                  },
+                  child: Text("Exit", style: TextStyle(fontSize: 20,
+                      fontFamily: "Livvic",
+                      color: Colors.grey[800]),),
+                )
+              ],
+            )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 //    _loadingMethod();
@@ -114,25 +148,30 @@ class _DashBoardState extends State<DashBoard>
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-        child: Scaffold(
-          backgroundColor:
-          progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
-          body: SafeArea(
-            bottom: false,
-            left: true,
-            right: true,
-            top: true,
-            child:
-            progressIndicator
-                ? Stack(children: <Widget>[
-              Opacity(
-                  opacity: 0.5,
-                  child: SingleChildScrollView(
-                    child: ResponsiveWidget(
-                      portraitLayout: _portraitStack(),
-                      landscapeLayout: _landscapeStack(),
-                  ),
-                  )
+        child: WillPopScope(
+          onWillPop: () {
+            exitDialog();
+            return Future<bool>.value(false);
+          },
+          child: Scaffold(
+            backgroundColor:
+            progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
+            body: SafeArea(
+              bottom: false,
+              left: true,
+              right: true,
+              top: true,
+              child:
+              progressIndicator
+                  ? Stack(children: <Widget>[
+                Opacity(
+                    opacity: 0.5,
+                    child: SingleChildScrollView(
+                      child: ResponsiveWidget(
+                        portraitLayout: _portraitStack(),
+                        landscapeLayout: _landscapeStack(),
+                      ),
+                    )
 //                SizedBox(
 //                  height: MediaQuery
 //                      .of(context)
@@ -149,10 +188,10 @@ class _DashBoardState extends State<DashBoard>
 //                            fit: BoxFit.cover)),
 //                  ),
 //                ),
-              ),
-              Center(
-                child: _loadingDialog(),
-              )
+                ),
+                Center(
+                  child: _loadingDialog(),
+                )
 
 //              Center(
 //                child: Container(
@@ -182,17 +221,18 @@ class _DashBoardState extends State<DashBoard>
 //                      )),
 //                ),
 //              )
-            ])
-                :
-            SingleChildScrollView(
-                child: ResponsiveWidget(
-                  portraitLayout: isMyAlgorithms
-                      ? _portraitMyAlgoStack()
-                      : _portraitStack(),
-                  landscapeLayout: isMyAlgorithms
-                      ? _landscapeMyAlgoStack()
-                      : _landscapeStack(),
-                )),
+              ])
+                  :
+              SingleChildScrollView(
+                  child: ResponsiveWidget(
+                    portraitLayout: isMyAlgorithms
+                        ? _portraitMyAlgoStack()
+                        : _portraitStack(),
+                    landscapeLayout: isMyAlgorithms
+                        ? _landscapeMyAlgoStack()
+                        : _landscapeStack(),
+                  )),
+            ),
           ),
         ),
       ),
