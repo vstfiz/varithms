@@ -5,6 +5,7 @@ import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/rating_bar.dart';
 import 'package:Varithms/responsiveui.dart';
+import 'package:Varithms/searching_service.dart';
 import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
@@ -12,6 +13,7 @@ import 'package:Varithms/styling.dart';
 import 'package:Varithms/user_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -20,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'algorithm.dart';
 
 bool isMyAlgorithms = false;
+
 class DashBoard extends StatefulWidget {
   @override
   _DashBoardState createState() => _DashBoardState();
@@ -29,7 +32,53 @@ class _DashBoardState extends State<DashBoard>
     with SingleTickerProviderStateMixin {
   bool progressIndicator = true;
   bool myAlgoProgress = false;
+  bool isSearching = false;
   double val = 0.0;
+  var queryResults = [];
+  var tempStorage = [];
+  FocusNode focusNode = new FocusNode();
+
+  startSearch(String query) {
+//    print('method chala');
+    print(query);
+
+    if (query.length == 0) {
+      setState(() {
+        queryResults = [];
+        tempStorage = [];
+      });
+    }
+    var searchQuery = query.substring(0, 1).toUpperCase() + query.substring(1);
+    if (queryResults.length == 0 && searchQuery.length == 1) {
+//      print('condition if');
+      SearchService().search(searchQuery).then((QuerySnapshot querySnapshot) {
+        print(querySnapshot.documents.length);
+        for (int i = 0; i < querySnapshot.documents.length; i++) {
+          queryResults.add(querySnapshot.documents[i].data);
+          print(queryResults.length);
+        }
+        queryResults.forEach((result) {
+          if (result['name'].startsWith(searchQuery)) {
+            setState(() {
+              tempStorage.add(result);
+              print(tempStorage.length);
+            });
+          }
+        });
+      });
+    } else {
+//      print('condition else');
+      tempStorage = [];
+      queryResults.forEach((result) {
+        if (result['name'].startsWith(searchQuery)) {
+          setState(() {
+            tempStorage.add(result);
+            print(tempStorage.length);
+          });
+        }
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -52,7 +101,6 @@ class _DashBoardState extends State<DashBoard>
   myAlgoFetch() async {
     return Timer(new Duration(milliseconds: 1000), myAlgoT);
   }
-
 
   algoFetch() async {
     fdb.FirebaseDB.getAlgosForDashboard().whenComplete(() {
@@ -108,62 +156,76 @@ class _DashBoardState extends State<DashBoard>
         builder: (context) =>
             AlertDialog(
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)
-              ),
+                  borderRadius: BorderRadius.circular(10)),
               title: Text(
-                "Exit", style: TextStyle(fontSize: 30, fontFamily: "Livvic"),),
-              content: Text("Do you want to exit ?",
-                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),),
+                "Exit",
+                style: TextStyle(fontSize: 30, fontFamily: "Livvic"),
+              ),
+              content: Text(
+                "Do you want to exit ?",
+                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),
+              ),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text("Cancel", style: TextStyle(fontSize: 20,
-                      fontFamily: "Livvic",
-                      color: Colors.grey[800]),),
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Livvic",
+                        color: Colors.grey[800]),
+                  ),
                 ),
                 FlatButton(
                   onPressed: () {
                     SystemNavigator.pop();
                   },
-                  child: Text("Exit", style: TextStyle(fontSize: 20,
-                      fontFamily: "Livvic",
-                      color: Colors.grey[800]),),
+                  child: Text(
+                    "Exit",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Livvic",
+                        color: Colors.grey[800]),
+                  ),
                 )
               ],
-            )
-    );
+            ));
   }
 
   @override
   Widget build(BuildContext context) {
-//    _loadingMethod();
-//    progressInc();
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
           statusBarColor: Color(0xD02D3E50),
-          statusBarBrightness: Brightness.light
-      ),
+          statusBarBrightness: Brightness.light),
       child: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
         },
         child: WillPopScope(
           onWillPop: () {
-            exitDialog();
-            return Future<bool>.value(false);
+            if (isSearching) {
+              setState(() {
+                isSearching = false;
+              });
+              return Future<bool>.value(false);
+            } else {
+              exitDialog();
+              return Future<bool>.value(false);
+            }
           },
           child: Scaffold(
-            backgroundColor:
-            progressIndicator ? Colors.blueAccent : AppTheme.appBackgroundColor,
+            backgroundColor: progressIndicator
+                ? Colors.blueAccent
+                : isSearching ? Colors.white : AppTheme.appBackgroundColor,
             body: SafeArea(
               bottom: false,
               left: true,
               right: true,
               top: true,
-              child:
-              progressIndicator
+              child: progressIndicator
                   ? Stack(children: <Widget>[
                 Opacity(
                     opacity: 0.5,
@@ -223,10 +285,11 @@ class _DashBoardState extends State<DashBoard>
 //                ),
 //              )
               ])
-                  :
-              SingleChildScrollView(
+                  : SingleChildScrollView(
                   child: ResponsiveWidget(
-                    portraitLayout: isMyAlgorithms
+                    portraitLayout: isSearching
+                        ? _portraitSearchingStack()
+                        : isMyAlgorithms
                         ? _portraitMyAlgoStack()
                         : _portraitStack(),
                     landscapeLayout: isMyAlgorithms
@@ -240,6 +303,111 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
+  Widget _portraitSearchingStack() {
+    focusNode.requestFocus();
+    return Stack(
+      children: <Widget>[
+        Container(
+            height: 50,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 20,
+            margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+            decoration: BoxDecoration(
+                color: Colors.white
+            ),
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(25),
+              ),
+              elevation: 20,
+              child: TextField(
+                focusNode: focusNode,
+                onChanged: (searchValue) {
+                  print(searchValue);
+                  startSearch(searchValue);
+                },
+                onTap: () {
+                  setState(() {
+                    isSearching = true;
+                  });
+//                      print("value of isSearching : " + isSearching.toString());
+                },
+                decoration: InputDecoration(
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  border: InputBorder.none,
+                  hintText: "Search here",
+                ),
+                style: TextStyle(
+                    color: Colors.grey[500],
+                    fontSize: 20,
+                    fontFamily: "Livvic"),
+              ),
+            )
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 100),
+          height: 500,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width,
+          child: ListView(
+            children: tempStorage.map((value) {
+              return Container(
+                  height: 60,
+                  padding: EdgeInsets.only(left: 20, top: 20),
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+//                    border: Border(
+//
+//                      bottom: BorderSide(
+//                        width: 1,color: Colors.grey
+//                      ),
+//                    )
+
+                  ),
+                  child: FlatButton(
+                    onPressed: () {
+                      globals.selectedAlgoName = value['name'];
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context) => Content()
+                      ));
+                    },
+                    child: Row(
+                      children: <Widget>[
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.grey,
+                          size: 24,
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        Text(value['name'], style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: "Livvic",
+                        ),
+                          textAlign: TextAlign.start,),
+                      ],
+                    ),
+                  )
+              );
+            }).toList(),
+          ),
+        )
+      ],
+    );
+  }
+
   Widget _portraitMyAlgoStack() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,8 +416,7 @@ class _DashBoardState extends State<DashBoard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-              bottom:
-              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
             ),
           ),
           constraints: BoxConstraints(
@@ -261,8 +428,7 @@ class _DashBoardState extends State<DashBoard>
             fit: StackFit.expand,
             children: <Widget>[
               FractionallySizedBox(
-                heightFactor:
-                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
                 alignment: Alignment.bottomCenter,
                 child: _tabs(context),
               ),
@@ -274,24 +440,21 @@ class _DashBoardState extends State<DashBoard>
           ),
         ),
         Container(
-          constraints: BoxConstraints(
-              maxHeight: 100 * SizeConfig.heightMultiplier),
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
           decoration: BoxDecoration(
             color: Color(0xFFFFF7BC),
           ),
           child: ListView(
-            children:
-            List.generate(globals.algoList.length, (int index) {
+            children: List.generate(globals.algoList.length, (int index) {
               Algorithms algorithm = globals.algoList[index];
               return Container(
-                margin: EdgeInsets.symmetric(
-                    vertical: 25, horizontal: 20),
+                margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
                 height: 270,
                 width: 320,
                 child: Card(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)
-                  ),
+                      borderRadius: BorderRadius.circular(25)),
                   elevation: 8,
                   child: Stack(
                     children: <Widget>[
@@ -299,17 +462,14 @@ class _DashBoardState extends State<DashBoard>
                         top: 20,
                         left: 15,
                         child: CachedNetworkImage(
-                          imageBuilder: (context,
-                              imageProvider) =>
+                          imageBuilder: (context, imageProvider) =>
                               Container(
                                 width: 90.0,
                                 height: 90.0,
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius
-                                      .circular(15),
+                                  borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
-                                      image: imageProvider,
-                                      fit: BoxFit.cover),
+                                      image: imageProvider, fit: BoxFit.cover),
                                 ),
                               ),
                           placeholder: (context, url) =>
@@ -317,10 +477,8 @@ class _DashBoardState extends State<DashBoard>
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error),
                           imageUrl: algorithm.imageUrl,
-                          width: 10 *
-                              SizeConfig.imageSizeMultiplier,
-                          height: 10 *
-                              SizeConfig.imageSizeMultiplier,
+                          width: 10 * SizeConfig.imageSizeMultiplier,
+                          height: 10 * SizeConfig.imageSizeMultiplier,
                         ),
                       ),
                       Positioned(
@@ -341,11 +499,13 @@ class _DashBoardState extends State<DashBoard>
                       Positioned(
                         left: 20,
                         top: 120,
-                        child: Text("Progress : " +
-                            algorithm.progress.toString() + "%",
-                          style: TextStyle(fontFamily: "Livvic",
+                        child: Text(
+                          "Progress : " + algorithm.progress.toString() + "%",
+                          style: TextStyle(
+                              fontFamily: "Livvic",
                               color: Colors.black,
-                              fontSize: 20),),
+                              fontSize: 20),
+                        ),
                       ),
                       Positioned(
                         right: 15,
@@ -353,17 +513,13 @@ class _DashBoardState extends State<DashBoard>
                         child: RatingBar(
                           itemSize: 20,
                           unratedColor: Colors.grey,
-                          initialRating: algorithm.difficulty
-                              .toDouble(),
-                          minRating: algorithm.difficulty
-                              .toDouble(),
-                          maxRating: algorithm.difficulty
-                              .toDouble(),
+                          initialRating: algorithm.difficulty.toDouble(),
+                          minRating: algorithm.difficulty.toDouble(),
+                          maxRating: algorithm.difficulty.toDouble(),
                           direction: Axis.horizontal,
                           allowHalfRating: true,
                           itemCount: 5,
-                          itemPadding: EdgeInsets.symmetric(
-                              horizontal: 1.0),
+                          itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
                           itemBuilder: (context, _) =>
                               Icon(
                                 Icons.star,
@@ -381,10 +537,9 @@ class _DashBoardState extends State<DashBoard>
                           width: 310,
                           child: LinearProgressIndicator(
                             backgroundColor: Colors.grey,
-                            valueColor: AlwaysStoppedAnimation<
-                                Color>(Colors.blue),
-                            value: algorithm.progress.toDouble() /
-                                100.0,
+                            valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.blue),
+                            value: algorithm.progress.toDouble() / 100.0,
                           ),
                         ),
                       ),
@@ -411,8 +566,10 @@ class _DashBoardState extends State<DashBoard>
                           ),
                           child: Center(
                             child: IconButton(
-                              icon: Icon(Icons.chevron_right,
-                                color: Colors.black,),
+                              icon: Icon(
+                                Icons.chevron_right,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
@@ -436,8 +593,7 @@ class _DashBoardState extends State<DashBoard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-              bottom:
-              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
             ),
           ),
           constraints: BoxConstraints(
@@ -449,8 +605,7 @@ class _DashBoardState extends State<DashBoard>
             fit: StackFit.expand,
             children: <Widget>[
               FractionallySizedBox(
-                heightFactor:
-                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
                 alignment: Alignment.bottomCenter,
                 child: _tabs(context),
               ),
@@ -462,8 +617,8 @@ class _DashBoardState extends State<DashBoard>
           ),
         ),
         Container(
-          constraints: BoxConstraints(
-              maxHeight: 100 * SizeConfig.heightMultiplier),
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
           decoration: BoxDecoration(
             color: AppTheme.appBackgroundColor,
           ),
@@ -502,7 +657,6 @@ class _DashBoardState extends State<DashBoard>
         ),
       ],
     );
-
   }
 
   Widget _topContainerLandscape(BuildContext context) {
@@ -530,24 +684,24 @@ class _DashBoardState extends State<DashBoard>
                     _profileImage(context),
                     Expanded(
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 1 * SizeConfig.heightMultiplier,
-                        ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 1 * SizeConfig.heightMultiplier,
+                          ),
                           child: FlatButton(
                             onPressed: () {
-                              Navigator.push(context, new MaterialPageRoute(
-                                  builder: (context) => UserProfile()));
+                              Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (context) => UserProfile()));
                             },
                             child: Text(
                               Strings.greetingMessage,
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 2.5 * SizeConfig.textMultiplier,
-                                  fontFamily: "Livvic"
-                              ),
+                                  fontFamily: "Livvic"),
                             ),
-                          )
-                      ),
+                          )),
                     ),
                     Expanded(
                       flex: 2,
@@ -574,7 +728,7 @@ class _DashBoardState extends State<DashBoard>
                                 child: TextField(
                                   decoration: InputDecoration(
                                     border: InputBorder.none,
-                                    hintText: Strings.searchHere,
+                                    hintText: "Search here",
                                   ),
                                   style: Theme
                                       .of(context)
@@ -677,8 +831,7 @@ class _DashBoardState extends State<DashBoard>
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 2.5 * SizeConfig.textMultiplier,
-                                    fontFamily: "Livvic"
-                                ),
+                                    fontFamily: "Livvic"),
                               ),
                             ),
                           ),
@@ -742,11 +895,23 @@ class _DashBoardState extends State<DashBoard>
                                 horizontal: 1 * SizeConfig.heightMultiplier,
                               ),
                               child: TextField(
+                                onChanged: (searchValue) {
+                                  print(searchValue);
+                                },
+                                onTap: () {
+                                  setState(() {
+                                    isSearching = true;
+                                    focusNode.requestFocus();
+                                  });
+                                  print("value of isSearching : " +
+                                      isSearching.toString());
+                                },
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
-                                  hintText: Strings.searchHere,
+                                  hintText: "Search here",
                                 ),
-                                style: TextStyle(color: Colors.grey[500],
+                                style: TextStyle(
+                                    color: Colors.grey[500],
                                     fontSize: 20,
                                     fontFamily: "Livvic"),
                               ),
@@ -786,8 +951,7 @@ class _DashBoardState extends State<DashBoard>
                             color: Colors.white,
                             size: 6 * SizeConfig.imageSizeMultiplier,
                           ),
-                        )
-                    ),
+                        )),
                   ),
                 ],
               ),
@@ -800,8 +964,8 @@ class _DashBoardState extends State<DashBoard>
 
   Widget _loadingDialog() {
     return AlertDialog(
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0)),
+        shape:
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: Colors.white,
         content: Container(
             height: 60,
@@ -814,13 +978,14 @@ class _DashBoardState extends State<DashBoard>
                   SizedBox(
                     width: 20,
                   ),
-                  Text("Loading Data...", style: TextStyle(
-                      fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
+                  Text(
+                    "Loading Data...",
+                    style: TextStyle(
+                        fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),
+                  )
                 ],
               ),
-            )
-        )
-    );
+            )));
   }
 
   Widget _tabs(BuildContext context) {
@@ -843,8 +1008,8 @@ class _DashBoardState extends State<DashBoard>
                       bottom:
                       Radius.circular(4.0 * SizeConfig.heightMultiplier))),
               child: Align(
-                alignment: Alignment(
-                    0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
+                alignment:
+                Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
                 child: Text(
                   "Algorithms",
                   style: TextStyle(
@@ -876,11 +1041,12 @@ class _DashBoardState extends State<DashBoard>
                       bottom:
                       Radius.circular(3.0 * SizeConfig.heightMultiplier))),
               child: Align(
-                alignment: Alignment(
-                    0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
+                alignment:
+                Alignment(0, SizeConfig.isMobilePortrait ? 0.3 : 0.35),
                 child: Text(
                   "My Algortihms",
-                  style: TextStyle(fontSize: isMyAlgorithms ? 25 : 20,
+                  style: TextStyle(
+                      fontSize: isMyAlgorithms ? 25 : 20,
                       fontFamily: "Livvic",
                       color: isMyAlgorithms ? Colors.white : Colors.black),
                 ),
@@ -900,8 +1066,7 @@ class _DashBoardState extends State<DashBoard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-              bottom:
-              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
             ),
           ),
           constraints: BoxConstraints(
@@ -913,8 +1078,7 @@ class _DashBoardState extends State<DashBoard>
             fit: StackFit.expand,
             children: <Widget>[
               FractionallySizedBox(
-                heightFactor:
-                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
                 alignment: Alignment.bottomCenter,
                 child: _tabs(context),
               ),
@@ -926,8 +1090,8 @@ class _DashBoardState extends State<DashBoard>
           ),
         ),
         Container(
-          constraints: BoxConstraints(
-              maxHeight: 100 * SizeConfig.heightMultiplier),
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
           decoration: BoxDecoration(
             color: AppTheme.appBackgroundColor,
           ),
@@ -976,10 +1140,8 @@ class _DashBoardState extends State<DashBoard>
             height: 50.0,
             child: FlatButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) =>
-                        UserProfile()
-                ));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => UserProfile()));
               },
             ),
             decoration: BoxDecoration(
@@ -1003,8 +1165,7 @@ class _DashBoardState extends State<DashBoard>
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(
-              bottom:
-              Radius.circular(3.0 * SizeConfig.heightMultiplier),
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
             ),
           ),
           constraints: BoxConstraints(
@@ -1016,8 +1177,7 @@ class _DashBoardState extends State<DashBoard>
             fit: StackFit.expand,
             children: <Widget>[
               FractionallySizedBox(
-                heightFactor:
-                SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
                 alignment: Alignment.bottomCenter,
                 child: _tabs(context),
               ),
@@ -1029,8 +1189,8 @@ class _DashBoardState extends State<DashBoard>
           ),
         ),
         Container(
-          constraints: BoxConstraints(
-              maxHeight: 100 * SizeConfig.heightMultiplier),
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
           decoration: BoxDecoration(
             color: AppTheme.appBackgroundColor,
           ),
@@ -1145,11 +1305,9 @@ class _DashBoardState extends State<DashBoard>
                         style: TextStyle(
                             fontFamily: "Livvic",
                             fontSize: 30,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
-
                     ),
                     SizedBox(
                       height: 10,
@@ -1161,8 +1319,7 @@ class _DashBoardState extends State<DashBoard>
                         style: TextStyle(
                             fontFamily: "Livvic",
                             fontSize: 20,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -1253,8 +1410,7 @@ class _DashBoardState extends State<DashBoard>
                         style: TextStyle(
                             fontFamily: "Livvic",
                             fontSize: 30,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                         textAlign: TextAlign.center,
                       ),
                     ),

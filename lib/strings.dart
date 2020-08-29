@@ -17,7 +17,7 @@ various algorithms.''';
       " !";
 
 //  static const String whatLearnToday = 'Curious about an algorithm?';
-  static const String searchHere = 'Search here';
+//  static const String searchHere = 'Search here';
 
 //  static const String lessons = 'Algorithms';
 //  static const String myClasses = 'My Algorithms';

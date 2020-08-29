@@ -34,4 +34,5 @@ BuildContext cont;
 List<AlgorithmTypes> algoTypeList = new List<AlgorithmTypes>();
 List<Algorithms> algoList = new List<Algorithms>();
 String selectedAlgoTypeName = "";
+String selectedAlgoName = "";
 List<Algorithms> algoListForDashboard = new List<Algorithms>();
