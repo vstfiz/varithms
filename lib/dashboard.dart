@@ -20,6 +20,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'algorithm.dart';
+import 'content.dart';
 
 bool isMyAlgorithms = false;
 
