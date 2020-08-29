@@ -441,19 +441,29 @@ class _FillDetailsState extends State<FillDetails> {
                               });
                             }
                           } else {
-                            print("b1");
+                            Fluttertoast.showToast(
+                                msg: "No Occupation selected. Please select your Occupation",
+                                toastLength: Toast.LENGTH_LONG);
                           }
                         } else {
-                          print("b2");
+                          Fluttertoast.showToast(
+                              msg: "Invalid Mobile. Please enter valid Mobile Number",
+                              toastLength: Toast.LENGTH_LONG);
                         }
                       } else {
-                        print("b3");
+                        Fluttertoast.showToast(
+                            msg: "No Gender selected. Please select your gender",
+                            toastLength: Toast.LENGTH_LONG);
                       }
                     } else {
-                      print("b4");
+                      Fluttertoast.showToast(
+                          msg: "Invalid E-mail. Please enter valid E-mail",
+                          toastLength: Toast.LENGTH_LONG);
                     }
                   } else {
-                    print("b5");
+                    Fluttertoast.showToast(
+                        msg: "Name can't be empty. Please enter your name",
+                        toastLength: Toast.LENGTH_LONG);
                   }
                 },
                 child: Text("Submit",

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:Varithms/dashboard.dart';
+import 'package:Varithms/fill_details.dart';
 import 'package:Varithms/fire_auth.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
                   }
-                  return DashBoard();
+                  return FillDetails();
                 },
               ),
             );
