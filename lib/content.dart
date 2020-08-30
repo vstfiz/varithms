@@ -421,7 +421,7 @@ class _ContentState extends State<Content> {
             )),
         Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(15)),
+                color: Colors.white, borderRadius: BorderRadius.circular(20)),
             padding: EdgeInsets.only(left: 10, right: 10, top: 10),
             margin: EdgeInsets.only(left: 30, right: 30),
             height: 400,
@@ -463,11 +463,14 @@ class _ContentState extends State<Content> {
             )),
         Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(15)),
+                color: Colors.white, borderRadius: BorderRadius.circular(20)),
             padding: EdgeInsets.only(left: 10, right: 10, top: 10),
             margin: EdgeInsets.only(left: 30, right: 30),
             height: 400,
-            width: MediaQuery.of(context).size.width - 60,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
             child: Scrollbar(
               controller: _scrollControllerVertical,
               isAlwaysShown: true,
