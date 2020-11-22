@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/play_button.dart';
+import 'package:Varithms/question.dart';
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/styling.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,6 +18,8 @@ class Content extends StatefulWidget {
 
 class _ContentState extends State<Content> {
   final ScrollController _scrollControllerVertical = new ScrollController();
+  final ScrollController _scrollControllerHorizontal = new ScrollController();
+  final ScrollController _questionScrollController = new ScrollController();
   bool isExpanded = false;
   double playingValue = 0;
   FlutterTtsImproved tts = new FlutterTtsImproved();
@@ -23,6 +27,15 @@ class _ContentState extends State<Content> {
   double speed = 0.9;
   double pitch = 0.95;
   bool isSettings = false;
+  List<Question> questions = new List<Question>();
+  int currQuestion = 1;
+  Question question;
+  bool isQuestionCompleted = false;
+  String currAnswer;
+  bool ansSelected = false;
+  var answers = [];
+  double progress;
+  TextEditingController _answerController = new TextEditingController();
 
   MaskFilter _blur = MaskFilter.blur(BlurStyle.outer, 10.0);
 
@@ -35,6 +48,49 @@ class _ContentState extends State<Content> {
         _wordToDisplay = word;
       });
     });
+  }
+
+  getQuestions() async {
+    progress = 0.0;
+    questions = await fdb.FirebaseDB.getQuestions(globals.selectedAlgoName);
+    question = questions[0];
+    print(question.answer);
+
+    answers = [
+      question.option1,
+      question.option2,
+      question.option3,
+      question.option4
+    ];
+  }
+
+  getNextQuestion() {
+    print(question.answer + "   jbk");
+    if (_answerController.text == question.answer) {
+      progress += 0.1;
+    }
+    print(progress);
+    currQuestion++;
+    print(currQuestion);
+
+    if (currQuestion < questions.length) {
+      question = questions[currQuestion - 1];
+      answers = [
+        question.option1,
+        question.option2,
+        question.option3,
+        question.option4
+      ];
+    } else {
+      question = questions[currQuestion - 1];
+      answers = [
+        question.option1,
+        question.option2,
+        question.option3,
+        question.option4
+      ];
+      isQuestionCompleted = true;
+    }
   }
 
   Future<void> initCompletionListener() async {
@@ -65,35 +121,144 @@ class _ContentState extends State<Content> {
     });
   }
 
+  _popQuestionDialog() {
+    Navigator.pop(context);
+  }
+
+  Widget _answerTile(String value) {
+    return Stack(
+      children: [
+        Container(
+          child: CircleAvatar(
+            radius: 5,
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.black,
+          ),
+        ),
+        SizedBox(
+          height: 25,
+        ),
+        Container(
+            margin: EdgeInsets.only(left: 15),
+            width: MediaQuery.of(context).size.width - 90,
+            padding: EdgeInsets.only(left: 5, right: 5),
+            child: Text(
+              value,
+              style: TextStyle(fontFamily: 'Livvic'),
+            ))
+      ],
+    );
+  }
+
   Future<void> _questionDialog() {
+    int _groupvalue = -1;
     return showDialog<void>(
-        context: context,
-        builder: (context) => AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0)),
-            title: Text("Question No. 5"),
-            backgroundColor: Colors.white,
-            content: Container(
-                height: 400,
-                child: Center(
-                  child: Row(
-                    children: <Widget>[
-                      CircularProgressIndicator(
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+      context: context,
+      builder: (context) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        title: Text("Question No. ${question.questionNumber}"),
+        backgroundColor: Colors.white,
+        content: Container(
+            height: 350,
+            child: Scrollbar(
+              isAlwaysShown: true,
+              child: SingleChildScrollView(
+                controller: _questionScrollController,
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      width: MediaQuery.of(context).size.width - 80,
+                      margin: EdgeInsets.only(right: 20),
+                      // height: 150,
+                      child: Text(
+                        "${question.questionNumber}. ${question.question}",
+                        style: TextStyle(fontSize: 25),
+                        softWrap: true,
+                        textAlign: TextAlign.start,
                       ),
-                      SizedBox(
-                        width: 20,
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 20),
+                      child: Column(
+                        children: List.generate(answers.length, (index) {
+                          return _answerTile(answers[index]);
+                        }),
                       ),
-                      Text(
-                        "Loading Data...",
-                        style: TextStyle(
-                            fontFamily: "Livvic",
-                            fontSize: 23,
-                            letterSpacing: 1),
-                      )
-                    ],
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width - 90,
+                      height: 40,
+                      margin: EdgeInsets.only(left: 15, top: 150),
+                      child: Card(
+                        elevation: 10,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)),
+                        child: TextField(
+                          style: TextStyle(fontFamily: "Livvic", fontSize: 25),
+                          controller: _answerController,
+                          decoration: InputDecoration(
+                              hintText: "Answer",
+                              contentPadding: EdgeInsets.only(
+                                  left: 8.0, bottom: 8.0, right: 8.0),
+                              border: InputBorder.none),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              controller: _questionScrollController,
+            )),
+        actions: <Widget>[
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              "Cancel",
+              style: TextStyle(
+                  fontSize: 20, fontFamily: "Livvic", color: Colors.grey[800]),
+            ),
+          ),
+          isQuestionCompleted
+              ? FlatButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    if (_answerController.text == question.answer) {
+                      progress += 0.1;
+                    }
+                    _uploadingDialog();
+                    await fdb.FirebaseDB.uploadProgress('Quick Sort', progress);
+                    _popQuestionDialog();
+                  },
+                  child: Text(
+                    "Finish",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Livvic",
+                        color: Colors.grey[800]),
                   ),
-                ))));
+                )
+              : FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _answerController.text = "";
+                    _loadingDialog();
+                    getNextQuestion();
+                    _popDialog();
+                  },
+                  child: Text(
+                    "Submit",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontFamily: "Livvic",
+                        color: Colors.grey[800]),
+                  ),
+                )
+        ],
+      ),
+    );
   }
 
   Future<void> _loadingDialog() {
@@ -124,6 +289,39 @@ class _ContentState extends State<Content> {
                     ],
                   ),
                 ))));
+  }
+
+
+  Future<void> _uploadingDialog() {
+    return showDialog<void>(
+        context: context,
+        builder: (context) =>
+            AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0)),
+                backgroundColor: Colors.white,
+                content: Container(
+                    height: 60,
+                    child: Center(
+                      child: Row(
+                        children: <Widget>[
+                          CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.blue),
+                          ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            "Uploading Data...",
+                            style: TextStyle(
+                                fontFamily: "Livvic",
+                                fontSize: 23,
+                                letterSpacing: 1),
+                          )
+                        ],
+                      ),
+                    ))));
   }
 
   Future<void> setSpeechPitch(double pitch) async {
@@ -421,26 +619,31 @@ class _ContentState extends State<Content> {
             )),
         Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [new BoxShadow(color: Colors.grey, blurRadius: 5)]),
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
             margin: EdgeInsets.only(left: 30, right: 30),
             height: 400,
-            width: MediaQuery.of(context).size.width - 60,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
             child: Scrollbar(
               controller: _scrollControllerVertical,
               isAlwaysShown: true,
               child: SingleChildScrollView(
+                  controller: _scrollControllerVertical,
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    controller: _scrollControllerVertical,
                     child: Text(
                       "ffgyufthdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygv\nbhhu"
-                      "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
-                      "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
-                      "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
-                      "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
-                      "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
+                          "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
+                          "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
+                          "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
+                          "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
+                          "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
                       textAlign: TextAlign.justify,
                     ),
                   )),
@@ -463,8 +666,10 @@ class _ContentState extends State<Content> {
             )),
         Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [new BoxShadow(color: Colors.grey, blurRadius: 5)]),
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
             margin: EdgeInsets.only(left: 30, right: 30),
             height: 400,
             width: MediaQuery
@@ -472,20 +677,20 @@ class _ContentState extends State<Content> {
                 .size
                 .width - 60,
             child: Scrollbar(
-              controller: _scrollControllerVertical,
+              controller: _scrollControllerHorizontal,
               isAlwaysShown: true,
               child: SingleChildScrollView(
+                  controller: _scrollControllerHorizontal,
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    controller: _scrollControllerVertical,
                     child: Text(
                       "ffgyufthdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygv\nbhhu"
-                      "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
-                      "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
-                      "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
-                      "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
-                      "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
+                          "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
+                          "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
+                          "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
+                          "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
+                          "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
                       textAlign: TextAlign.justify,
                     ),
                   )),
@@ -500,8 +705,10 @@ class _ContentState extends State<Content> {
               color: Colors.blue, borderRadius: BorderRadius.circular(15)),
           margin: EdgeInsets.only(left: 240, top: 10),
           child: FlatButton(
-            onPressed: () {
+            onPressed: () async {
               _loadingDialog();
+              await _pause();
+              await getQuestions();
               _popDialog();
             },
             child: Text(

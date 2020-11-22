@@ -1,5 +1,4 @@
 import 'dart:math';
-
 import 'package:Varithms/globals.dart' as globals;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

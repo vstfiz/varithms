@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+    <meta content="A new Flutter project." name="description">
+
+    <!-- iOS meta tags & icons -->
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="varithms" name="apple-mobile-web-app-title">
+    <link href="icons/Icon-192.png" rel="apple-touch-icon">
+
+    <!-- Favicon -->
+    <link href="favicon.png" rel="icon" type="image/png"/>
+
+    <title>varithms</title>
+    <link href="manifest.json" rel="manifest">
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.5.0/firebase-firestore.js"></script>
+
+    <script>
+
+    var firebaseConfig = {
+    apiKey: "AIzaSyBhVmEyT-3GkCKdP_SpK2CLobZH2cykYH0",
+    authDomain: "varithms7354.firebaseapp.com",
+    databaseURL: "https://varithms7354.firebaseio.com",
+    projectId: "varithms7354",
+    storageBucket: "varithms7354.appspot.com",
+    messagingSenderId: "731937585222",
+    appId: "1:731937585222:web:9d06e1b22f82f50cc1f247",
+    measurementId: "G-DWP4RM7D1X"
+  };
+  firebase.initializeApp(firebaseConfig);
+
+    </script>
+
+    <script src="main.dart.js" type="application/javascript"></script>
+</head>
+<body>
+<!-- This script installs service_worker.js to provide PWA functionality to
+     application. For more information, see:
+     https://developers.google.com/web/fundamentals/primers/service-workers -->
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js');
+      });
+    }
+
+</script>
+<script src="main.dart.js" type="application/javascript"></script>
+</body>
+</html>
