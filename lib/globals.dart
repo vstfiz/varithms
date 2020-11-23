@@ -30,6 +30,7 @@ TextEditingController otpController = new TextEditingController();
 BuildContext cont;
 List<AlgorithmTypes> algoTypeList = new List<AlgorithmTypes>();
 List<Algorithms> algoList = new List<Algorithms>();
+List<Algorithms> myAlgoList = new List<Algorithms>();
 String selectedAlgoTypeName = "";
 Algorithms selectedAlgo =
     new Algorithms(0, "content", 'name', 'imageUrl', 'category', 0, "", "");

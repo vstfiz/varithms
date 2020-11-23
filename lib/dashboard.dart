@@ -89,8 +89,8 @@ class _DashBoardState extends State<DashBoard>
   }
 
   myAlgoT() async {
-    fdb.FirebaseDB.getAlgos("Randomized Algorithms").whenComplete(() {
-      print("Length :" + globals.algoList.length.toString());
+    fdb.FirebaseDB.getMyAlgos().whenComplete(() {
+      print("Length :" + globals.myAlgoList.length.toString());
       setState(() {
         isMyAlgorithms = true;
         myAlgoProgress = true;
@@ -450,8 +450,8 @@ class _DashBoardState extends State<DashBoard>
             color: Color(0xFFFFF7BC),
           ),
           child: ListView(
-            children: List.generate(globals.algoList.length, (int index) {
-              Algorithms algorithm = globals.algoList[index];
+            children: List.generate(globals.myAlgoList.length, (int index) {
+              Algorithms algorithm = globals.myAlgoList[index];
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
                 height: 270,

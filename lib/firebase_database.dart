@@ -50,6 +50,30 @@ class FirebaseDB {
     return globals.algoList;
   }
 
+  static Future<List<Algorithms>> getMyAlgos() async {
+    Firestore firestore = Firestore.instance;
+    var ref = firestore.collection('users');
+    QuerySnapshot querySnapshot =
+        await ref.where("uid", isEqualTo: globals.user.uid).getDocuments();
+    String ds = querySnapshot.documents.single.documentID;
+    ref = firestore.collection('users/${ds}/myAlgorithms');
+    querySnapshot = await ref.getDocuments();
+    List<DocumentSnapshot> data = querySnapshot.documents;
+    for (var doc in data) {
+      Algorithms algorithms = new Algorithms(
+          doc['difficulty'],
+          doc['content'],
+          doc['name'],
+          doc['imageUrl'],
+          doc['category_name'],
+          doc['progress'],
+          doc['implInJava'],
+          doc['implInPython']);
+      globals.myAlgoList.add(algorithms);
+    }
+    return globals.myAlgoList;
+  }
+
   static Future<List<Algorithms>> getAlgosForDashboard() async {
     Firestore firestore = Firestore.instance;
     var ref = firestore.collection('algorithms');

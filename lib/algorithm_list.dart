@@ -199,16 +199,15 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                         imageBuilder: (context,
                                             imageProvider) =>
                                             Container(
-                                              width: 90.0,
-                                              height: 90.0,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius
-                                                    .circular(15),
-                                                image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover),
-                                              ),
-                                            ),
+                                      width: 120.0,
+                                      height: 180.0,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        image: DecorationImage(
+                                            image: imageProvider,
+                                            fit: BoxFit.cover),
+                                      ),
+                                    ),
                                         placeholder: (context, url) =>
                                             CircularProgressIndicator(),
                                         errorWidget: (context, url, error) =>
@@ -236,15 +235,6 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                           ),
                                         )),
                                     Positioned(
-                                      left: 20,
-                                      top: 120,
-                                      child: Text("Progress : " +
-                                          algorithm.progress.toString() + "%",
-                                        style: TextStyle(fontFamily: "Livvic",
-                                            color: Colors.black,
-                                            fontSize: 20),),
-                                    ),
-                                    Positioned(
                                       right: 15,
                                       top: 125,
                                       child: RatingBar(
@@ -269,20 +259,6 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                         onRatingUpdate: (rating) {
                                           print(rating);
                                         },
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: 150,
-                                      left: 20,
-                                      child: SizedBox(
-                                        width: 310,
-                                        child: LinearProgressIndicator(
-                                          backgroundColor: Colors.grey,
-                                          valueColor: AlwaysStoppedAnimation<
-                                              Color>(Colors.blue),
-                                          value: algorithm.progress.toDouble() /
-                                              100.0,
-                                        ),
                                       ),
                                     ),
                                     Positioned(
