@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
+import 'content.dart';
+
 class AlgorithmsList extends StatefulWidget {
   @override
   _AlgorithmsListState createState() => _AlgorithmsListState();
@@ -122,9 +124,10 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
         :
     WillPopScope(
       onWillPop: () {
-        Navigator.pop(context);
-        return Future<bool>.value(false);
-      },
+        globals.algoList.removeRange(0, globals.algoList.length - 1);
+              Navigator.pop(context);
+              return Future<bool>.value(false);
+            },
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Color(0xFF2D3E50),
@@ -305,6 +308,18 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                         ),
                                         child: Center(
                                           child: IconButton(
+                                            onPressed: () async {
+                                              globals.selectedAlgo = algorithm;
+                                              _loadingDialog();
+                                              await fdb.FirebaseDB.addInMine();
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                              Navigator.push(context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) {
+                                                        return Content();
+                                                      }));
+                                            },
                                             icon: Icon(Icons.chevron_right,
                                               color: Colors.black,),
                                           ),

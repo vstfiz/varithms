@@ -109,6 +109,10 @@ class _DashBoardState extends State<DashBoard>
         progressIndicator = false;
       });
     });
+    print("vdsfdbdfb");
+    for (var i in globals.algoList) {
+      print(i.category);
+    }
   }
 
   algoT() async {
@@ -378,10 +382,9 @@ class _DashBoardState extends State<DashBoard>
                   ),
                   child: FlatButton(
                     onPressed: () {
-                      globals.selectedAlgoName = value['name'];
-                      Navigator.push(context, MaterialPageRoute(
-                          builder: (context) => Content()
-                      ));
+                      globals.selectedAlgo = value;
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Content()));
                     },
                     child: Row(
                       children: <Widget>[

@@ -31,5 +31,6 @@ BuildContext cont;
 List<AlgorithmTypes> algoTypeList = new List<AlgorithmTypes>();
 List<Algorithms> algoList = new List<Algorithms>();
 String selectedAlgoTypeName = "";
-String selectedAlgoName = "Quick Sort";
+Algorithms selectedAlgo =
+    new Algorithms(0, "content", 'name', 'imageUrl', 'category', 0, "", "");
 List<Algorithms> algoListForDashboard = new List<Algorithms>();

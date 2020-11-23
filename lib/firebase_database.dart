@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'dashboard.dart';
 
 class FirebaseDB {
+  static bool _check = false;
+
   static Future<void> getAlgotype() async {
     Firestore firestore = Firestore.instance;
     var ref = firestore.collection('algorithmTypes');
@@ -38,10 +40,11 @@ class FirebaseDB {
           doc['difficulty'],
           doc['content'],
           doc['name'],
-          doc['noOfLearners'],
           doc['imageUrl'],
-          doc['category'],
-          doc['progress']);
+          doc['category_name'],
+          doc['progress'],
+          doc['implInJava'],
+          doc['implInPython']);
       globals.algoList.add(algorithms);
     }
     return globals.algoList;
@@ -53,14 +56,16 @@ class FirebaseDB {
     QuerySnapshot querySnapshot = await ref.limit(15).getDocuments();
     List<DocumentSnapshot> ds = querySnapshot.documents;
     for (var doc in ds) {
+      // print(doc['category_name']);
       Algorithms algorithms = new Algorithms(
           doc['difficulty'],
           doc['content'],
           doc['name'],
-          doc['noOfLearners'],
           doc['imageUrl'],
-          doc['category'],
-          doc['progress']);
+          doc['category_name'],
+          doc['progress'],
+          doc['implInJava'],
+          doc['implInPython']);
       globals.algoListForDashboard.add(algorithms);
     }
     return globals.algoListForDashboard;
@@ -71,7 +76,7 @@ class FirebaseDB {
     var ref = firestore.collection('users');
     print(uid);
     QuerySnapshot querySnapshot =
-        await ref.where('uid', isEqualTo: uid).getDocuments();
+    await ref.where('uid', isEqualTo: uid).getDocuments();
     List<DocumentSnapshot> ds = querySnapshot.documents;
     if (ds.isEmpty) {
       Navigator.push(
@@ -148,25 +153,64 @@ class FirebaseDB {
   static void uploadProgress(String algoName, double progress) async {
     Firestore firestore = Firestore.instance;
     print("user id is : " + globals.user.uid);
-    var ref = firestore.collection('users').where(
-        'uid', isEqualTo: globals.user.uid);
+    var ref =
+    firestore.collection('users').where('uid', isEqualTo: globals.user.uid);
     QuerySnapshot querySnapshot = await ref.getDocuments();
     List<DocumentSnapshot> documentSnapshot = querySnapshot.documents;
     String ds = documentSnapshot.single.documentID;
     print("user document is:" + ds);
-    ref = firestore.collection('users/${ds}/myAlgorithms').where(
-        'name', isEqualTo: algoName);
+    ref = firestore
+        .collection('users/${ds}/myAlgorithms')
+        .where('name', isEqualTo: algoName);
     querySnapshot = await ref.getDocuments();
     documentSnapshot = querySnapshot.documents;
     String algoDs = documentSnapshot.single.documentID;
     print("algo id is:" + ds);
     if (documentSnapshot.single['progress'] < progress) {
-      firestore.collection('users/${ds}/myAlgorithms')
+      firestore
+          .collection('users/${ds}/myAlgorithms')
           .document(algoDs)
           .updateData({
         'progress': progress,
       });
     }
     print("data updated successfully");
+  }
+
+  static void addInMine() async {
+    Firestore firestore = Firestore.instance;
+    print("user id is : " + globals.user.uid);
+    var ref =
+    firestore.collection('users').where('uid', isEqualTo: globals.user.uid);
+    QuerySnapshot querySnapshot = await ref.getDocuments();
+    List<DocumentSnapshot> documentSnapshot = querySnapshot.documents;
+    String ds = documentSnapshot.single.documentID;
+    print("user document is:" + ds);
+    print(globals.selectedAlgo.category);
+    Map<String, dynamic> algo = new Map<String, dynamic>();
+    algo.putIfAbsent('name', () => globals.selectedAlgo.name);
+    algo.putIfAbsent('category', () => globals.selectedAlgo.category);
+    algo.putIfAbsent('content', () => globals.selectedAlgo.content);
+    algo.putIfAbsent('implInJava', () => globals.selectedAlgo.implInJava);
+    algo.putIfAbsent('implInPython', () => globals.selectedAlgo.implInPython);
+    algo.putIfAbsent('difficulty', () => globals.selectedAlgo.difficulty);
+    algo.putIfAbsent('imageUrl', () => globals.selectedAlgo.imageUrl);
+    algo.putIfAbsent('progress', () => globals.selectedAlgo.progress);
+    await _checkAlgoInMine(globals.selectedAlgo.name, ds);
+    if (_check) {
+      firestore.collection('users/${ds}/myAlgorithms').add(algo);
+    }
+  }
+
+  static Future<bool> _checkAlgoInMine(name, userId) async {
+    Firestore firestore = Firestore.instance;
+    print("user id is : " + globals.user.uid);
+    var ref =
+    firestore.collection('users/${userId}/myAlgorithms').where(
+        'name', isEqualTo: name);
+    QuerySnapshot querySnapshot = await ref.getDocuments();
+    List<DocumentSnapshot> documentSnapshot = querySnapshot.documents;
+    _check = (documentSnapshot.length == 0);
+    return false;
   }
 }

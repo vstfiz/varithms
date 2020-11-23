@@ -5,7 +5,9 @@ import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/play_button.dart';
 import 'package:Varithms/question.dart';
 import 'package:Varithms/responsiveui.dart';
+import 'package:Varithms/size_config.dart';
 import 'package:Varithms/styling.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tts_improved/flutter_tts_improved.dart';
@@ -52,7 +54,7 @@ class _ContentState extends State<Content> {
 
   getQuestions() async {
     progress = 0.0;
-    questions = await fdb.FirebaseDB.getQuestions(globals.selectedAlgoName);
+    questions = await fdb.FirebaseDB.getQuestions(globals.selectedAlgo.name);
     question = questions[0];
     print(question.answer);
 
@@ -107,11 +109,18 @@ class _ContentState extends State<Content> {
   @override
   void initState() {
     super.initState();
+    // _loadingDialog();
+    // _addInMyAlgo();
     addListeners();
     initPlatformState();
     initCompletionListener();
     setSpeechPitch(pitch);
     setSpeechSpeed(speed);
+  }
+
+  _addInMyAlgo() async {
+    await fdb.FirebaseDB.addInMine();
+    Navigator.pop(context);
   }
 
   _popDialog() {
@@ -333,8 +342,7 @@ class _ContentState extends State<Content> {
   }
 
   Future _speak() async {
-    var result = await tts.speak(
-        "Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.");
+    var result = await tts.speak(globals.selectedAlgo.content);
     if (result == 1) setState(() => globals.isPlaying = true);
   }
 
@@ -373,7 +381,7 @@ class _ContentState extends State<Content> {
           width: MediaQuery.of(context).size.width - 60,
           child: FittedBox(
             child: Text(
-              "Quick Sort",
+              globals.selectedAlgo.name,
               style: TextStyle(
                   fontFamily: "Livvic", fontSize: 70, color: Colors.black),
               textAlign: TextAlign.center,
@@ -381,17 +389,45 @@ class _ContentState extends State<Content> {
             fit: BoxFit.scaleDown,
           ),
         ),
+
         Container(
           margin: EdgeInsets.only(left: 30, right: 30, top: 20),
           height: 200,
-          width: MediaQuery.of(context).size.width - 60,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: CachedNetworkImage(
+            imageBuilder: (context,
+                imageProvider) =>
+                Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width - 60.0,
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius
+                        .circular(15),
+                    image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover),
+                  ),
+                ),
+            placeholder: (context, url) =>
+                CircularProgressIndicator(),
+            errorWidget: (context, url, error) =>
+                Icon(Icons.error),
+            imageUrl: globals.selectedAlgo.imageUrl,
+            width: 10 *
+                SizeConfig.imageSizeMultiplier,
+            height: 10 *
+                SizeConfig.imageSizeMultiplier,
+          ),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(width: 1, color: Colors.grey),
-              image: DecorationImage(
-                  image: Image.asset('assets/images/randomizedAlgorithm.png')
-                      .image,
-                  fit: BoxFit.cover)),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(width: 1, color: Colors.grey),
+          ),
         ),
         Container(
           height: 100,
@@ -586,8 +622,7 @@ class _ContentState extends State<Content> {
         Container(
           margin: EdgeInsets.only(left: 30, right: 30, top: 10),
           width: MediaQuery.of(context).size.width - 60,
-          child: Text(
-            "Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.Hello World My goal with this plugin is to allow everyone in flutter to track where the speech is currently at. This can be used to print words on the screen as they are spoken, highlight words of a paragraph as they are uttered, for timing how long each word takes to say at a given speed, or really any other weird reason you may need it. This API is powerful, and I know people are asking for it, and there is simply not a plugin yet that covers it. Surprise! Now there is. You are welcome.",
+          child: Text(globals.selectedAlgo.content,
             style: TextStyle(fontFamily: "Livvic", fontSize: 24),
             textAlign: TextAlign.justify,
           ),
@@ -638,12 +673,7 @@ class _ContentState extends State<Content> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text(
-                      "ffgyufthdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygv\nbhhu"
-                          "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
-                          "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
-                          "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
-                          "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
-                          "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
+                      globals.selectedAlgo.implInJava,
                       textAlign: TextAlign.justify,
                     ),
                   )),
@@ -685,12 +715,7 @@ class _ContentState extends State<Content> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text(
-                      "ffgyufthdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygv\nbhhu"
-                          "guvbhkhgvhbjhgvbhkdfgyuhgyfghgfhfdxcvu\nyukgfbhhu"
-                          "gyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgy\nuhgyfghgf"
-                          "hfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhg\nvbhkgv"
-                          "hbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhh\nuguvbh"
-                          "khgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\ngyuhgyfghgfhfdxcvuyukgfbh\nhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkdfgyuhgyfghgfhfdxcvuyukgfbhhugyvhbygvbhhuguvbhkhgvhbjhgvbhkgvhbhkgvhbhkgv bmkhgvbknhgv bkhgvh bmnjuhib",
+                      globals.selectedAlgo.implInPython,
                       textAlign: TextAlign.justify,
                     ),
                   )),
