@@ -86,9 +86,9 @@ class _SearchingState extends State<Searching> {
                 child: Stack(
                   children: <Widget>[
                     Container(
-                        height: 50,
-                        width: MediaQuery.of(context).size.width - 20,
-                        margin: EdgeInsets.only(left: 10, right: 10, top: 10),
+                        height: SizeConfig.height(50),
+                        width: MediaQuery.of(context).size.width - SizeConfig.width(20),
+                        margin: EdgeInsets.only(left: SizeConfig.width(10), right: SizeConfig.width(10), top: SizeConfig.height(10)),
                         decoration: BoxDecoration(
                           color: globals.darkModeOn
                               ? Colors.grey[800]
@@ -131,14 +131,14 @@ class _SearchingState extends State<Searching> {
                           ),
                         )),
                     Container(
-                      margin: EdgeInsets.only(top: 100),
-                      height: 750,
+                      margin: EdgeInsets.only(top: SizeConfig.height(100)),
+                      height: SizeConfig.height(750),
                       width: MediaQuery.of(context).size.width,
                       child: ListView(
                         children: tempStorage.map((value) {
                           return Container(
-                              height: 60,
-                              padding: EdgeInsets.only(left: 20, top: 20),
+                              height: SizeConfig.height(60),
+                              padding: EdgeInsets.only(left: SizeConfig.width(20), top: SizeConfig.height(20)),
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
                                 color: globals.darkModeOn
@@ -180,7 +180,7 @@ class _SearchingState extends State<Searching> {
                                       size: 24,
                                     ),
                                     SizedBox(
-                                      width: 15,
+                                      width: SizeConfig.width(15),
                                     ),
                                     Text(
                                       value['name'],
@@ -201,10 +201,10 @@ class _SearchingState extends State<Searching> {
                     ),
                     Container(
                       margin: EdgeInsets.only(
-                          left: MediaQuery.of(context).size.width - 120,
-                          top: MediaQuery.of(context).size.height - 150),
-                      height: 100,
-                      width: 100,
+                          left: MediaQuery.of(context).size.width - SizeConfig.width(120),
+                          top: MediaQuery.of(context).size.height - SizeConfig.height(150)),
+                      height: SizeConfig.height(100),
+                      width: SizeConfig.width(100),
                       decoration: BoxDecoration(
                           color: Colors.blueAccent, shape: BoxShape.circle),
                       child: FlatButton(

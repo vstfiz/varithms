@@ -312,8 +312,8 @@ class _DashBoardState extends State<DashBoard>
               Algorithms algorithm = globals.myAlgoList[index];
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                height: 270,
-                width: 320,
+                height: SizeConfig.height(270),
+                width: SizeConfig.width(320),
                 child: Card(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25)),
@@ -321,13 +321,13 @@ class _DashBoardState extends State<DashBoard>
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        top: 20,
-                        left: 15,
+                        top:SizeConfig.height(20) ,
+                        left: SizeConfig.width(15),
                         child: CachedNetworkImage(
                           imageBuilder: (context, imageProvider) =>
                               Container(
-                                width: 90.0,
-                                height: 90.0,
+                                width: SizeConfig.width(90.0),
+                                height: SizeConfig.height(90),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
@@ -344,11 +344,11 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                          top: 20,
-                          left: 120,
+                          top: SizeConfig.height(20),
+                          left: SizeConfig.width(120),
                           child: Container(
-                            width: 185,
-                            height: 100,
+                            width: SizeConfig.width(185),
+                            height: SizeConfig.height(100),
                             child: Text(
                               algorithm.name,
                               style: TextStyle(
@@ -359,8 +359,8 @@ class _DashBoardState extends State<DashBoard>
                             ),
                           )),
                       Positioned(
-                        left: 20,
-                        top: 120,
+                        left: SizeConfig.width(20),
+                        top: SizeConfig.height(120),
                         child: Text(
                           "Progress : " + algorithm.progress.toString() + "%",
                           style: TextStyle(
@@ -370,8 +370,8 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        right: 15,
-                        top: 125,
+                        right: SizeConfig.width(15),
+                        top: SizeConfig.height(125),
                         child: RatingBar(
                           itemSize: 20,
                           unratedColor: Colors.grey,
@@ -393,10 +393,10 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        top: 150,
-                        left: 20,
+                        top: SizeConfig.height(150),
+                        left: SizeConfig.width(20),
                         child: SizedBox(
-                          width: 310,
+                          width: SizeConfig.width(310),
                           child: LinearProgressIndicator(
                             backgroundColor: Colors.grey,
                             valueColor:
@@ -406,10 +406,10 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        left: 20,
-                        top: 170,
+                        left: SizeConfig.width(20),
+                        top: SizeConfig.height(170),
                         child: SizedBox(
-                          width: 310,
+                          width: SizeConfig.width(310),
                           child: Divider(
                             color: Colors.grey[650],
                             thickness: 2.0,
@@ -417,11 +417,11 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        top: 190,
-                        right: 40,
+                        top: SizeConfig.height(190),
+                        right: SizeConfig.width(40),
                         child: Container(
-                          width: 55,
-                          height: 55,
+                          width: SizeConfig.width(55),
+                          height: SizeConfig.height(55),
                           decoration: BoxDecoration(
                             color: Colors.lightBlueAccent,
                             shape: BoxShape.circle,
@@ -489,8 +489,8 @@ class _DashBoardState extends State<DashBoard>
               Algorithms algorithm = globals.myAlgoList[index];
               return Container(
                 margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                height: 270,
-                width: 320,
+                height: SizeConfig.height(270),
+                width: SizeConfig.width(320),
                 child: Card(
                   color: globals.darkModeOn ? Colors.grey : Colors.white,
                   shape: RoundedRectangleBorder(
@@ -499,13 +499,13 @@ class _DashBoardState extends State<DashBoard>
                   child: Stack(
                     children: <Widget>[
                       Positioned(
-                        top: 20,
-                        left: 15,
+                        top: SizeConfig.height(20),
+                        left: SizeConfig.width(15),
                         child: CachedNetworkImage(
                           imageBuilder: (context, imageProvider) =>
                               Container(
-                                width: 90.0,
-                                height: 90.0,
+                                width: SizeConfig.width(90.0),
+                                height: SizeConfig.height(90.0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
@@ -517,16 +517,16 @@ class _DashBoardState extends State<DashBoard>
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error),
                           imageUrl: algorithm.imageUrl,
-                          width: 10 * SizeConfig.imageSizeMultiplier,
-                          height: 10 * SizeConfig.imageSizeMultiplier,
+                          width: SizeConfig.width(10) * SizeConfig.imageSizeMultiplier,
+                          height: SizeConfig.height(10) * SizeConfig.imageSizeMultiplier,
                         ),
                       ),
                       Positioned(
-                          top: 20,
-                          left: 120,
+                          top: SizeConfig.height(20),
+                          left: SizeConfig.width(120),
                           child: Container(
-                            width: 185,
-                            height: 100,
+                            width: SizeConfig.width(185),
+                            height: SizeConfig.height(100),
                             child: Text(
                               algorithm.name,
                               style: TextStyle(
@@ -539,8 +539,8 @@ class _DashBoardState extends State<DashBoard>
                             ),
                           )),
                       Positioned(
-                        left: 20,
-                        top: 120,
+                        left: SizeConfig.width(20),
+                        top: SizeConfig.height(120),
                         child: Text(
                           "Progress : " + algorithm.progress.toString() + "%",
                           style: TextStyle(
@@ -551,8 +551,8 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        right: 15,
-                        top: 125,
+                        right: SizeConfig.width(15),
+                        top: SizeConfig.height(125),
                         child: RatingBar(
                           itemSize: 20,
                           unratedColor: Colors.white12,
@@ -574,10 +574,10 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        top: 150,
-                        left: 20,
+                        top: SizeConfig.height(150),
+                        left:SizeConfig.width(20),
                         child: SizedBox(
-                          width: 310,
+                          width: SizeConfig.width(310),
                           child: LinearProgressIndicator(
                             backgroundColor: Colors.white,
                             valueColor:
@@ -589,10 +589,10 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        left: 20,
-                        top: 170,
+                        left: SizeConfig.width(20),
+                        top: SizeConfig.height(170),
                         child: SizedBox(
-                          width: 310,
+                          width: SizeConfig.width(310),
                           child: Divider(
                             color: Colors.black,
                             thickness: 2.0,
@@ -600,11 +600,11 @@ class _DashBoardState extends State<DashBoard>
                         ),
                       ),
                       Positioned(
-                        top: 190,
-                        right: 40,
+                        top: SizeConfig.height(190),
+                        right: SizeConfig.width(40),
                         child: Container(
-                          width: 55,
-                          height: 55,
+                          width: SizeConfig.width(55),
+                          height: SizeConfig.height(55),
                           decoration: BoxDecoration(
                             color: Colors.pink,
                             shape: BoxShape.circle,
@@ -1018,7 +1018,7 @@ class _DashBoardState extends State<DashBoard>
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         content: Container(
-            height: 60,
+            height: SizeConfig.height(60),
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -1027,7 +1027,7 @@ class _DashBoardState extends State<DashBoard>
                         globals.darkModeOn ? Colors.orange : Colors.blue),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: SizeConfig.width(20),
                   ),
                   Text(
                     "Loading Data...",
@@ -1371,7 +1371,7 @@ class _DashBoardState extends State<DashBoard>
   Widget _algorithmTypeCards(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-          height: 295.0,
+          height: SizeConfig.height(295),
           viewportFraction: 0.95,
           enableInfiniteScroll: true,
           enlargeCenterPage: true,
@@ -1392,7 +1392,7 @@ class _DashBoardState extends State<DashBoard>
                 );
               },
               child: Container(
-                width: 360,
+                width: SizeConfig.width(360),
                 margin: EdgeInsets.symmetric(
                     horizontal: 1 * SizeConfig.widthMultiplier),
                 decoration: BoxDecoration(
@@ -1417,8 +1417,8 @@ class _DashBoardState extends State<DashBoard>
                               placeholder: (context, url) =>
                                   Center(
                                     child: SizedBox(
-                                      height: 30,
-                                      width: 30,
+                                      height: SizeConfig.height(30),
+                                      width: SizeConfig.width(30),
                                       child: Card(
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -1433,10 +1433,10 @@ class _DashBoardState extends State<DashBoard>
                       ),
                     ),
                     SizedBox(
-                      height: 30,
+                      height: SizeConfig.height(30),
                     ),
                     Container(
-                      width: 360,
+                      width: SizeConfig.width(360),
                       child: Text(
                         i.name,
                         style: TextStyle(
@@ -1447,10 +1447,10 @@ class _DashBoardState extends State<DashBoard>
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: SizeConfig.height(10),
                     ),
                     Container(
-                      width: 360,
+                      width: SizeConfig.width(360),
                       child: Text(
                         i.noOfAlgorithms + " Courses",
                         style: TextStyle(
@@ -1461,7 +1461,7 @@ class _DashBoardState extends State<DashBoard>
                       ),
                     ),
                     SizedBox(
-                      height: 5,
+                      height: SizeConfig.height(5),
                     )
                   ],
                 ),
@@ -1476,7 +1476,7 @@ class _DashBoardState extends State<DashBoard>
   Widget _algorithmCards(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-          height: 295.0,
+          height: SizeConfig.height(295),
           viewportFraction: 0.95,
           enableInfiniteScroll: true,
           enlargeCenterPage: true,
@@ -1522,8 +1522,8 @@ class _DashBoardState extends State<DashBoard>
                               placeholder: (context, url) =>
                                   Center(
                                     child: SizedBox(
-                                      height: 30,
-                                      width: 30,
+                                      height: SizeConfig.height(30),
+                                      width: SizeConfig.width(30),
                                       child: Card(
                                         shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
@@ -1538,10 +1538,10 @@ class _DashBoardState extends State<DashBoard>
                       ),
                     ),
                     SizedBox(
-                      height: 30,
+                      height: SizeConfig.height(30),
                     ),
                     Container(
-                      width: 360,
+                      width: SizeConfig.width(360),
                       child: Text(
                         i.name,
                         style: TextStyle(
@@ -1552,7 +1552,7 @@ class _DashBoardState extends State<DashBoard>
                       ),
                     ),
                     SizedBox(
-                      height: 10,
+                      height: SizeConfig.height(10),
                     ),
                   ],
                 ),

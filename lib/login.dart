@@ -13,6 +13,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'fire_auth.dart';
+import 'size_config.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -116,12 +117,12 @@ class _LoginState extends State<Login> {
             ),
           ),
           Positioned(
-            top: 150,
-            left: 30,
-            right: 30,
+            top: SizeConfig.height(150),
+            left: SizeConfig.width(30),
+            right: SizeConfig.width(30),
             child: Container(
-              height: 300,
-              width: 300,
+              height: SizeConfig.height(300),
+              width: SizeConfig.width(300),
               child: Card(
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25)),
@@ -139,23 +140,23 @@ class _LoginState extends State<Login> {
           Row(
             children: <Widget>[
               Container(
-                width: 150,
-                margin: EdgeInsets.only(left: 30, top: 500),
+                width: SizeConfig.width(150),
+                margin: EdgeInsets.only(left: SizeConfig.width(30), top: SizeConfig.height(500)),
                 child: Divider(
                   thickness: 2,
                   color: Colors.black,
                 ),
               ),
               Container(
-                margin: EdgeInsets.only(left: 15, top: 500),
+                margin: EdgeInsets.only(left: SizeConfig.width(15), top: SizeConfig.height(500)),
                 child: Text(
                   "OR",
                   style: TextStyle(fontSize: 25),
                 ),
               ),
               Container(
-                width: 150,
-                margin: EdgeInsets.only(left: 15, top: 500),
+                width: SizeConfig.width(150),
+                margin: EdgeInsets.only(left: SizeConfig.width(15), top: SizeConfig.height(500)),
                 child: Divider(
                   thickness: 2,
                   color: Colors.black,
@@ -164,12 +165,12 @@ class _LoginState extends State<Login> {
             ],
           ),
           Positioned(
-            top: 580,
-            left: 50,
-            right: 50,
+            top: SizeConfig.height(580),
+            left: SizeConfig.width(50),
+            right: SizeConfig.width(50),
             child: Container(
 //            color: Colors.white,
-              width: 260,
+              width: SizeConfig.width(260),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -186,14 +187,14 @@ class _LoginState extends State<Login> {
                       child: Row(
                         children: <Widget>[
                           Container(
-                            width: 30,
-                            height: 30,
+                            width: SizeConfig.width(30),
+                            height: SizeConfig.height(30),
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: AssetImage('assets/google.png'))),
                           ),
                           SizedBox(
-                            width: 30,
+                            width: SizeConfig.width(30),
                           ),
                           Text(
                             "Sign  In  With  Google",
@@ -207,7 +208,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: SizeConfig.height(20),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -223,14 +224,14 @@ class _LoginState extends State<Login> {
                       child: Row(
                         children: <Widget>[
                           Container(
-                            width: 30,
-                            height: 30,
+                            width: SizeConfig.width(30),
+                            height: SizeConfig.height(30),
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: AssetImage('assets/facebook.png'))),
                           ),
                           SizedBox(
-                            width: 30,
+                            width: SizeConfig.width(30),
                           ),
                           Text(
                             "Sign  In  With  Facebook",
@@ -244,7 +245,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   SizedBox(
-                    height: 20,
+                    height: SizeConfig.height(20),
                   ),
                   Container(
                     decoration: BoxDecoration(
@@ -264,14 +265,14 @@ class _LoginState extends State<Login> {
                       child: Row(
                         children: <Widget>[
                           Container(
-                            width: 30,
-                            height: 30,
+                            width: SizeConfig.width(30),
+                            height: SizeConfig.height(30),
                             decoration: BoxDecoration(
                                 image: DecorationImage(
                                     image: AssetImage('assets/phone.png'))),
                           ),
                           SizedBox(
-                            width: 30,
+                            width: SizeConfig.width(30),
                           ),
                           Text(
                             "Sign  In  With  Phone",
@@ -289,17 +290,17 @@ class _LoginState extends State<Login> {
             ),
           ),
           Positioned(
-              bottom: 30,
-              left: 10,
-              right: 10,
+              bottom: SizeConfig.height(30),
+              left: SizeConfig.width(10),
+              right: SizeConfig.width(10),
               child: SizedBox(
-                height: 80,
-                width: 340,
+                height: SizeConfig.height(80),
+                width: SizeConfig.width(340),
                 child: Column(
                   children: <Widget>[
                     isSignUp || forgotPassword
                         ? SizedBox(
-                      height: 30,
+                      height: SizeConfig.height(30),
                     )
                         : Text(
                       "Don't have an account?",
@@ -310,8 +311,8 @@ class _LoginState extends State<Login> {
                     ),
                     isSignUp || forgotPassword
                         ? Container(
-                      width: 250,
-                      height: 50,
+                      width: SizeConfig.width(250),
+                      height: SizeConfig.height(50),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: Color(0xFF2D3E50),
@@ -379,12 +380,12 @@ class _LoginState extends State<Login> {
                 ),
               ),
               SizedBox(
-                width: 10,
+                width: SizeConfig.width(10),
               ),
               Stack(
                 children: <Widget>[
                   Container(
-                    width: 210,
+                    width: SizeConfig.width(210),
                     child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
@@ -397,7 +398,7 @@ class _LoginState extends State<Login> {
                         decoration: InputDecoration(
                           hintText: "Phone",
                           prefixIcon: Icon(Icons.phone),
-                          contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                          contentPadding: EdgeInsets.only(right: SizeConfig.width(5.0), top: SizeConfig.height(8)),
                           border: InputBorder.none,
                         ),
                       ),
@@ -405,7 +406,7 @@ class _LoginState extends State<Login> {
                   ),
                   otpSent
                       ? Positioned(
-                    right: 0,
+                    right: SizeConfig.width(0),
                     child: IconButton(
                       icon: Icon(Icons.edit),
                       onPressed: () {
@@ -421,11 +422,11 @@ class _LoginState extends State<Login> {
             ],
           ),
           SizedBox(
-            height: 20,
+            height: SizeConfig.height(20),
           ),
           otpSent
               ? Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -438,7 +439,7 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(
                     hintText: "4-Digit OTP",
                     prefixIcon: Icon(Icons.vpn_key),
-                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    contentPadding: EdgeInsets.only(right: SizeConfig.width(5.0), top: SizeConfig.height(8)),
                     border: InputBorder.none),
               ),
             ),
@@ -446,7 +447,7 @@ class _LoginState extends State<Login> {
               : SizedBox(),
           otpSent
               ? Container(
-            margin: EdgeInsets.only(left: 150),
+            margin: EdgeInsets.only(left: SizeConfig.width(150)),
             child: FlatButton(
               child: Text(
                 "Resend OTP",
@@ -459,10 +460,10 @@ class _LoginState extends State<Login> {
           )
               : SizedBox(),
           SizedBox(
-            height: 10,
+            height: SizeConfig.height(10),
           ),
           Container(
-            width: 150,
+            width: SizeConfig.width(150),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15), color: Colors.blue),
             child: FlatButton(
@@ -507,7 +508,7 @@ class _LoginState extends State<Login> {
       child: Column(
         children: <Widget>[
           Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -524,10 +525,10 @@ class _LoginState extends State<Login> {
             ),
           ),
           SizedBox(
-            height: 10,
+            height: SizeConfig.height(10),
           ),
           Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -539,16 +540,16 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(
                     hintText: "Password",
                     prefixIcon: Icon(Icons.lock),
-                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    contentPadding: EdgeInsets.only(right: SizeConfig.width(5), top: SizeConfig.height(8)),
                     border: InputBorder.none),
               ),
             ),
           ),
           SizedBox(
-            height: 10,
+            height: SizeConfig.height(10),
           ),
           Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -560,16 +561,16 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(
                     hintText: "Confirm Password",
                     prefixIcon: Icon(Icons.lock),
-                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    contentPadding: EdgeInsets.only(right: SizeConfig.width(5), top: SizeConfig.height(8)),
                     border: InputBorder.none),
               ),
             ),
           ),
           SizedBox(
-            height: 15,
+            height: SizeConfig.height(15),
           ),
           loginProgress ? _inProgress() : Container(
-            width: 100,
+            width: SizeConfig.width(100),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
@@ -605,7 +606,7 @@ class _LoginState extends State<Login> {
       child: Column(
         children: <Widget>[
           Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -616,19 +617,19 @@ class _LoginState extends State<Login> {
                 decoration: InputDecoration(
                     hintText: "E-mail",
                     prefixIcon: Icon(Icons.people),
-                    contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                    contentPadding: EdgeInsets.only(right: SizeConfig.width(5.0), top: SizeConfig.height(8)),
                     border: InputBorder.none),
               ),
             ),
           ),
           SizedBox(
-            height: 20,
+            height: SizeConfig.height(20),
           ),
           SizedBox(
-            height: 20,
+            height: SizeConfig.height(20),
           ),
           Container(
-            width: 200,
+            width: SizeConfig.width(200),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25), color: Colors.blue),
             child: FlatButton(
@@ -655,7 +656,7 @@ class _LoginState extends State<Login> {
       child: Column(
         children: <Widget>[
           Container(
-            width: 290,
+            width: SizeConfig.width(290),
             child: Card(
               elevation: 10,
               shape: RoundedRectangleBorder(
@@ -664,7 +665,7 @@ class _LoginState extends State<Login> {
                 style: TextStyle(fontFamily: "Livvic", fontSize: 25),
                 controller: globals.usernameController,
                 decoration: InputDecoration(
-                  contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                  contentPadding: EdgeInsets.only(right: SizeConfig.width(5.0), top: SizeConfig.height(8)),
                   border: InputBorder.none,
                   hintText: "E-mail",
                   prefixIcon: Icon(Icons.people),
@@ -674,10 +675,10 @@ class _LoginState extends State<Login> {
             ),
           ),
           SizedBox(
-            height: 20,
+            height: SizeConfig.height(20),
           ),
           Container(
-              width: 290,
+              width: SizeConfig.width(290),
               child: Card(
                 elevation: 10,
                 shape: RoundedRectangleBorder(
@@ -693,7 +694,7 @@ class _LoginState extends State<Login> {
                 ),
               )),
           Container(
-            margin: EdgeInsets.only(left: 150),
+            margin: EdgeInsets.only(left: SizeConfig.width(150)),
             child: FlatButton(
               onPressed: () {
                 setState(() {
@@ -713,7 +714,7 @@ class _LoginState extends State<Login> {
             ),
           ),
           SizedBox(
-            height: 15,
+            height: SizeConfig.height(15),
           ),
           loginProgress ? _inProgress() : Container(
             width: 100,
@@ -745,8 +746,8 @@ class _LoginState extends State<Login> {
   Widget _inProgress() {
     return Center(
       child: Container(
-        width: 50,
-        height: 50,
+        width: SizeConfig.width(50),
+        height: SizeConfig.height(50),
         child: CircularProgressIndicator(
           backgroundColor: Colors.grey,
           valueColor: new AlwaysStoppedAnimation<Color>(Colors.blueAccent),
@@ -769,12 +770,12 @@ class _LoginState extends State<Login> {
             child: Text("SCreen Start"),
           ),
           Positioned(
-              bottom: 20,
-              left: 10,
-              right: 10,
+              bottom: SizeConfig.height(20),
+              left: SizeConfig.width(10),
+              right: SizeConfig.width(10),
               child: SizedBox(
-                height: 60,
-                width: 340,
+                height: SizeConfig.height(60),
+                width: SizeConfig.width(340),
                 child: FlatButton(
                   textColor: Colors.white,
                   child: Center(

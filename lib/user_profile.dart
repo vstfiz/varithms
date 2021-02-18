@@ -12,6 +12,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import 'size_config.dart';
+
 class UserProfile extends StatefulWidget {
   _UserProfileState createState() => _UserProfileState();
 }
@@ -91,7 +93,7 @@ class _UserProfileState extends State<UserProfile> {
         ClipPath(
           clipper: OvalBottomBorderClipper(),
           child: Container(
-            height: 360,
+            height: SizeConfig.height(360),
             width: MediaQuery
                 .of(context)
                 .size
@@ -104,7 +106,7 @@ class _UserProfileState extends State<UserProfile> {
         ClipPath(
           clipper: OvalBottomBorderClipper(),
           child: Container(
-            height: 350,
+            height: SizeConfig.height(350),
             width: MediaQuery
                 .of(context)
                 .size
@@ -115,35 +117,35 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         Positioned(
-          top: 25,
+          top: SizeConfig.height(25),
           left: (MediaQuery
               .of(context)
               .size
-              .width / 2) - 70,
+              .width / 2) - SizeConfig.width(70),
           right: (MediaQuery
               .of(context)
               .size
-              .width / 2) - 70,
+              .width / 2) - SizeConfig.width(70),
           child: CircleAvatar(
             radius: 70,
             backgroundColor: globals.darkModeOn ? Colors.white : Colors.grey,
           ),
         ),
         Positioned(
-          top: 30,
+          top: SizeConfig.height(30),
           left: (MediaQuery
               .of(context)
               .size
-              .width / 2) - 65,
+              .width / 2) - SizeConfig.width(65),
           right: (MediaQuery
               .of(context)
               .size
-              .width / 2) - 65,
+              .width / 2) - SizeConfig.width(65),
           child: CachedNetworkImage(
             imageBuilder: (context, imageProvider) =>
                 Container(
-                  height: 130,
-                  width: 130,
+                  height: SizeConfig.height(130),
+                  width: SizeConfig.width(130),
                   decoration: BoxDecoration(
                       image:
                       DecorationImage(image: imageProvider, fit: BoxFit.cover),
@@ -152,8 +154,8 @@ class _UserProfileState extends State<UserProfile> {
             placeholder: (context, url) =>
                 Center(
                   child: Container(
-                    height: 25,
-                    width: 25,
+                    height: SizeConfig.height(25),
+                    width: SizeConfig.width(25),
                     child: CircularProgressIndicator(),
                   ),
                 ),
@@ -165,15 +167,15 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         Positioned(
-          top: 130,
+          top: SizeConfig.height(130),
           left: (MediaQuery
               .of(context)
               .size
-              .width / 2) + 30,
+              .width / 2) + SizeConfig.width(30),
 //          right: (MediaQuery.of(context).size.width / 2 ) -70,
           child: Container(
-              height: 30,
-              width: 30,
+              height: SizeConfig.height(30),
+              width: SizeConfig.width(30),
               decoration:
               BoxDecoration(color: Colors.grey, shape: BoxShape.circle),
               child: IconButton(
@@ -185,14 +187,14 @@ class _UserProfileState extends State<UserProfile> {
               )),
         ),
         Positioned(
-          top: 200,
+          top: SizeConfig.height(200),
 //          right: 20,
-          left: 20,
+          left: SizeConfig.width(20),
           child: Container(
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 40,
+                .width - SizeConfig.width(40),
             child: Text(
               globals.mainUser.name,
               style: TextStyle(
@@ -203,14 +205,14 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         Positioned(
-          top: 240,
+          top: SizeConfig.height(240),
 //          right: 20,
-          left: 20,
+          left: SizeConfig.width(20),
           child: Container(
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 40,
+                .width - SizeConfig.width(40),
             child: Text(
               globals.mainUser.email,
               style: TextStyle(
@@ -221,14 +223,14 @@ class _UserProfileState extends State<UserProfile> {
           ),
         ),
         Positioned(
-          top: 280,
+          top: SizeConfig.height(280),
 //          right: 20,
-          left: 20,
+          left: SizeConfig.width(20),
           child: Container(
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 40,
+                .width - SizeConfig.width(40),
             child: Text(
               "${globals.myAlgoList.length} Algorithms",
               style: TextStyle(
@@ -242,11 +244,11 @@ class _UserProfileState extends State<UserProfile> {
                 .of(context)
                 .size
                 .width,
-            margin: EdgeInsets.only(top: 425),
+            margin: EdgeInsets.only(top: SizeConfig.height(425)),
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 15),
+                  margin: EdgeInsets.only(left: SizeConfig.width(15)),
                   child: Text("Name",
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 25,
@@ -257,24 +259,24 @@ class _UserProfileState extends State<UserProfile> {
                       overflow: TextOverflow.ellipsis),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: SizeConfig.height(20)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
                   ),
                 ),
                 Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 20),
-                  margin: EdgeInsets.only(top: 10),
+                  height: SizeConfig.height(60),
+                  padding: EdgeInsets.only(top: SizeConfig.height(20)),
+                  margin: EdgeInsets.only(top: SizeConfig.height(10)),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(left: 15),
+                        padding: EdgeInsets.only(left: SizeConfig.width(15)),
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 80,
+                            .width - SizeConfig.width(80),
                         child: TextField(
                           controller: _nameController,
                           enabled: field1,
@@ -290,7 +292,7 @@ class _UserProfileState extends State<UserProfile> {
                         ),
                       ),
                       SizedBox(
-                        width: 30,
+                        width: SizeConfig.width(30),
                       ),
                       IconButton(
                         icon: Icon(Icons.edit),
@@ -305,7 +307,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: SizeConfig.height(60)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
@@ -318,11 +320,11 @@ class _UserProfileState extends State<UserProfile> {
                 .of(context)
                 .size
                 .width,
-            margin: EdgeInsets.only(top: 500),
+            margin: EdgeInsets.only(top: SizeConfig.height(5000)),
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 15),
+                  margin: EdgeInsets.only(left: SizeConfig.height(15)),
                   child: Text("E-mail",
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 25,
@@ -333,24 +335,24 @@ class _UserProfileState extends State<UserProfile> {
                       overflow: TextOverflow.ellipsis),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: SizeConfig.height(20)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
                   ),
                 ),
                 Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 20),
-                  margin: EdgeInsets.only(top: 10),
+                  height: SizeConfig.height(60),
+                  padding: EdgeInsets.only(top: SizeConfig.height(20)),
+                  margin: EdgeInsets.only(top: SizeConfig.height(10)),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(left: 15),
+                        padding: EdgeInsets.only(left: SizeConfig.width(15)),
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 80,
+                            .width - SizeConfig.width(80),
                         child: TextField(
                           enabled: field2,
                           style: TextStyle(fontFamily: "Livvic",
@@ -360,12 +362,12 @@ class _UserProfileState extends State<UserProfile> {
                           decoration: InputDecoration(
                               hintText: globals.mainUser.email,
                               contentPadding: EdgeInsets.only(
-                                  right: 5.0, bottom: 8),
+                                  right: SizeConfig.width(5), bottom: SizeConfig.height(8)),
                               border: InputBorder.none),
                         ),
                       ),
                       SizedBox(
-                        width: 30,
+                        width: SizeConfig.width(30),
                       ),
                       IconButton(
                         icon: Icon(Icons.edit),
@@ -379,7 +381,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: SizeConfig.height(60)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
@@ -392,11 +394,11 @@ class _UserProfileState extends State<UserProfile> {
                 .of(context)
                 .size
                 .width,
-            margin: EdgeInsets.only(top: 575),
+            margin: EdgeInsets.only(top: SizeConfig.height(575)),
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 15),
+                  margin: EdgeInsets.only(left: SizeConfig.height(15)),
                   child: Text("Phone",
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 25,
@@ -407,24 +409,24 @@ class _UserProfileState extends State<UserProfile> {
                       overflow: TextOverflow.ellipsis),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: SizeConfig.height(20)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
                   ),
                 ),
                 Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 20),
-                  margin: EdgeInsets.only(top: 10),
+                  height: SizeConfig.height(60),
+                  padding: EdgeInsets.only(top: SizeConfig.height(20)),
+                  margin: EdgeInsets.only(top: SizeConfig.height(10)),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(left: 15),
+                        padding: EdgeInsets.only(left: SizeConfig.height(15)),
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 80,
+                            .width - SizeConfig.width(80),
                         child: TextField(
                           enabled: field3,
                           style: TextStyle(fontFamily: "Livvic",
@@ -434,12 +436,12 @@ class _UserProfileState extends State<UserProfile> {
                           decoration: InputDecoration(
                               hintText: globals.mainUser.mobile,
                               contentPadding: EdgeInsets.only(
-                                  right: 5.0, bottom: 8),
+                                  right: SizeConfig.width(5), bottom: SizeConfig.height(8)),
                               border: InputBorder.none),
                         ),
                       ),
                       SizedBox(
-                        width: 30,
+                        width: SizeConfig.width(30),
                       ),
                       IconButton(
                         icon: Icon(Icons.edit),
@@ -453,7 +455,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: SizeConfig.height(60)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
@@ -466,11 +468,11 @@ class _UserProfileState extends State<UserProfile> {
                 .of(context)
                 .size
                 .width,
-            margin: EdgeInsets.only(top: 650),
+            margin: EdgeInsets.only(top: SizeConfig.height(650)),
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 15),
+                  margin: EdgeInsets.only(left: SizeConfig.width(15)),
                   child: Text("Gender",
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 25,
@@ -481,24 +483,24 @@ class _UserProfileState extends State<UserProfile> {
                       overflow: TextOverflow.ellipsis),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: SizeConfig.height(20)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
                   ),
                 ),
                 Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 20),
-                  margin: EdgeInsets.only(top: 10),
+                  height: SizeConfig.height(60),
+                  padding: EdgeInsets.only(top: SizeConfig.height(20)),
+                  margin: EdgeInsets.only(top: SizeConfig.height(10)),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(left: 15),
+                        padding: EdgeInsets.only(left: SizeConfig.height(15)),
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 80,
+                            .width - SizeConfig.width(80),
                         child: TextField(
                           enabled: field4,
                           style: TextStyle(fontFamily: "Livvic",
@@ -508,12 +510,12 @@ class _UserProfileState extends State<UserProfile> {
                           decoration: InputDecoration(
                               hintText: globals.mainUser.gender,
                               contentPadding: EdgeInsets.only(
-                                  right: 5.0, bottom: 8),
+                                  right: SizeConfig.width(5), bottom: SizeConfig.height(8)),
                               border: InputBorder.none),
                         ),
                       ),
                       SizedBox(
-                        width: 30,
+                        width: SizeConfig.width(30),
                       ),
                       IconButton(
                         icon: Icon(Icons.edit),
@@ -527,7 +529,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: SizeConfig.height(60)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
@@ -540,11 +542,11 @@ class _UserProfileState extends State<UserProfile> {
                 .of(context)
                 .size
                 .width,
-            margin: EdgeInsets.only(top: 725),
+            margin: EdgeInsets.only(top: SizeConfig.height(725)),
             child: Stack(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.only(left: 15),
+                  margin: EdgeInsets.only(left: SizeConfig.height(15)),
                   child: Text("Occupation",
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 25,
@@ -555,24 +557,24 @@ class _UserProfileState extends State<UserProfile> {
                       overflow: TextOverflow.ellipsis),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 20),
+                  margin: EdgeInsets.only(top: SizeConfig.height(20)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
                   ),
                 ),
                 Container(
-                  height: 60,
-                  padding: EdgeInsets.only(top: 20),
-                  margin: EdgeInsets.only(top: 10),
+                  height: SizeConfig.height(60),
+                  padding: EdgeInsets.only(top: SizeConfig.height(20)),
+                  margin: EdgeInsets.only(top: SizeConfig.height(10)),
                   child: Row(
                     children: <Widget>[
                       Container(
-                        padding: EdgeInsets.only(left: 15),
+                        padding: EdgeInsets.only(left: SizeConfig.width(15)),
                         width: MediaQuery
                             .of(context)
                             .size
-                            .width - 80,
+                            .width - SizeConfig.width(80),
                         child: TextField(
                           enabled: field5,
                           style: TextStyle(fontFamily: "Livvic",
@@ -582,12 +584,12 @@ class _UserProfileState extends State<UserProfile> {
                           decoration: InputDecoration(
                               hintText: globals.mainUser.occupation,
                               contentPadding: EdgeInsets.only(
-                                  right: 5.0, bottom: 8),
+                                  right: SizeConfig.width(5), bottom: SizeConfig.height(8)),
                               border: InputBorder.none),
                         ),
                       ),
                       SizedBox(
-                        width: 30,
+                        width: SizeConfig.width(30),
                       ),
                       IconButton(
                         icon: Icon(Icons.edit),
@@ -601,7 +603,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.only(top: 60),
+                  margin: EdgeInsets.only(top: SizeConfig.height(60)),
                   child: Divider(
                       thickness: 1,
                       color: globals.darkModeOn ? Colors.white : Colors.black
@@ -613,8 +615,8 @@ class _UserProfileState extends State<UserProfile> {
           width: MediaQuery
               .of(context)
               .size
-              .width - 40,
-          margin: EdgeInsets.only(left: 20, right: 20, top: 820),
+              .width - SizeConfig.width(40),
+          margin: EdgeInsets.only(left: SizeConfig.width(20), right: SizeConfig.width(20), top: SizeConfig.height(820)),
           decoration: BoxDecoration(
               color: globals.darkModeOn ? Colors.pink : Colors.blue,
               borderRadius: BorderRadius.circular(15)),
@@ -689,7 +691,7 @@ class _UserProfileState extends State<UserProfile> {
             borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: Colors.white,
         content: Container(
-            height: 60,
+            height: SizeConfig.height(60),
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -697,7 +699,7 @@ class _UserProfileState extends State<UserProfile> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: SizeConfig.width(20),
                   ),
                   Text("Uploading Data...", style: TextStyle(
                       fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
@@ -718,7 +720,7 @@ class _UserProfileState extends State<UserProfile> {
         child: Stack(
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(left: 15),
+              margin: EdgeInsets.only(left: SizeConfig.width(15)),
               child: Text(title,
                   textAlign: TextAlign.left,
                   style: TextStyle(fontSize: 25, fontFamily: "Livvic"),
@@ -726,23 +728,23 @@ class _UserProfileState extends State<UserProfile> {
                   overflow: TextOverflow.ellipsis),
             ),
             Container(
-              margin: EdgeInsets.only(top: 20),
+              margin: EdgeInsets.only(top: SizeConfig.height(20)),
               child: Divider(
                 thickness: 1,
               ),
             ),
             Container(
               height: 60,
-              padding: EdgeInsets.only(top: 20),
-              margin: EdgeInsets.only(top: 10),
+              padding: EdgeInsets.only(top: SizeConfig.height(20)),
+              margin: EdgeInsets.only(top: SizeConfig.height(10)),
               child: Row(
                 children: <Widget>[
                   Container(
-                    padding: EdgeInsets.only(left: 15),
+                    padding: EdgeInsets.only(left: SizeConfig.width(15)),
                     width: MediaQuery
                         .of(context)
                         .size
-                        .width - 80,
+                        .width - SizeConfig.width(80),
                     child: TextField(
                       enabled: true,
                       style: TextStyle(fontFamily: "Livvic",
@@ -751,12 +753,12 @@ class _UserProfileState extends State<UserProfile> {
 
                       decoration: InputDecoration(
                           hintText: value,
-                          contentPadding: EdgeInsets.only(right: 5.0, top: 8),
+                          contentPadding: EdgeInsets.only(right: SizeConfig.width(5), top: SizeConfig.height(8)),
                           border: InputBorder.none),
                     ),
                   ),
                   SizedBox(
-                    width: 30,
+                    width: SizeConfig.width(30),
                   ),
                   IconButton(
                     icon: Icon(Icons.edit),
@@ -770,7 +772,7 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 60),
+              margin: EdgeInsets.only(top: SizeConfig.height(60)),
               child: Divider(
                 thickness: 1,
               ),
@@ -785,7 +787,7 @@ class _UserProfileState extends State<UserProfile> {
         ClipPath(
           clipper: OvalBottomBorderClipper(),
           child: Container(
-            height: 360,
+            height: SizeConfig.height(360),
             width: MediaQuery
                 .of(context)
                 .size
@@ -798,7 +800,7 @@ class _UserProfileState extends State<UserProfile> {
         ClipPath(
           clipper: OvalBottomBorderClipper(),
           child: Container(
-            height: 350,
+            height: SizeConfig.height(350),
             width: MediaQuery
                 .of(context)
                 .size
@@ -818,7 +820,7 @@ class _UserProfileState extends State<UserProfile> {
                   borderRadius: BorderRadius.circular(10.0)),
               backgroundColor: Colors.white,
               content: Container(
-                  height: 60,
+                  height: SizeConfig.height(60),
                   child: Center(
                     child: Row(
                       children: <Widget>[
@@ -827,7 +829,7 @@ class _UserProfileState extends State<UserProfile> {
                           AlwaysStoppedAnimation<Color>(Colors.blue),
                         ),
                         SizedBox(
-                          width: 20,
+                          width: SizeConfig.width(20),
                         ),
                         Text(
                           "Loading Data...",

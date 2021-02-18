@@ -123,14 +123,14 @@ class WelcomeContentWidget extends StatelessWidget {
                 ),
               )),
           SizedBox(
-            height: 50,
+            height: SizeConfig.height(50),
           ),
           Container(
-            height: 400,
+            height: SizeConfig.height(400),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 150,
+                .width - SizeConfig.width(150),
             margin: EdgeInsets.symmetric(
                   vertical: 1 * SizeConfig.heightMultiplier),
             child: Image.asset(
@@ -139,7 +139,7 @@ class WelcomeContentWidget extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 50,
+            height: SizeConfig.height(50),
           ),
           Expanded(
             flex: 1,

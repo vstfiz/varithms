@@ -4,6 +4,8 @@ import 'package:Varithms/size_config.dart';
 import 'package:Varithms/styling.dart' as style;
 import 'package:flutter/material.dart';
 
+import 'size_config.dart';
+
 class AppTheme {
   AppTheme._();
 
@@ -41,7 +43,7 @@ class AppTheme {
   static final TextStyle _subTitleLight = TextStyle(
     color: subTitleTextColor,
     fontSize: 2 * SizeConfig.textMultiplier,
-    height: 1.5,
+    height: SizeConfig.height(1.5),
   );
 
   static final TextStyle _subTitleDark =

@@ -15,6 +15,13 @@ import 'package:flutter_tts_improved/flutter_tts_improved.dart';
 import 'package:wave/config.dart';
 import 'package:wave/wave.dart';
 
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+
 class Content extends StatefulWidget {
   _ContentState createState() => _ContentState();
 }
@@ -149,12 +156,12 @@ class _ContentState extends State<Content> {
           ),
         ),
         SizedBox(
-          height: 25,
+          height: SizeConfig.height(25),
         ),
         Container(
-            margin: EdgeInsets.only(left: 15),
-            width: MediaQuery.of(context).size.width - 90,
-            padding: EdgeInsets.only(left: 5, right: 5),
+            margin: EdgeInsets.only(left: SizeConfig.width(15)),
+            width: MediaQuery.of(context).size.width - SizeConfig.width(90),
+            padding: EdgeInsets.only(left: SizeConfig.width(5), right: SizeConfig.width(5)),
             child: Text(
               value,
               style: TextStyle(
@@ -176,7 +183,7 @@ class _ContentState extends State<Content> {
             color: globals.darkModeOn ? Colors.white : Colors.black),),
         backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         content: Container(
-            height: 350,
+            height: SizeConfig.height(350),
             child: Scrollbar(
               isAlwaysShown: true,
               child: SingleChildScrollView(
@@ -187,8 +194,8 @@ class _ContentState extends State<Content> {
                       width: MediaQuery
                           .of(context)
                           .size
-                          .width - 80,
-                      margin: EdgeInsets.only(right: 20),
+                          .width - SizeConfig.width(80),
+                      margin: EdgeInsets.only(right: SizeConfig.width(20)),
                       // height: 150,
                       child: Text(
                         "${question.questionNumber}. ${question.question}",
@@ -200,7 +207,7 @@ class _ContentState extends State<Content> {
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(top: 20),
+                      margin: EdgeInsets.only(top: SizeConfig.height(20)),
                       child: Column(
                         children: List.generate(answers.length, (index) {
                           return _answerTile(answers[index]);
@@ -208,9 +215,9 @@ class _ContentState extends State<Content> {
                       ),
                     ),
                     Container(
-                      width: MediaQuery.of(context).size.width - 90,
-                      height: 40,
-                      margin: EdgeInsets.only(left: 15, top: 150),
+                      width: MediaQuery.of(context).size.width - SizeConfig.width(90),
+                      height: SizeConfig.height(40),
+                      margin: EdgeInsets.only(left: SizeConfig.width(15), top: SizeConfig.height(150)),
                       child: Card(
                         elevation: 10,
                         shape: RoundedRectangleBorder(
@@ -221,7 +228,7 @@ class _ContentState extends State<Content> {
                           decoration: InputDecoration(
                               hintText: "Answer",
                               contentPadding: EdgeInsets.only(
-                                  left: 8.0, bottom: 8.0, right: 8.0),
+                                  left: SizeConfig.width(8.0), bottom: SizeConfig.height(8.0), right: SizeConfig.width(8.0)),
                               border: InputBorder.none),
                         ),
                       ),
@@ -294,7 +301,7 @@ class _ContentState extends State<Content> {
                 borderRadius: BorderRadius.circular(10.0)),
             backgroundColor: Colors.white,
             content: Container(
-                height: 60,
+                height: SizeConfig.height(60),
                 child: Center(
                   child: Row(
                     children: <Widget>[
@@ -302,7 +309,7 @@ class _ContentState extends State<Content> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                       ),
                       SizedBox(
-                        width: 20,
+                        width: SizeConfig.width(20),
                       ),
                       Text(
                         "Loading Data...",
@@ -325,7 +332,7 @@ class _ContentState extends State<Content> {
                     borderRadius: BorderRadius.circular(10.0)),
                 backgroundColor: Colors.white,
                 content: Container(
-                    height: 60,
+                    height: SizeConfig.height(60),
                     child: Center(
                       child: Row(
                         children: <Widget>[
@@ -334,7 +341,7 @@ class _ContentState extends State<Content> {
                                 Colors.blue),
                           ),
                           SizedBox(
-                            width: 20,
+                            width: SizeConfig.width(20),
                           ),
                           Text(
                             "Uploading Data...",
@@ -398,12 +405,12 @@ class _ContentState extends State<Content> {
     return Column(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 40, left: 30, right: 30),
-          height: 80,
+          margin: EdgeInsets.only(top: SizeConfig.height(40), left: SizeConfig.width(30), right: SizeConfig.width(30)),
+          height: SizeConfig.height(80),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: FittedBox(
             child: Text(
               globals.selectedAlgo.name,
@@ -415,20 +422,20 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(left: 30, right: 30, top: 20),
-          height: 200,
+          margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30), top: SizeConfig.height(20)),
+          height: SizeConfig.width(200),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: CachedNetworkImage(
             imageBuilder: (context, imageProvider) =>
                 Container(
                   width: MediaQuery
                       .of(context)
                       .size
-                      .width - 60.0,
-                  height: 200.0,
+                      .width - SizeConfig.width(60.0),
+                  height: SizeConfig.width(200.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
@@ -447,14 +454,14 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          height: 100,
+          height: SizeConfig.height(100),
           width: MediaQuery.of(context).size.width - 60,
-          margin: EdgeInsets.only(top: 20, left: 30, right: 30),
+          margin: EdgeInsets.only(top: SizeConfig.height(20), left: SizeConfig.width(30), right: SizeConfig.width(30)),
           child: Row(
             children: [
               Container(
-                height: 80,
-                width: 80,
+                height: SizeConfig.height(80),
+                width: SizeConfig.width(80),
                 margin: EdgeInsets.only(left: 15),
                 child: PlayButton(
                   initialIsPlaying: globals.isPlaying,
@@ -471,15 +478,15 @@ class _ContentState extends State<Content> {
                 ),
               ),
               SizedBox(
-                width: 20,
+                width: SizeConfig.width(20),
               ),
               Container(
-                  padding: EdgeInsets.only(top: 50, bottom: 50),
+                  padding: EdgeInsets.only(top: SizeConfig.height(50), bottom: SizeConfig.height(50)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: AppTheme.appBackgroundColor),
-                  width: MediaQuery.of(context).size.width - 180,
-                  height: 100,
+                  width: MediaQuery.of(context).size.width - SizeConfig.width(180),
+                  height: SizeConfig.height(100),
                   child: Stack(
                     children: [
                       globals.isPlaying
@@ -511,9 +518,9 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(left: 300),
-          height: 65,
-          width: 65,
+          margin: EdgeInsets.only(left: SizeConfig.width(300)),
+          height: SizeConfig.height(65),
+          width: SizeConfig.width(65),
           child: IconButton(
             icon: Icon(Icons.settings),
             onPressed: () {
@@ -531,18 +538,18 @@ class _ContentState extends State<Content> {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(color: Colors.grey)),
-                margin: EdgeInsets.only(top: 10),
-                height: 200,
-                width: MediaQuery.of(context).size.width - 60,
+                margin: EdgeInsets.only(top: SizeConfig.height(10)),
+                height: SizeConfig.height(200),
+                width: MediaQuery.of(context).size.width - SizeConfig.width(60),
                 child: Column(
                   children: [
                     Container(
-                      padding: EdgeInsets.only(left: 20, top: 20),
-                      height: 100,
+                      padding: EdgeInsets.only(left: SizeConfig.width(20), top: SizeConfig.height(20)),
+                      height: SizeConfig.height(100),
                       decoration: BoxDecoration(
                           border: Border(
                               bottom:
-                                  BorderSide(width: 1, color: Colors.grey))),
+                                  BorderSide(width: SizeConfig.width(1), color: Colors.grey))),
                       child: Row(
                         children: [
                           Text(
@@ -553,10 +560,10 @@ class _ContentState extends State<Content> {
                             ),
                           ),
                           SizedBox(
-                            width: 10,
+                            width: SizeConfig.width(10),
                           ),
                           SizedBox(
-                            width: 230,
+                            width: SizeConfig.width(230),
                             child: Slider(
                               value: speed,
                               onChanged: (value) {
@@ -581,8 +588,8 @@ class _ContentState extends State<Content> {
                       ),
                     ),
                     Container(
-                      height: 90,
-                      padding: EdgeInsets.only(left: 20, top: 20),
+                      height: SizeConfig.height(90),
+                      padding: EdgeInsets.only(left:SizeConfig.width(20) , top: SizeConfig.height(20)),
                       child: Row(
                         children: [
                           Text(
@@ -593,10 +600,10 @@ class _ContentState extends State<Content> {
                             ),
                           ),
                           SizedBox(
-                            width: 10,
+                            width: SizeConfig.width(10),
                           ),
                           SizedBox(
-                            width: 230,
+                            width:SizeConfig.width(230),
                             child: Slider(
                               value: pitch,
                               onChanged: (value) {
@@ -625,9 +632,9 @@ class _ContentState extends State<Content> {
               )
             : SizedBox(),
         Container(
-            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
-            width: MediaQuery.of(context).size.width - 60,
-            height: 100,
+            margin: EdgeInsets.only(top: SizeConfig.height(0), left: SizeConfig.width(30), right: SizeConfig.width(30)),
+            width: MediaQuery.of(context).size.width - SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 _wordToDisplay,
@@ -637,11 +644,11 @@ class _ContentState extends State<Content> {
               fit: BoxFit.scaleDown,
             )),
         Container(
-          margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+          margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30), top: SizeConfig.height(10)),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width -SizeConfig.width(60) ,
           child: Text(
             globals.selectedAlgo.content,
             style: TextStyle(fontFamily: "Livvic", fontSize: 24),
@@ -649,9 +656,9 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
-            width: MediaQuery.of(context).size.width - 60,
-            height: 100,
+            margin: EdgeInsets.only(top: SizeConfig.height(0), left: SizeConfig.width(30), right: SizeConfig.width(30)),
+            width: MediaQuery.of(context).size.width - SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 "Implementation",
@@ -661,9 +668,9 @@ class _ContentState extends State<Content> {
               fit: BoxFit.scaleDown,
             )),
         Container(
-            margin: EdgeInsets.only(right: 250),
-            width: MediaQuery.of(context).size.width - 60,
-            height: 100,
+            margin: EdgeInsets.only(right: SizeConfig.width(250)),
+            width: MediaQuery.of(context).size.width - SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 "** In Java",
@@ -678,13 +685,13 @@ class _ContentState extends State<Content> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [new BoxShadow(color: Colors.grey, blurRadius: 5)]),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-            margin: EdgeInsets.only(left: 30, right: 30),
-            height: 400,
+            padding: EdgeInsets.only(left: SizeConfig.width(10), right: SizeConfig.width(10), top: SizeConfig.height(10), bottom: SizeConfig.height(10)),
+            margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30)),
+            height: SizeConfig.height(400),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
+                .width - SizeConfig.width(60),
             child: Scrollbar(
               controller: _scrollControllerVertical,
               isAlwaysShown: true,
@@ -702,12 +709,12 @@ class _ContentState extends State<Content> {
                   )),
             )),
         SizedBox(
-          height: 20,
+          height: SizeConfig.height(20),
         ),
         Container(
-            margin: EdgeInsets.only(right: 250),
-            width: MediaQuery.of(context).size.width - 60,
-            height: 100,
+            margin: EdgeInsets.only(right: SizeConfig.width(250)),
+            width: MediaQuery.of(context).size.width - SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 "** In Python",
@@ -722,13 +729,13 @@ class _ContentState extends State<Content> {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [new BoxShadow(color: Colors.grey, blurRadius: 5)]),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-            margin: EdgeInsets.only(left: 30, right: 30),
-            height: 400,
+            padding: EdgeInsets.only(left: SizeConfig.width(10), right: SizeConfig.width(10), top: SizeConfig.height(10), bottom: SizeConfig.height(10)),
+            margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30)),
+            height: SizeConfig.height(400),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
+                .width - SizeConfig.width(60),
             child: Scrollbar(
               controller: _scrollControllerHorizontal,
               isAlwaysShown: true,
@@ -746,14 +753,14 @@ class _ContentState extends State<Content> {
                   )),
             )),
         SizedBox(
-          height: 20,
+          height: SizeConfig.height(20),
         ),
         Container(
-          height: 50,
-          width: 110,
+          height: SizeConfig.height(50),
+          width: SizeConfig.width(100),
           decoration: BoxDecoration(
               color: Colors.blue, borderRadius: BorderRadius.circular(15)),
-          margin: EdgeInsets.only(left: 240, top: 10),
+          margin: EdgeInsets.only(left: SizeConfig.width(240), top:SizeConfig.height(10) ),
           child: FlatButton(
             onPressed: () async {
               _loadingDialog();
@@ -769,7 +776,7 @@ class _ContentState extends State<Content> {
           ),
         ),
         SizedBox(
-          height: 20,
+          height: SizeConfig.height(20),
         )
       ],
     );
@@ -779,12 +786,12 @@ class _ContentState extends State<Content> {
     return Column(
       children: <Widget>[
         Container(
-          margin: EdgeInsets.only(top: 40, left: 30, right: 30),
-          height: 80,
+          margin: EdgeInsets.only(top: SizeConfig.height(40), left: SizeConfig.width(30), right: SizeConfig.width(30)),
+          height: SizeConfig.height(80),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: FittedBox(
             child: Text(
               globals.selectedAlgo.name,
@@ -796,20 +803,20 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(left: 30, right: 30, top: 20),
-          height: 200,
+          margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30), top: SizeConfig.height(20)),
+          height: SizeConfig.height(200),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: CachedNetworkImage(
             imageBuilder: (context, imageProvider) =>
                 Container(
                   width: MediaQuery
                       .of(context)
                       .size
-                      .width - 60.0,
-                  height: 200.0,
+                      .width - SizeConfig.width(60),
+                  height: SizeConfig.height(200),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
@@ -819,8 +826,8 @@ class _ContentState extends State<Content> {
             placeholder: (context, url) => CircularProgressIndicator(),
             errorWidget: (context, url, error) => Icon(Icons.error),
             imageUrl: globals.selectedAlgo.imageUrl,
-            width: 10 * SizeConfig.imageSizeMultiplier,
-            height: 10 * SizeConfig.imageSizeMultiplier,
+            width: SizeConfig.width(10) * SizeConfig.imageSizeMultiplier,
+            height: SizeConfig.height(10) * SizeConfig.imageSizeMultiplier,
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -828,18 +835,18 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          height: 100,
+          height: SizeConfig.height(100),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
-          margin: EdgeInsets.only(top: 20, left: 30, right: 30),
+              .width - SizeConfig.width(60),
+          margin: EdgeInsets.only(top: SizeConfig.height(20), left: SizeConfig.width(30), right: SizeConfig.width(30)),
           child: Row(
             children: [
               Container(
-                height: 80,
-                width: 80,
-                margin: EdgeInsets.only(left: 15),
+                height:SizeConfig.height(80) ,
+                width: SizeConfig.width(80),
+                margin: EdgeInsets.only(left: SizeConfig.width(15)),
                 child: PlayButton(
                   initialIsPlaying: globals.isPlaying,
                   onPressed: () {
@@ -855,10 +862,10 @@ class _ContentState extends State<Content> {
                 ),
               ),
               SizedBox(
-                width: 20,
+                width: SizeConfig.width(20),
               ),
               Container(
-                  padding: EdgeInsets.only(top: 50, bottom: 50),
+                  padding: EdgeInsets.only(top: SizeConfig.height(50), bottom: SizeConfig.height(50)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: globals.darkModeOn ? Colors.grey[800] : AppTheme
@@ -866,8 +873,8 @@ class _ContentState extends State<Content> {
                   width: MediaQuery
                       .of(context)
                       .size
-                      .width - 180,
-                  height: 100,
+                      .width - SizeConfig.width(180),
+                  height: SizeConfig.height(100),
                   child: Stack(
                     children: [
                       globals.isPlaying
@@ -900,9 +907,9 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-          margin: EdgeInsets.only(left: 300),
-          height: 65,
-          width: 65,
+          margin: EdgeInsets.only(left: SizeConfig.width(300)),
+          height: SizeConfig.height(65),
+          width: SizeConfig.width(65),
           child: IconButton(
             icon: Icon(Icons.settings,
                 color: globals.darkModeOn ? Colors.white : Colors.black),
@@ -922,17 +929,17 @@ class _ContentState extends State<Content> {
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
                   color: globals.darkModeOn ? Colors.black : Colors.grey)),
-          margin: EdgeInsets.only(top: 10),
-          height: 200,
+          margin: EdgeInsets.only(top: SizeConfig.height(10)),
+          height: SizeConfig.height(200),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.only(left: 20, top: 20),
-                height: 100,
+                padding: EdgeInsets.only(left: SizeConfig.width(20), top: SizeConfig.height(20)),
+                height: SizeConfig.height(100),
                 decoration: BoxDecoration(
                     border: Border(
                         bottom:
@@ -947,10 +954,10 @@ class _ContentState extends State<Content> {
                       ),
                     ),
                     SizedBox(
-                      width: 10,
+                      width: SizeConfig.width(10),
                     ),
                     SizedBox(
-                      width: 230,
+                      width: SizeConfig.width(230),
                       child: Slider(
                         value: speed,
                         onChanged: (value) {
@@ -975,8 +982,8 @@ class _ContentState extends State<Content> {
                 ),
               ),
               Container(
-                height: 90,
-                padding: EdgeInsets.only(left: 20, top: 20),
+                height: SizeConfig.height(90),
+                padding: EdgeInsets.only(left: SizeConfig.width(20), top: SizeConfig.height(20)),
                 child: Row(
                   children: [
                     Text(
@@ -987,10 +994,10 @@ class _ContentState extends State<Content> {
                       ),
                     ),
                     SizedBox(
-                      width: 10,
+                      width: SizeConfig.width(10),
                     ),
                     SizedBox(
-                      width: 230,
+                      width: SizeConfig.width(230),
                       child: Slider(
                         value: pitch,
                         onChanged: (value) {
@@ -1019,12 +1026,12 @@ class _ContentState extends State<Content> {
         )
             : SizedBox(),
         Container(
-            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
+            margin: EdgeInsets.only(top: SizeConfig.height(0), left: SizeConfig.width(30), right:SizeConfig.width(30)),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
-            height: 100,
+                .width -SizeConfig.width(60) ,
+            height:SizeConfig.height(100) ,
             child: FittedBox(
               child: Text(
                 _wordToDisplay,
@@ -1036,11 +1043,11 @@ class _ContentState extends State<Content> {
               fit: BoxFit.scaleDown,
             )),
         Container(
-          margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+          margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30), top: SizeConfig.height(10)),
           width: MediaQuery
               .of(context)
               .size
-              .width - 60,
+              .width - SizeConfig.width(60),
           child: Text(
             globals.selectedAlgo.content,
             style: TextStyle(fontFamily: "Livvic",
@@ -1050,12 +1057,12 @@ class _ContentState extends State<Content> {
           ),
         ),
         Container(
-            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
+            margin: EdgeInsets.only(top: SizeConfig.height(0), left: SizeConfig.width(30), right: SizeConfig.width(30)),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
-            height: 100,
+                .width - SizeConfig.width(60),
+            height:SizeConfig.height(100) ,
             child: FittedBox(
               child: Text(
                 "Implementation",
@@ -1067,12 +1074,12 @@ class _ContentState extends State<Content> {
               fit: BoxFit.scaleDown,
             )),
         Container(
-            margin: EdgeInsets.only(right: 250),
+            margin: EdgeInsets.only(right: SizeConfig.width(250)),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
-            height: 100,
+                .width - SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 "** In Java",
@@ -1087,13 +1094,13 @@ class _ContentState extends State<Content> {
                 color: Colors.grey,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [new BoxShadow(color: Colors.black, blurRadius: 5)]),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-            margin: EdgeInsets.only(left: 30, right: 30),
-            height: 400,
+            padding: EdgeInsets.only(left: SizeConfig.width(10), right: SizeConfig.width(10), top: SizeConfig.height(10), bottom: SizeConfig.height(10)),
+            margin: EdgeInsets.only(left: SizeConfig.width(30), right: SizeConfig.width(30)),
+            height: SizeConfig.height(400),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
+                .width - SizeConfig.width(60),
             child: Scrollbar(
               controller: _scrollControllerVertical,
               isAlwaysShown: true,
@@ -1111,15 +1118,15 @@ class _ContentState extends State<Content> {
                   )),
             )),
         SizedBox(
-          height: 20,
+          height: SizeConfig.height(20),
         ),
         Container(
-            margin: EdgeInsets.only(right: 250),
+            margin: EdgeInsets.only(right: SizeConfig.width(250)),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
-            height: 100,
+                .width -SizeConfig.width(60),
+            height: SizeConfig.height(100),
             child: FittedBox(
               child: Text(
                 "** In Python",
@@ -1134,13 +1141,13 @@ class _ContentState extends State<Content> {
                 color: Colors.grey,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [new BoxShadow(color: Colors.black, blurRadius: 5)]),
-            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-            margin: EdgeInsets.only(left: 30, right: 30),
-            height: 400,
+            padding: EdgeInsets.only(left: SizeConfig.width(10), right: SizeConfig.width(10), top: SizeConfig.height(10), bottom: SizeConfig.height(10)),
+            margin: EdgeInsets.only(left: SizeConfig.width((30)), right: SizeConfig.width(30)),
+            height: SizeConfig.height(400),
             width: MediaQuery
                 .of(context)
                 .size
-                .width - 60,
+                .width - SizeConfig.width(60),
             child: Scrollbar(
               controller: _scrollControllerHorizontal,
               isAlwaysShown: true,
@@ -1158,14 +1165,14 @@ class _ContentState extends State<Content> {
                   )),
             )),
         SizedBox(
-          height: 20,
+          height: SizeConfig.height(20),
         ),
         Container(
-          height: 50,
-          width: 110,
+          height: SizeConfig.height(50),
+          width: SizeConfig.width(110),
           decoration: BoxDecoration(
               color: Colors.pink, borderRadius: BorderRadius.circular(15)),
-          margin: EdgeInsets.only(left: 240, top: 10),
+          margin: EdgeInsets.only(left: SizeConfig.width(240), top: SizeConfig.height(10)),
           child: FlatButton(
             onPressed: () async {
               _loadingDialog();
@@ -1181,7 +1188,7 @@ class _ContentState extends State<Content> {
           ),
         ),
         SizedBox(
-          height: 20,
+          height:SizeConfig.height(20) ,
         )
       ],
     );

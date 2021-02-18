@@ -9,6 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'size_config.dart';
+
 class Settings extends StatefulWidget {
   @override
   _SettingsState createState() => _SettingsState();
@@ -47,14 +49,14 @@ class _SettingsState extends State<Settings> {
       child: Stack(
         children: <Widget>[
           Positioned(
-            top: 100,
-            left: 0,
-            right: 0,
+            top: SizeConfig.height(100),
+            left: SizeConfig.width(0),
+            right: SizeConfig.width(0),
             child: Container(
               width: MediaQuery
                   .of(context)
                   .size
-                  .width - 40,
+                  .width - SizeConfig.width(40),
               height: 180,
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
               child: Card(
@@ -65,11 +67,11 @@ class _SettingsState extends State<Settings> {
                 child: Stack(
                   children: <Widget>[
                     Positioned(
-                      top: 45,
-                      left: 40,
+                      top: SizeConfig.height(45),
+                      left: SizeConfig.width(40),
                       child: Container(
-                        height: 90,
-                        width: 90,
+                        height: SizeConfig.height(90),
+                        width: SizeConfig.width(90),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
                             image: DecorationImage(
@@ -80,10 +82,10 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     Positioned(
-                      left: 145,
-                      top: 75,
+                      left: SizeConfig.width(145),
+                      top: SizeConfig.height(75),
                       child: Container(
-                        width: 150,
+                        width: SizeConfig.width(150),
                         child: Text(
                           "Dark Mode",
                           style: TextStyle(
@@ -95,8 +97,8 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     Positioned(
-                      left: 300,
-                      top: 75,
+                      left: SizeConfig.width(300),
+                      top: SizeConfig.height(75),
                       child: CupertinoSwitch(
                         value: globals.darkModeOn,
                         onChanged: (value) async {
@@ -116,13 +118,13 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 310,
+            top: SizeConfig.height(310),
             child: Container(
               width: MediaQuery
                   .of(context)
                   .size
                   .width,
-              height: 80,
+              height: SizeConfig.height(80),
               child: Text(
                 "Connect with the Developer",
                 style: TextStyle(
@@ -135,8 +137,8 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 390,
-            left: 20,
+            top: SizeConfig.height(390),
+            left: SizeConfig.width(20),
             child: Column(
               children: <Widget>[
                 Row(
@@ -147,8 +149,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image:
@@ -173,7 +175,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
+                      width: SizeConfig.width(40),
                     ),
                     CircleAvatar(
                       radius: 50,
@@ -181,8 +183,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
 //                            shape: BoxShape.circle,
 
@@ -208,7 +210,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
+                      width: SizeConfig.width(40),
                     ),
                     CircleAvatar(
                       radius: 50,
@@ -216,8 +218,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: Image
@@ -243,7 +245,7 @@ class _SettingsState extends State<Settings> {
                   ],
                 ),
                 SizedBox(
-                  height: 50,
+                  height: SizeConfig.height(50),
                 ),
                 Row(
                   children: <Widget>[
@@ -253,8 +255,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: Image
@@ -278,7 +280,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
+                      width: SizeConfig.width(40),
                     ),
                     CircleAvatar(
                       radius: 50,
@@ -286,8 +288,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
                             image: DecorationImage(
                                 image: Image
@@ -312,7 +314,7 @@ class _SettingsState extends State<Settings> {
                       ),
                     ),
                     SizedBox(
-                      width: 40,
+                      width: SizeConfig.width(40),
                     ),
                     CircleAvatar(
                       radius: 50,
@@ -320,8 +322,8 @@ class _SettingsState extends State<Settings> {
                           ? Colors.grey[800]
                           : Colors.white,
                       child: Container(
-                        height: 80,
-                        width: 80,
+                        height: SizeConfig.height(80),
+                        width: SizeConfig.width(80),
                         decoration: BoxDecoration(
                             image: DecorationImage(
                               image:
@@ -352,7 +354,7 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 680,
+            top: SizeConfig.height(680),
             child: Container(
               width: MediaQuery
                   .of(context)
@@ -366,7 +368,7 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 700,
+            top: SizeConfig.height(700),
             child: Container(
               width: MediaQuery
                   .of(context)
@@ -380,16 +382,16 @@ class _SettingsState extends State<Settings> {
             ),
           ),
           Positioned(
-            top: 800,
-            left: 0,
-            right: 0,
+            top: SizeConfig.height(800),
+            left: SizeConfig.width(0),
+            right: SizeConfig.width(0),
             child: Container(
               width: MediaQuery
                   .of(context)
                   .size
                   .width - 40,
-              margin: EdgeInsets.only(left: 20, right: 20),
-              height: 70,
+              margin: EdgeInsets.only(left: SizeConfig.width(20), right: SizeConfig.width(20)),
+              height: SizeConfig.height(70),
               decoration: BoxDecoration(
                   color: globals.darkModeOn ? Colors.pink : Color(0xFF2D3E50),
                   borderRadius: BorderRadius.circular(20)),

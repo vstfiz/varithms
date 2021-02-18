@@ -143,16 +143,16 @@ class _SplashScreenState extends State<SplashScreen> {
       children: <Widget>[
         Center(
           child: SizedBox(
-            height: 250,
-            width: 180,
+            height: SizeConfig.height(250),
+            width: SizeConfig.width(180),
             child: Image.asset('assets/v2.png'),
           ),
         ),
         Positioned(
-          top: 630,
-          left: 45,
+          top: SizeConfig.height(630),
+          left: SizeConfig.width(45),
           child: SizedBox(
-            width: 340.0,
+            width: SizeConfig.width(340),
             child: TyperAnimatedTextKit(
                 speed: new Duration(milliseconds: 350),
                 text: [
@@ -179,16 +179,16 @@ class _SplashScreenState extends State<SplashScreen> {
       children: <Widget>[
         Center(
           child: SizedBox(
-            height: 250,
-            width: 180,
+            height: SizeConfig.height(250),
+            width: SizeConfig.width(180),
             child: Image.asset('assets/v1.png'),
           ),
         ),
         Positioned(
-          top: 630,
-          left: 45,
+          top: SizeConfig.height(630),
+          left: SizeConfig.width(45),
           child: SizedBox(
-            width: 340.0,
+            width: SizeConfig.width(340),
             child: TyperAnimatedTextKit(
                 speed: new Duration(milliseconds: 350),
                 text: [
@@ -214,19 +214,19 @@ class _SplashScreenState extends State<SplashScreen> {
     return Stack(
       children: <Widget>[
         Positioned(
-          top: 50,
-          left: 330,
+          top: SizeConfig.height(50),
+          left: SizeConfig.width(330),
           child: SizedBox(
-            height: 180,
-            width: 250,
+            height: SizeConfig.height(180),
+            width: SizeConfig.width(250),
             child: Image.asset('assets/v2.png'),
           ),
         ),
         Positioned(
-          top: 300,
-          left: 300,
+          top: SizeConfig.height(300),
+          left: SizeConfig.width(300),
           child: SizedBox(
-            width: 340.0,
+            width: SizeConfig.width(340),
             child: TyperAnimatedTextKit(
                 speed: new Duration(milliseconds: 350),
                 text: [
@@ -252,19 +252,19 @@ class _SplashScreenState extends State<SplashScreen> {
     return Stack(
       children: <Widget>[
         Positioned(
-          top: 50,
-          left: 330,
+          top: SizeConfig.height(50),
+          left: SizeConfig.width(330),
           child: SizedBox(
-            height: 180,
-            width: 250,
+            height: SizeConfig.height(180),
+            width: SizeConfig.width(250),
             child: Image.asset('assets/v2.png'),
           ),
         ),
         Positioned(
-          top: 300,
-          left: 300,
+          top: SizeConfig.height(300),
+          left: SizeConfig.width(300),
           child: SizedBox(
-            width: 340.0,
+            width: SizeConfig.width(340),
             child: TyperAnimatedTextKit(
                 speed: new Duration(milliseconds: 350),
                 text: [

@@ -12,6 +12,24 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 
 import 'content.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
+import 'size_config.dart';
 
 class AlgorithmsList extends StatefulWidget {
   @override
@@ -60,7 +78,7 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
             borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: Colors.white,
         content: Container(
-            height: 60,
+            height: SizeConfig.height(60),
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -68,7 +86,7 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: SizeConfig.width(20),
                   ),
                   Text("Loading Data...", style: TextStyle(
                       fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
@@ -93,14 +111,14 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                     body: Stack(
                       children: <Widget>[
                         Positioned(
-                          left: 100,
-                          top: 20,
+                          left: SizeConfig.width(100),
+                          top: SizeConfig.height(20),
                           child: Text(globals.selectedAlgoTypeName),
                         ),
                         Positioned(
                           child: SizedBox(
-                            height: SizeConfig.heightMultiplier * 48,
-                            width: SizeConfig.widthMultiplier * 100,
+                            height: SizeConfig.heightMultiplier * SizeConfig.height(48),
+                            width: SizeConfig.widthMultiplier * SizeConfig.width(100),
                             child: Container(
                               color: Color(0xFF2D3E50),
                             ),
@@ -156,29 +174,29 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
 //                        ),
 //                      )),
             Positioned(
-              top: SizeConfig.heightMultiplier * 44,
-              height: SizeConfig.heightMultiplier * 56,
-              width: SizeConfig.widthMultiplier * 100,
+              top: SizeConfig.heightMultiplier * SizeConfig.height(44),
+              height: SizeConfig.heightMultiplier * SizeConfig.height(56),
+              width: SizeConfig.widthMultiplier * SizeConfig.width(100),
               child: ClipPath(
                 clipper: WaveClipperOne(
                   reverse: true,
                 ),
                 child: Container(
                   color: Color(0xFFF3EFF3),
-                  height: SizeConfig.heightMultiplier * 52,
-                  width: SizeConfig.widthMultiplier * 100,
+                  height: SizeConfig.heightMultiplier * SizeConfig.height(52),
+                  width: SizeConfig.widthMultiplier * SizeConfig.width(100),
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+              margin: EdgeInsets.only(top: SizeConfig.height(10), left: SizeConfig.width(10), right: SizeConfig.width(10)),
               child: ListView(
                 children: List.generate(globals.algoList.length, (int index) {
                   Algorithms algorithm = globals.algoList[index];
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                    height: 270,
-                    width: 320,
+                    height: SizeConfig.height(270),
+                    width: SizeConfig.width(320),
                     child: Card(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25)),
@@ -186,13 +204,13 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                       child: Stack(
                         children: <Widget>[
                           Positioned(
-                            top: 20,
-                            left: 15,
+                            top: SizeConfig.height(20),
+                            left: SizeConfig.width(15),
                             child: CachedNetworkImage(
                               imageBuilder: (context, imageProvider) =>
                                   Container(
-                                width: 120.0,
-                                height: 180.0,
+                                width: SizeConfig.width(120.0),
+                                height: SizeConfig.height(180.0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
@@ -204,16 +222,16 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
                               imageUrl: algorithm.imageUrl,
-                              width: 10 * SizeConfig.imageSizeMultiplier,
-                              height: 10 * SizeConfig.imageSizeMultiplier,
+                              width: SizeConfig.width(10) * SizeConfig.imageSizeMultiplier,
+                              height: SizeConfig.height(10) * SizeConfig.imageSizeMultiplier,
                             ),
                           ),
                           Positioned(
-                              top: 20,
-                              left: 120,
+                              top: SizeConfig.height(20),
+                              left: SizeConfig.width(120),
                               child: Container(
-                                width: 185,
-                                height: 100,
+                                width: SizeConfig.width(185),
+                                height: SizeConfig.height(100),
                                 child: Text(
                                   algorithm.name,
                                   style: TextStyle(
@@ -224,8 +242,8 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                 ),
                               )),
                           Positioned(
-                            right: 15,
-                            top: 125,
+                            right: SizeConfig.width(15),
+                            top: SizeConfig.height(125),
                             child: RatingBar(
                               itemSize: 20,
                               unratedColor: Colors.grey,
@@ -247,10 +265,10 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                             ),
                           ),
                           Positioned(
-                            left: 20,
-                            top: 170,
+                            left: SizeConfig.width(20),
+                            top: SizeConfig.height(170),
                             child: SizedBox(
-                              width: 310,
+                              width: SizeConfig.width(310),
                               child: Divider(
                                 color: Colors.grey[650],
                                 thickness: 2.0,
@@ -258,11 +276,11 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                             ),
                           ),
                           Positioned(
-                            top: 190,
-                            right: 40,
+                            top: SizeConfig.height(190),
+                            right: SizeConfig.width(40),
                             child: Container(
-                              width: 55,
-                              height: 55,
+                              width: SizeConfig.width(55),
+                              height: SizeConfig.height(55),
                               decoration: BoxDecoration(
                                 color: Colors.lightBlueAccent,
                                 shape: BoxShape.circle,
@@ -349,29 +367,29 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
 //                        ),
 //                      )),
             Positioned(
-              top: SizeConfig.heightMultiplier * 44,
-              height: SizeConfig.heightMultiplier * 56,
-              width: SizeConfig.widthMultiplier * 100,
+              top: SizeConfig.heightMultiplier * SizeConfig.height(44),
+              height: SizeConfig.heightMultiplier * SizeConfig.height(56),
+              width: SizeConfig.widthMultiplier * SizeConfig.width(100),
               child: ClipPath(
                 clipper: WaveClipperOne(
                   reverse: true,
                 ),
                 child: Container(
                   color: Colors.black,
-                  height: SizeConfig.heightMultiplier * 52,
-                  width: SizeConfig.widthMultiplier * 100,
+                  height: SizeConfig.heightMultiplier * SizeConfig.height(52),
+                  width: SizeConfig.widthMultiplier * SizeConfig.width(100),
                 ),
               ),
             ),
             Container(
-              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+              margin: EdgeInsets.only(top: SizeConfig.height(10), left:SizeConfig.width(10), right: SizeConfig.width(10)),
               child: ListView(
                 children: List.generate(globals.algoList.length, (int index) {
                   Algorithms algorithm = globals.algoList[index];
                   return Container(
                     margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
-                    height: 270,
-                    width: 320,
+                    height: SizeConfig.height(270),
+                    width: SizeConfig.width(320),
                     child: Card(
                       color: Colors.grey[800],
                       shape: RoundedRectangleBorder(
@@ -380,13 +398,13 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                       child: Stack(
                         children: <Widget>[
                           Positioned(
-                            top: 20,
-                            left: 15,
+                            top: SizeConfig.height(20),
+                            left: SizeConfig.width(15),
                             child: CachedNetworkImage(
                               imageBuilder: (context, imageProvider) =>
                                   Container(
-                                width: 120.0,
-                                height: 180.0,
+                                width: SizeConfig.width(120.0),
+                                height: SizeConfig.height(180.0),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
@@ -398,16 +416,16 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                               errorWidget: (context, url, error) =>
                                   Icon(Icons.error),
                               imageUrl: algorithm.imageUrl,
-                              width: 10 * SizeConfig.imageSizeMultiplier,
-                              height: 10 * SizeConfig.imageSizeMultiplier,
+                              width: SizeConfig.width(10) * SizeConfig.imageSizeMultiplier,
+                              height: SizeConfig.width(10) * SizeConfig.imageSizeMultiplier,
                             ),
                           ),
                           Positioned(
-                              top: 20,
-                              left: 120,
+                              top: SizeConfig.height(20),
+                              left: SizeConfig.width(120),
                               child: Container(
-                                width: 185,
-                                height: 100,
+                                width: SizeConfig.width(185),
+                                height: SizeConfig.height(100),
                                 child: Text(
                                   algorithm.name,
                                   style: TextStyle(
@@ -418,8 +436,8 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                 ),
                               )),
                           Positioned(
-                            right: 15,
-                            top: 125,
+                            right: SizeConfig.width(15),
+                            top: SizeConfig.height(125),
                             child: RatingBar(
                               itemSize: 20,
                               unratedColor: Colors.white12,
@@ -441,10 +459,10 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                             ),
                           ),
                           Positioned(
-                            left: 20,
-                            top: 170,
+                            left: SizeConfig.width(20),
+                            top:SizeConfig.height(170),
                             child: SizedBox(
-                              width: 310,
+                              width: SizeConfig.width(310),
                               child: Divider(
                                 color: Colors.white,
                                 thickness: 2.0,
@@ -452,11 +470,11 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                             ),
                           ),
                           Positioned(
-                            top: 190,
-                            right: 40,
+                            top: SizeConfig.height(190),
+                            right: SizeConfig.width(40),
                             child: Container(
-                              width: 55,
-                              height: 55,
+                              width: SizeConfig.width(55),
+                              height: SizeConfig.height(55),
                               decoration: BoxDecoration(
                                 color: Colors.pink,
                                 shape: BoxShape.circle,

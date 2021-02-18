@@ -14,6 +14,8 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'size_config.dart';
+
 class FillDetails extends StatefulWidget {
   _FillDetailsState createState() => _FillDetailsState();
 }
@@ -178,8 +180,8 @@ class _FillDetailsState extends State<FillDetails> {
           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 25, vertical: 150),
-            width: 380,
-            height: 600,
+            width: SizeConfig.width(380),
+            height: SizeConfig.height(600),
             child: Card(
               color: globals.darkModeOn ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(
@@ -188,7 +190,7 @@ class _FillDetailsState extends State<FillDetails> {
               child: Column(
                 children: <Widget>[
                   SizedBox(
-                    height: 70,
+                    height: SizeConfig.height(70),
                   ),
                   Container(
                       margin:
@@ -240,7 +242,7 @@ class _FillDetailsState extends State<FillDetails> {
                     ),
                   ),
                   Container(
-                    width: 350,
+                    width: SizeConfig.width(350),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                     child: cdd.DropdownButton<String>(
                       leftMargin: 187,
@@ -261,7 +263,7 @@ class _FillDetailsState extends State<FillDetails> {
                       iconSize: 24,
                       elevation: 16,
                       underline: Container(
-                        height: 1,
+                        height: SizeConfig.height(1),
                         color: Colors.grey,
                       ),
                       style:
@@ -287,7 +289,7 @@ class _FillDetailsState extends State<FillDetails> {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.only(left: 10, bottom: 10, right: 10),
+                    margin: EdgeInsets.only(left: SizeConfig.width(10), bottom: SizeConfig.height(10), right: SizeConfig.width(10)),
                     child: TextField(
                       style: TextStyle(fontFamily: "Livvic",
                           color: globals.darkModeOn ? Colors.white : Colors
@@ -306,7 +308,7 @@ class _FillDetailsState extends State<FillDetails> {
                     ),
                   ),
                   Container(
-                    width: 350,
+                    width: SizeConfig.width(350),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                     child: cdd.DropdownButton<String>(
                       leftMargin: 130,
@@ -327,7 +329,7 @@ class _FillDetailsState extends State<FillDetails> {
                       iconSize: 24,
                       elevation: 16,
                       underline: Container(
-                        height: 1,
+                        height: SizeConfig.height(1),
                         color: Colors.grey,
                       ),
                       style:
@@ -359,15 +361,15 @@ class _FillDetailsState extends State<FillDetails> {
             ),
           ),
           Positioned(
-            top: 75,
+            top: SizeConfig.height(70),
             left: (MediaQuery
                 .of(context)
                 .size
-                .width / 2) - 75,
+                .width / 2) - SizeConfig.width(70),
             child: _image == null
                 ? Container(
-              height: 150,
-              width: 150,
+              height: SizeConfig.height(150),
+              width: SizeConfig.width(150),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.grey[700],
@@ -386,8 +388,8 @@ class _FillDetailsState extends State<FillDetails> {
                   )),
             )
                 : Container(
-              height: 150,
-              width: 150,
+              height: SizeConfig.height(150),
+              width: SizeConfig.width(150),
               decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   image: DecorationImage(
@@ -416,14 +418,14 @@ class _FillDetailsState extends State<FillDetails> {
             ),
           ),
           Positioned(
-            top: 725,
+            top: SizeConfig.height(725),
             left: (MediaQuery
                 .of(context)
                 .size
                 .width / 2) - 75,
             child: Container(
-              width: 150,
-              height: 50,
+              width: SizeConfig.width(150),
+              height: SizeConfig.height(50),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: globals.darkModeOn ? Colors.pink : Colors.blue),
@@ -518,13 +520,13 @@ class _FillDetailsState extends State<FillDetails> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       backgroundColor: Colors.white,
       content: Container(
-        height: 200,
+        height: SizeConfig.height(200),
         child: Stack(
           children: <Widget>[
             Positioned(
-              top: 0,
-              right: 0,
-              left: 0,
+              top: SizeConfig.height(0),
+              right: SizeConfig.width(0),
+              left: SizeConfig.width(0),
               child: Text("Choose Image Source",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontFamily: "Livvic", fontSize: 25)),
@@ -532,7 +534,7 @@ class _FillDetailsState extends State<FillDetails> {
             Column(
               children: <Widget>[
                 SizedBox(
-                  height: 60,
+                  height: SizeConfig.height(60),
                 ),
                 FlatButton(
                   onPressed: () {
@@ -547,7 +549,7 @@ class _FillDetailsState extends State<FillDetails> {
                         size: 30,
                       ),
                       SizedBox(
-                        width: 20,
+                        width: SizeConfig.width(20),
                       ),
                       Text(
                         "Camera",
@@ -557,7 +559,7 @@ class _FillDetailsState extends State<FillDetails> {
                   ),
                 ),
                 SizedBox(
-                  height: 20,
+                  height: SizeConfig.height(20),
                 ),
                 FlatButton(
                   onPressed: () {
@@ -572,7 +574,7 @@ class _FillDetailsState extends State<FillDetails> {
                         size: 30,
                       ),
                       SizedBox(
-                        width: 20,
+                        width: SizeConfig.height(20),
                       ),
                       Text(
                         "Gallery",
@@ -600,7 +602,7 @@ class _FillDetailsState extends State<FillDetails> {
             borderRadius: BorderRadius.circular(10.0)),
         backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         content: Container(
-            height: 60,
+            height: SizeConfig.height(60),
             child: Center(
               child: Row(
                 children: <Widget>[
@@ -608,7 +610,7 @@ class _FillDetailsState extends State<FillDetails> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
                   ),
                   SizedBox(
-                    width: 20,
+                    width: SizeConfig.width(20),
                 ),
                 Text("Uploading Data...", style: TextStyle(
                     fontFamily: "Livvic",
