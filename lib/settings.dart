@@ -4,6 +4,7 @@ import 'package:Varithms/responsiveui.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +23,10 @@ class _SettingsState extends State<Settings> {
       left: true,
       bottom: false,
       child: WillPopScope(
-        onWillPop: () {},
+        onWillPop: () {
+          Navigator.pop(context);
+          return Future<bool>.value(false);
+        },
         child: Scaffold(
           body: SingleChildScrollView(
             child: ResponsiveWidget(
@@ -37,14 +41,9 @@ class _SettingsState extends State<Settings> {
 
   Widget _portraitStack(BuildContext context) {
     return Container(
-      height: MediaQuery
-          .of(context)
-          .size
-          .height,
-      width: MediaQuery
-          .of(context)
-          .size
-          .width,
+      color: globals.darkModeOn ? Colors.grey[800] : Colors.white,
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       child: Stack(
         children: <Widget>[
           Positioned(
@@ -59,6 +58,7 @@ class _SettingsState extends State<Settings> {
               height: 180,
               margin: EdgeInsets.symmetric(horizontal: 20, vertical: 0),
               child: Card(
+                color: globals.darkModeOn ? Colors.black : Colors.white,
                 elevation: 15,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
@@ -86,7 +86,11 @@ class _SettingsState extends State<Settings> {
                         width: 150,
                         child: Text(
                           "Dark Mode",
-                          style: TextStyle(fontSize: 30, fontFamily: "Livvic"),
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontFamily: "Livvic",
+                            color: globals.darkModeOn ? Colors.white : Colors
+                                .black,),
                         ),
                       ),
                     ),
@@ -102,6 +106,7 @@ class _SettingsState extends State<Settings> {
                           SharedPreferences sharedPreferences =
                           await SharedPreferences.getInstance();
                           sharedPreferences.setBool('darkMode', value);
+                          Phoenix.rebirth(globals.cont);
                         },
                       ),
                     ),
@@ -123,6 +128,7 @@ class _SettingsState extends State<Settings> {
                 style: TextStyle(
                   fontSize: 30,
                   fontFamily: "Livvic",
+                  color: globals.darkModeOn ? Colors.white : Colors.black,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -137,7 +143,9 @@ class _SettingsState extends State<Settings> {
                   children: <Widget>[
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.white,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -169,6 +177,9 @@ class _SettingsState extends State<Settings> {
                     ),
                     CircleAvatar(
                       radius: 50,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -201,7 +212,9 @@ class _SettingsState extends State<Settings> {
                     ),
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.white,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -236,7 +249,9 @@ class _SettingsState extends State<Settings> {
                   children: <Widget>[
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.white,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -267,7 +282,9 @@ class _SettingsState extends State<Settings> {
                     ),
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.white,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -299,7 +316,9 @@ class _SettingsState extends State<Settings> {
                     ),
                     CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.white,
+                      backgroundColor: globals.darkModeOn
+                          ? Colors.grey[800]
+                          : Colors.white,
                       child: Container(
                         height: 80,
                         width: 80,
@@ -340,7 +359,9 @@ class _SettingsState extends State<Settings> {
                   .size
                   .width,
               child: Text("Mini Project III year", style: TextStyle(
-                color: Colors.grey, fontFamily: "Livvic", fontSize: 25,),
+                color: globals.darkModeOn ? Colors.white : Colors.grey,
+                fontFamily: "Livvic",
+                fontSize: 25,),
                 textAlign: TextAlign.center,),
             ),
           ),
@@ -352,7 +373,9 @@ class _SettingsState extends State<Settings> {
                   .size
                   .width,
               child: Text("Vstfiz Tech Pvt Ltd", style: TextStyle(
-                color: Colors.grey, fontFamily: "Livvic", fontSize: 25,),
+                color: globals.darkModeOn ? Colors.white : Colors.grey,
+                fontFamily: "Livvic",
+                fontSize: 25,),
                 textAlign: TextAlign.center,),
             ),
           ),
@@ -368,7 +391,7 @@ class _SettingsState extends State<Settings> {
               margin: EdgeInsets.only(left: 20, right: 20),
               height: 70,
               decoration: BoxDecoration(
-                  color: Color(0xFF2D3E50),
+                  color: globals.darkModeOn ? Colors.pink : Color(0xFF2D3E50),
                   borderRadius: BorderRadius.circular(20)),
               child: FlatButton(
                 onPressed: () {

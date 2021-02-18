@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/play_button.dart';
@@ -140,8 +141,8 @@ class _ContentState extends State<Content> {
         Container(
           child: CircleAvatar(
             radius: 5,
-            backgroundColor: Colors.black,
-            foregroundColor: Colors.black,
+            backgroundColor: globals.darkModeOn ? Colors.white : Colors.black,
+            foregroundColor: globals.darkModeOn ? Colors.white : Colors.black,
           ),
         ),
         SizedBox(
@@ -153,7 +154,9 @@ class _ContentState extends State<Content> {
             padding: EdgeInsets.only(left: 5, right: 5),
             child: Text(
               value,
-              style: TextStyle(fontFamily: 'Livvic'),
+              style: TextStyle(
+                  fontFamily: 'Livvic',
+                  color: globals.darkModeOn ? Colors.white : Colors.black),
             ))
       ],
     );
@@ -165,9 +168,10 @@ class _ContentState extends State<Content> {
       context: context,
       builder: (context) => AlertDialog(
         shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        title: Text("Question No. ${question.questionNumber}"),
-        backgroundColor: Colors.white,
+        RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+        title: Text("Question No. ${question.questionNumber}", style: TextStyle(
+            color: globals.darkModeOn ? Colors.white : Colors.black),),
+        backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         content: Container(
             height: 350,
             child: Scrollbar(
@@ -177,12 +181,17 @@ class _ContentState extends State<Content> {
                 child: Column(
                   children: <Widget>[
                     Container(
-                      width: MediaQuery.of(context).size.width - 80,
+                      width: MediaQuery
+                          .of(context)
+                          .size
+                          .width - 80,
                       margin: EdgeInsets.only(right: 20),
                       // height: 150,
                       child: Text(
                         "${question.questionNumber}. ${question.question}",
-                        style: TextStyle(fontSize: 25),
+                        style: TextStyle(fontSize: 25,
+                            color: globals.darkModeOn ? Colors.white : Colors
+                                .black),
                         softWrap: true,
                         textAlign: TextAlign.start,
                       ),
@@ -227,7 +236,9 @@ class _ContentState extends State<Content> {
             child: Text(
               "Cancel",
               style: TextStyle(
-                  fontSize: 20, fontFamily: "Livvic", color: Colors.grey[800]),
+                  fontSize: 20,
+                  fontFamily: "Livvic",
+                  color: globals.darkModeOn ? Colors.white : Colors.grey[800]),
             ),
           ),
           isQuestionCompleted
@@ -238,7 +249,8 @@ class _ContentState extends State<Content> {
                       progress += 0.1;
                     }
                     _uploadingDialog();
-                    await fdb.FirebaseDB.uploadProgress('Quick Sort', progress);
+                    await fdb.FirebaseDB.uploadProgress(
+                        globals.selectedAlgo.name, progress);
                     _popQuestionDialog();
                   },
                   child: Text(
@@ -262,7 +274,8 @@ class _ContentState extends State<Content> {
                     style: TextStyle(
                         fontSize: 20,
                         fontFamily: "Livvic",
-                        color: Colors.grey[800]),
+                        color: globals.darkModeOn ? Colors.white : Colors
+                            .grey[800]),
                   ),
                 )
         ],
@@ -299,7 +312,6 @@ class _ContentState extends State<Content> {
                   ),
                 ))));
   }
-
 
   Future<void> _uploadingDialog() {
     return showDialog<void>(
@@ -359,11 +371,18 @@ class _ContentState extends State<Content> {
       left: true,
       bottom: false,
       child: WillPopScope(
+        onWillPop: () {
+          Navigator.pop(context);
+          Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return DashBoard();
+          }));
+        },
         child: Scaffold(
-          backgroundColor: AppTheme.appBackgroundColor,
+          backgroundColor: globals.darkModeOn ? Colors.grey[800] : AppTheme
+              .appBackgroundColor,
           body: SingleChildScrollView(
             child: ResponsiveWidget(
-              portraitLayout: _portraitStack(),
+              portraitLayout: globals.darkModeOn ? _darkStack() : _lightStack(),
               landscapeLayout: _landscapeStack(),
             ),
           ),
@@ -372,13 +391,16 @@ class _ContentState extends State<Content> {
     );
   }
 
-  Widget _portraitStack() {
+  Widget _lightStack() {
     return Column(
       children: <Widget>[
         Container(
           margin: EdgeInsets.only(top: 40, left: 30, right: 30),
           height: 80,
-          width: MediaQuery.of(context).size.width - 60,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
           child: FittedBox(
             child: Text(
               globals.selectedAlgo.name,
@@ -389,7 +411,6 @@ class _ContentState extends State<Content> {
             fit: BoxFit.scaleDown,
           ),
         ),
-
         Container(
           margin: EdgeInsets.only(left: 30, right: 30, top: 20),
           height: 200,
@@ -398,8 +419,7 @@ class _ContentState extends State<Content> {
               .size
               .width - 60,
           child: CachedNetworkImage(
-            imageBuilder: (context,
-                imageProvider) =>
+            imageBuilder: (context, imageProvider) =>
                 Container(
                   width: MediaQuery
                       .of(context)
@@ -407,22 +427,16 @@ class _ContentState extends State<Content> {
                       .width - 60.0,
                   height: 200.0,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius
-                        .circular(15),
+                    borderRadius: BorderRadius.circular(15),
                     image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover),
+                        image: imageProvider, fit: BoxFit.cover),
                   ),
                 ),
-            placeholder: (context, url) =>
-                CircularProgressIndicator(),
-            errorWidget: (context, url, error) =>
-                Icon(Icons.error),
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
             imageUrl: globals.selectedAlgo.imageUrl,
-            width: 10 *
-                SizeConfig.imageSizeMultiplier,
-            height: 10 *
-                SizeConfig.imageSizeMultiplier,
+            width: 10 * SizeConfig.imageSizeMultiplier,
+            height: 10 * SizeConfig.imageSizeMultiplier,
           ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
@@ -621,8 +635,12 @@ class _ContentState extends State<Content> {
             )),
         Container(
           margin: EdgeInsets.only(left: 30, right: 30, top: 10),
-          width: MediaQuery.of(context).size.width - 60,
-          child: Text(globals.selectedAlgo.content,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: Text(
+            globals.selectedAlgo.content,
             style: TextStyle(fontFamily: "Livvic", fontSize: 24),
             textAlign: TextAlign.justify,
           ),
@@ -673,7 +691,7 @@ class _ContentState extends State<Content> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text(
-                      globals.selectedAlgo.implInJava,
+                      globals.selectedAlgo.implInJava.replaceAll("\n", '\n'),
                       textAlign: TextAlign.justify,
                     ),
                   )),
@@ -728,6 +746,417 @@ class _ContentState extends State<Content> {
           width: 110,
           decoration: BoxDecoration(
               color: Colors.blue, borderRadius: BorderRadius.circular(15)),
+          margin: EdgeInsets.only(left: 240, top: 10),
+          child: FlatButton(
+            onPressed: () async {
+              _loadingDialog();
+              await _pause();
+              await getQuestions();
+              _popDialog();
+            },
+            child: Text(
+              "Take Quiz",
+              style: TextStyle(
+                  fontFamily: "Livvic", fontSize: 20, color: Colors.white),
+            ),
+          ),
+        ),
+        SizedBox(
+          height: 20,
+        )
+      ],
+    );
+  }
+
+  Widget _darkStack() {
+    return Column(
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(top: 40, left: 30, right: 30),
+          height: 80,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: FittedBox(
+            child: Text(
+              globals.selectedAlgo.name,
+              style: TextStyle(
+                  fontFamily: "Livvic", fontSize: 70, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+            fit: BoxFit.scaleDown,
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 30, right: 30, top: 20),
+          height: 200,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: CachedNetworkImage(
+            imageBuilder: (context, imageProvider) =>
+                Container(
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width - 60.0,
+                  height: 200.0,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
+                  ),
+                ),
+            placeholder: (context, url) => CircularProgressIndicator(),
+            errorWidget: (context, url, error) => Icon(Icons.error),
+            imageUrl: globals.selectedAlgo.imageUrl,
+            width: 10 * SizeConfig.imageSizeMultiplier,
+            height: 10 * SizeConfig.imageSizeMultiplier,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(width: 1, color: Colors.grey),
+          ),
+        ),
+        Container(
+          height: 100,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          margin: EdgeInsets.only(top: 20, left: 30, right: 30),
+          child: Row(
+            children: [
+              Container(
+                height: 80,
+                width: 80,
+                margin: EdgeInsets.only(left: 15),
+                child: PlayButton(
+                  initialIsPlaying: globals.isPlaying,
+                  onPressed: () {
+                    setState(() {
+                      globals.isPlaying = !globals.isPlaying;
+                    });
+                    if (globals.isPlaying) {
+                      _speak();
+                    } else {
+                      _pause();
+                    }
+                  },
+                ),
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Container(
+                  padding: EdgeInsets.only(top: 50, bottom: 50),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      color: globals.darkModeOn ? Colors.grey[800] : AppTheme
+                          .appBackgroundColor),
+                  width: MediaQuery
+                      .of(context)
+                      .size
+                      .width - 180,
+                  height: 100,
+                  child: Stack(
+                    children: [
+                      globals.isPlaying
+                          ? WaveWidget(
+                        config: CustomConfig(
+                          gradients: [
+                            [Colors.blue, Colors.orange],
+                            [Colors.red, Colors.pink[800]],
+                            [Colors.lightBlue, Colors.yellow],
+                            [Colors.redAccent, Colors.green]
+                          ],
+                          durations: [35000, 19440, 10800, 6000],
+                          heightPercentages: [0.20, 0.23, 0.25, 0.30],
+                          blur: _blur,
+                          gradientBegin: Alignment.bottomLeft,
+                          gradientEnd: Alignment.topRight,
+                        ),
+                        backgroundColor: Colors.blue,
+                        size: Size(double.infinity, double.infinity),
+                        waveAmplitude: 0,
+                      )
+                          : Divider(
+                        thickness: 1,
+                        color: globals.darkModeOn ? Colors.white : Colors
+                            .grey[800],
+                      ),
+                    ],
+                  ))
+            ],
+          ),
+        ),
+        Container(
+          margin: EdgeInsets.only(left: 300),
+          height: 65,
+          width: 65,
+          child: IconButton(
+            icon: Icon(Icons.settings,
+                color: globals.darkModeOn ? Colors.white : Colors.black),
+            onPressed: () {
+              print("Dasdvfbgvgdfsa");
+              setState(() {
+                isSettings = !isSettings;
+              });
+              print(isSettings);
+            },
+          ),
+        ),
+        isSettings
+            ? Container(
+          decoration: BoxDecoration(
+              color: globals.darkModeOn ? Colors.grey : Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(
+                  color: globals.darkModeOn ? Colors.black : Colors.grey)),
+          margin: EdgeInsets.only(top: 10),
+          height: 200,
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.only(left: 20, top: 20),
+                height: 100,
+                decoration: BoxDecoration(
+                    border: Border(
+                        bottom:
+                        BorderSide(width: 1, color: Colors.grey))),
+                child: Row(
+                  children: [
+                    Text(
+                      "Speed",
+                      style: TextStyle(
+                        fontFamily: "Livvic",
+                        fontSize: 20,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 230,
+                      child: Slider(
+                        value: speed,
+                        onChanged: (value) {
+                          setState(() {
+                            speed = value;
+                          });
+
+                          print(value);
+                          setSpeechSpeed(value);
+                          _pause();
+                        },
+                      ),
+                    ),
+                    Text(
+                      "${(speed * 100).toInt()} %",
+                      style: TextStyle(
+                        fontFamily: "Livvic",
+                        fontSize: 20,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Container(
+                height: 90,
+                padding: EdgeInsets.only(left: 20, top: 20),
+                child: Row(
+                  children: [
+                    Text(
+                      "Pitch",
+                      style: TextStyle(
+                        fontFamily: "Livvic",
+                        fontSize: 20,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    SizedBox(
+                      width: 230,
+                      child: Slider(
+                        value: pitch,
+                        onChanged: (value) {
+                          setState(() {
+                            pitch = value;
+                          });
+
+                          print(value);
+                          setSpeechPitch(value);
+                          _pause();
+                        },
+                      ),
+                    ),
+                    Text(
+                      "${(pitch * 100).toInt()} %",
+                      style: TextStyle(
+                        fontFamily: "Livvic",
+                        fontSize: 20,
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        )
+            : SizedBox(),
+        Container(
+            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            height: 100,
+            child: FittedBox(
+              child: Text(
+                _wordToDisplay,
+                style: TextStyle(
+                    fontSize: 45, fontFamily: "Livvic", color: globals
+                    .darkModeOn ? Colors.white : Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              fit: BoxFit.scaleDown,
+            )),
+        Container(
+          margin: EdgeInsets.only(left: 30, right: 30, top: 10),
+          width: MediaQuery
+              .of(context)
+              .size
+              .width - 60,
+          child: Text(
+            globals.selectedAlgo.content,
+            style: TextStyle(fontFamily: "Livvic",
+                fontSize: 24,
+                color: globals.darkModeOn ? Colors.white : Colors.black),
+            textAlign: TextAlign.justify,
+          ),
+        ),
+        Container(
+            margin: EdgeInsets.only(top: 0, left: 30, right: 30),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            height: 100,
+            child: FittedBox(
+              child: Text(
+                "Implementation",
+                style: TextStyle(
+                    fontSize: 45, fontFamily: "Livvic", color: globals
+                    .darkModeOn ? Colors.white : Colors.black),
+                textAlign: TextAlign.center,
+              ),
+              fit: BoxFit.scaleDown,
+            )),
+        Container(
+            margin: EdgeInsets.only(right: 250),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            height: 100,
+            child: FittedBox(
+              child: Text(
+                "** In Java",
+                style: TextStyle(
+                    fontSize: 20, fontFamily: "Livvic", color: Colors.red),
+                textAlign: TextAlign.start,
+              ),
+              fit: BoxFit.scaleDown,
+            )),
+        Container(
+            decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [new BoxShadow(color: Colors.black, blurRadius: 5)]),
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            margin: EdgeInsets.only(left: 30, right: 30),
+            height: 400,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            child: Scrollbar(
+              controller: _scrollControllerVertical,
+              isAlwaysShown: true,
+              child: SingleChildScrollView(
+                  controller: _scrollControllerVertical,
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(
+                      globals.selectedAlgo.implInJava.replaceAll("\n", '\n'),
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(color: Colors.white),
+
+                    ),
+                  )),
+            )),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+            margin: EdgeInsets.only(right: 250),
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            height: 100,
+            child: FittedBox(
+              child: Text(
+                "** In Python",
+                style: TextStyle(
+                    fontSize: 20, fontFamily: "Livvic", color: Colors.red),
+                textAlign: TextAlign.start,
+              ),
+              fit: BoxFit.scaleDown,
+            )),
+        Container(
+            decoration: BoxDecoration(
+                color: Colors.grey,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [new BoxShadow(color: Colors.black, blurRadius: 5)]),
+            padding: EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+            margin: EdgeInsets.only(left: 30, right: 30),
+            height: 400,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width - 60,
+            child: Scrollbar(
+              controller: _scrollControllerHorizontal,
+              isAlwaysShown: true,
+              child: SingleChildScrollView(
+                  controller: _scrollControllerHorizontal,
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: Text(
+                      globals.selectedAlgo.implInPython,
+                      textAlign: TextAlign.justify,
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  )),
+            )),
+        SizedBox(
+          height: 20,
+        ),
+        Container(
+          height: 50,
+          width: 110,
+          decoration: BoxDecoration(
+              color: Colors.pink, borderRadius: BorderRadius.circular(15)),
           margin: EdgeInsets.only(left: 240, top: 10),
           child: FlatButton(
             onPressed: () async {

@@ -39,4 +39,12 @@ class SizeConfig {
     heightMultiplier = _blockSizeVertical;
     widthMultiplier = _blockSizeHorizontal;
   }
+
+  static double height(double val) {
+    return (val / 917.6470759830676) * _screenHeight;
+  }
+
+  static double width(double val) {
+    return (val / 917.6470759830676) * _screenWidth;
+  }
 }

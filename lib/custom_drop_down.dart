@@ -6,6 +6,7 @@
 
 import 'dart:math' as math;
 import 'dart:ui' show window;
+import 'package:Varithms/globals.dart' as globals;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -184,6 +185,7 @@ class _DropdownMenuItemButtonState<T>
       child: InkWell(
         autofocus: widget.itemIndex == widget.route.selectedIndex,
         child: Container(
+          color: globals.darkModeOn ? Colors.grey[800] : Colors.white,
           padding: widget.padding,
           child: widget.route.items[widget.itemIndex],
         ),
@@ -275,9 +277,7 @@ class _DropdownMenuState<T> extends State<_DropdownMenu<T>> {
       opacity: _fadeOpacity,
       child: CustomPaint(
         painter: _DropdownMenuPainter(
-          color: widget.dropdownColor ?? Theme
-              .of(context)
-              .canvasColor,
+          color: globals.darkModeOn ? Colors.grey[800] : Colors.white,
           elevation: route.elevation,
           selectedIndex: route.selectedIndex,
           resize: _resize,
@@ -1429,11 +1429,9 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>>
       child: Container(
         decoration: _showHighlight
             ? BoxDecoration(
-          color: widget.focusColor ?? Theme
-              .of(context)
-              .focusColor,
-          borderRadius: const BorderRadius.all(Radius.circular(4.0)),
-        )
+          color: globals.darkModeOn ? Colors.grey[800] : Colors.white,
+                borderRadius: const BorderRadius.all(Radius.circular(4.0)),
+              )
             : null,
         padding: padding.resolve(Directionality.of(context)),
         height: widget.isDense ? _denseButtonHeight : null,

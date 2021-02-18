@@ -109,7 +109,7 @@ class FirebaseDB {
       DocumentSnapshot document = ds.single;
       globals.mainUser = new User(
           document['name'],
-          document['country'],
+          document['profession'],
           document['phone'],
           document['email'],
           document['gender'],
@@ -145,6 +145,24 @@ class FirebaseDB {
     userData
         .forEach((String k, String v) => print("k is: " + k + "v is  : " + v));
     ref.add(userData);
+  }
+
+  static Future<bool> updateDetails(name, mail, gender, phone, iAmA) async {
+    Firestore firestore = Firestore.instance;
+    QuerySnapshot querySnapshot = await firestore
+        .collection('users')
+        .where('uid', isEqualTo: globals.user.uid)
+        .getDocuments();
+    String ds = querySnapshot.documents.single.documentID;
+    Map<String, String> userData = new Map<String, String>();
+    userData.putIfAbsent('name', () => name);
+    userData.putIfAbsent('email', () => mail);
+    userData.putIfAbsent('gender', () => gender);
+    userData.putIfAbsent('phone', () => phone);
+    userData.putIfAbsent('profession', () => iAmA);
+    userData
+        .forEach((String k, String v) => print("k is: " + k + "v is  : " + v));
+    var ref = firestore.collection('users').document(ds).updateData(userData);
   }
 
   static Future<List<Question>> getQuestions(String name) async {

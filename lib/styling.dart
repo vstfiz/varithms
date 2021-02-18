@@ -1,3 +1,4 @@
+import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/size_config.dart';
 import 'package:flutter/material.dart';
 
@@ -6,8 +7,10 @@ class AppTheme {
 
   static const Color appBackgroundColor = Color(0xFFFFF7EC);
   static const Color topBarBackgroundColor = Color(0xFF2d3e50);
-  static const Color selectedTabBackgroundColor = Color(0xFF1e4a77);
-  static const Color unSelectedTabBackgroundColor = Color(0xFFFFFFFC);
+  static Color selectedTabBackgroundColor =
+      globals.darkModeOn ? Colors.orange : Color(0xFF1e4a77);
+  static Color unSelectedTabBackgroundColor =
+      globals.darkModeOn ? Colors.grey[800] : Color(0xFFFFFFFC);
   static const Color subTitleTextColor = Color(0xFF9F988F);
 
   static final ThemeData lightTheme = ThemeData(
@@ -82,18 +85,18 @@ class AppTheme {
   static final TextStyle titleDark = titleLight.copyWith(color: Colors.white);
 
   static final TextStyle subTitleDark =
-      subTitleLight.copyWith(color: Colors.white70);
+  subTitleLight.copyWith(color: Colors.white70);
 
   static final TextStyle buttonDark = buttonLight.copyWith(color: Colors.black);
 
   static final TextStyle greetingDark =
-      greetingLight.copyWith(color: Colors.black);
+  greetingLight.copyWith(color: Colors.black);
 
   static final TextStyle searchDark = searchDark.copyWith(color: Colors.black);
 
   static final TextStyle _selectedTabDark =
-      _selectedTabDark.copyWith(color: Colors.white);
+  _selectedTabDark.copyWith(color: Colors.white);
 
   static final TextStyle _unSelectedTabDark =
-      _selectedTabDark.copyWith(color: Colors.white70);
+  _selectedTabDark.copyWith(color: Colors.white70);
 }

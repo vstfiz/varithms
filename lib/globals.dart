@@ -7,15 +7,12 @@ import 'algorithm.dart';
 import 'algorithm_type.dart';
 
 User user = new User("", "", "", "", "", "", "");
-User mainUser = new User(
-    "",
-    "",
-    "", "", "", "", "");
+User mainUser = new User("", "", "", "", "", "", "");
 
 double width(double width) {}
 
 double height(double height) {}
-bool darkModeOn = false;
+bool darkModeOn = true;
 bool isPortrait;
 bool isPlaying = false;
 bool isOtpLogin = false;

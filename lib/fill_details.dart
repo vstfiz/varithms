@@ -131,6 +131,7 @@ class _FillDetailsState extends State<FillDetails> {
         return Future<bool>.value(false);
       },
       child: Scaffold(
+        backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         body: SafeArea(
           bottom: false,
           top: true,
@@ -138,10 +139,9 @@ class _FillDetailsState extends State<FillDetails> {
           left: true,
           child: SingleChildScrollView(
             child: Builder(
-              builder: (context) =>
-                  ResponsiveWidget(
-                    portraitLayout: _portraitStack(context),
-                    landscapeLayout: _landscapeStack(context),
+              builder: (context) => ResponsiveWidget(
+                portraitLayout: _portraitStack(context),
+                landscapeLayout: _landscapeStack(context),
                   ),
             ),
           ),
@@ -170,7 +170,9 @@ class _FillDetailsState extends State<FillDetails> {
                   .width,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage("assets/back_login.png"),
+                      image: AssetImage(globals.darkModeOn
+                          ? "assets/v2.png"
+                          : "assets/back_login.png"),
                       fit: BoxFit.contain)),
             ),
           ),
@@ -179,6 +181,7 @@ class _FillDetailsState extends State<FillDetails> {
             width: 380,
             height: 600,
             child: Card(
+              color: globals.darkModeOn ? Colors.black : Colors.white,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               elevation: 8.0,
@@ -197,29 +200,42 @@ class _FillDetailsState extends State<FillDetails> {
                         style: TextStyle(
                             fontSize: 25,
                             fontFamily: "Livvic",
-                            color: Colors.grey),
+                            color: globals.darkModeOn ? Colors.white : Colors
+                                .grey),
                       )),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                     child: TextField(
                       controller: _nameController,
-                      style: TextStyle(fontFamily: "Livvic"),
+                      style: TextStyle(fontFamily: "Livvic",
+                          color: globals.darkModeOn ? Colors.white : Colors
+                              .grey),
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person),
+                          prefixIcon: Icon(Icons.person,
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           labelText: "Name",
-                          labelStyle: TextStyle(fontFamily: "Livvic"),
+                          labelStyle: TextStyle(fontFamily: "Livvic",
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           contentPadding: EdgeInsets.all(5.0)),
                     ),
                   ),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                     child: TextField(
-                      style: TextStyle(fontFamily: "Livvic"),
+                      style: TextStyle(fontFamily: "Livvic",
+                          color: globals.darkModeOn ? Colors.white : Colors
+                              .grey),
                       controller: _emailController,
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.mail),
+                          prefixIcon: Icon(Icons.mail,
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           labelText: "E-mail",
-                          labelStyle: TextStyle(fontFamily: "Livvic"),
+                          labelStyle: TextStyle(fontFamily: "Livvic",
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           contentPadding: EdgeInsets.all(5.0)),
                     ),
                   ),
@@ -239,7 +255,8 @@ class _FillDetailsState extends State<FillDetails> {
                         style: TextStyle(
                             fontFamily: "Livvic",
                             fontSize: 17,
-                            color: Colors.grey[650]),
+                            color: globals.darkModeOn ? Colors.white : Colors
+                                .grey[650]),
                       ),
                       iconSize: 24,
                       elevation: 16,
@@ -248,7 +265,9 @@ class _FillDetailsState extends State<FillDetails> {
                         color: Colors.grey,
                       ),
                       style:
-                      TextStyle(fontFamily: "Livvic", color: Colors.black),
+                      TextStyle(fontFamily: "Livvic",
+                          color: globals.darkModeOn ? Colors.white : Colors
+                              .black),
                       onChanged: (String newValue) {
                         setState(() {
                           dropdownValue = newValue;
@@ -258,8 +277,11 @@ class _FillDetailsState extends State<FillDetails> {
                       items: <String>['Male', 'Female', 'Prefer not to say']
                           .map<cdd.DropdownMenuItem<String>>((String value) {
                         return cdd.DropdownMenuItem<String>(
+
                           value: value,
-                          child: Text(value),
+                          child: Text(value, style: TextStyle(
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),),
                         );
                       }).toList(),
                     ),
@@ -267,13 +289,19 @@ class _FillDetailsState extends State<FillDetails> {
                   Container(
                     margin: EdgeInsets.only(left: 10, bottom: 10, right: 10),
                     child: TextField(
-                      style: TextStyle(fontFamily: "Livvic"),
+                      style: TextStyle(fontFamily: "Livvic",
+                          color: globals.darkModeOn ? Colors.white : Colors
+                              .grey),
                       keyboardType: TextInputType.phone,
                       controller: _phoneController,
                       decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone),
+                          prefixIcon: Icon(Icons.phone,
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           labelText: "Mobile",
-                          labelStyle: TextStyle(fontFamily: "Livvic"),
+                          labelStyle: TextStyle(fontFamily: "Livvic",
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),
                           contentPadding: EdgeInsets.all(5.0)),
                     ),
                   ),
@@ -293,7 +321,8 @@ class _FillDetailsState extends State<FillDetails> {
                         style: TextStyle(
                             fontFamily: "Livvic",
                             fontSize: 17,
-                            color: Colors.grey[650]),
+                            color: globals.darkModeOn ? Colors.white : Colors
+                                .grey[650]),
                       ),
                       iconSize: 24,
                       elevation: 16,
@@ -302,7 +331,9 @@ class _FillDetailsState extends State<FillDetails> {
                         color: Colors.grey,
                       ),
                       style:
-                      TextStyle(fontFamily: "Livvic", color: Colors.black),
+                      TextStyle(fontFamily: "Livvic",
+                          color: globals.darkModeOn ? Colors.white : Colors
+                              .black),
                       onChanged: (String newValue) {
                         setState(() {
                           dropdownValuePerson = newValue;
@@ -316,7 +347,9 @@ class _FillDetailsState extends State<FillDetails> {
                       ].map<cdd.DropdownMenuItem<String>>((String value) {
                         return cdd.DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value),
+                          child: Text(value, style: TextStyle(
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .grey),),
                         );
                       }).toList(),
                     ),
@@ -392,7 +425,8 @@ class _FillDetailsState extends State<FillDetails> {
               width: 150,
               height: 50,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20), color: Colors.blue),
+                  borderRadius: BorderRadius.circular(20),
+                  color: globals.darkModeOn ? Colors.pink : Colors.blue),
               child: FlatButton(
                 onPressed: () async {
                   print(_nameController.text.toString());
@@ -562,21 +596,25 @@ class _FillDetailsState extends State<FillDetails> {
 
   Widget _loadingDialog() {
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-      backgroundColor: Colors.white,
-      content: Container(
-          height: 60,
-          child: Center(
-            child: Row(
-              children: <Widget>[
-                CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
-                ),
-                SizedBox(
-                  width: 20,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0)),
+        backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
+        content: Container(
+            height: 60,
+            child: Center(
+              child: Row(
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ),
+                  SizedBox(
+                    width: 20,
                 ),
                 Text("Uploading Data...", style: TextStyle(
-                    fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),)
+                    fontFamily: "Livvic",
+                    fontSize: 23,
+                    letterSpacing: 1,
+                    color: globals.darkModeOn ? Colors.white : Colors.black),)
               ],
             ),
           )

@@ -5,6 +5,7 @@ import 'package:Varithms/firebase_database.dart' as fdb;
 import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/rating_bar.dart';
 import 'package:Varithms/responsiveui.dart';
+import 'package:Varithms/searching.dart';
 import 'package:Varithms/searching_service.dart';
 import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
@@ -35,51 +36,6 @@ class _DashBoardState extends State<DashBoard>
   bool myAlgoProgress = false;
   bool isSearching = false;
   double val = 0.0;
-  var queryResults = [];
-  var tempStorage = [];
-  FocusNode focusNode = new FocusNode();
-
-  startSearch(String query) {
-//    print('method chala');
-    print(query);
-
-    if (query.length == 0) {
-      setState(() {
-        queryResults = [];
-        tempStorage = [];
-      });
-    }
-    var searchQuery = query.substring(0, 1).toUpperCase() + query.substring(1);
-    if (queryResults.length == 0 && searchQuery.length == 1) {
-//      print('condition if');
-      SearchService().search(searchQuery).then((QuerySnapshot querySnapshot) {
-        print(querySnapshot.documents.length);
-        for (int i = 0; i < querySnapshot.documents.length; i++) {
-          queryResults.add(querySnapshot.documents[i].data);
-          print(queryResults.length);
-        }
-        queryResults.forEach((result) {
-          if (result['name'].startsWith(searchQuery)) {
-            setState(() {
-              tempStorage.add(result);
-              print(tempStorage.length);
-            });
-          }
-        });
-      });
-    } else {
-//      print('condition else');
-      tempStorage = [];
-      queryResults.forEach((result) {
-        if (result['name'].startsWith(searchQuery)) {
-          setState(() {
-            tempStorage.add(result);
-            print(tempStorage.length);
-          });
-        }
-      });
-    }
-  }
 
   @override
   void initState() {
@@ -89,6 +45,9 @@ class _DashBoardState extends State<DashBoard>
   }
 
   myAlgoT() async {
+    if (globals.myAlgoList.length != 0) {
+      globals.myAlgoList.removeRange(0, globals.myAlgoList.length - 1);
+    }
     fdb.FirebaseDB.getMyAlgos().whenComplete(() {
       print("Length :" + globals.myAlgoList.length.toString());
       setState(() {
@@ -162,13 +121,19 @@ class _DashBoardState extends State<DashBoard>
             AlertDialog(
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10)),
+              backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors
+                  .white,
               title: Text(
                 "Exit",
-                style: TextStyle(fontSize: 30, fontFamily: "Livvic"),
+                style: TextStyle(fontSize: 30,
+                    fontFamily: "Livvic",
+                    color: globals.darkModeOn ? Colors.white : Colors.black),
               ),
               content: Text(
                 "Do you want to exit ?",
-                style: TextStyle(fontSize: 20, fontFamily: "Livvic"),
+                style: TextStyle(fontSize: 20,
+                    fontFamily: "Livvic",
+                    color: globals.darkModeOn ? Colors.white : Colors.black),
               ),
               actions: <Widget>[
                 FlatButton(
@@ -180,7 +145,8 @@ class _DashBoardState extends State<DashBoard>
                     style: TextStyle(
                         fontSize: 20,
                         fontFamily: "Livvic",
-                        color: Colors.grey[800]),
+                        color: globals.darkModeOn ? Colors.orange : Colors
+                            .grey[800]),
                   ),
                 ),
                 FlatButton(
@@ -192,7 +158,8 @@ class _DashBoardState extends State<DashBoard>
                     style: TextStyle(
                         fontSize: 20,
                         fontFamily: "Livvic",
-                        color: Colors.grey[800]),
+                        color: globals.darkModeOn ? Colors.orange : Colors
+                            .grey[800]),
                   ),
                 )
               ],
@@ -211,20 +178,14 @@ class _DashBoardState extends State<DashBoard>
         },
         child: WillPopScope(
           onWillPop: () {
-            if (isSearching) {
-              setState(() {
-                isSearching = false;
-              });
-              return Future<bool>.value(false);
-            } else {
               exitDialog();
               return Future<bool>.value(false);
-            }
           },
           child: Scaffold(
             backgroundColor: progressIndicator
                 ? Colors.blueAccent
-                : isSearching ? Colors.white : AppTheme.appBackgroundColor,
+                : globals.darkModeOn ? Colors.grey[800] : AppTheme
+                .appBackgroundColor,
             body: SafeArea(
               bottom: false,
               left: true,
@@ -292,10 +253,12 @@ class _DashBoardState extends State<DashBoard>
               ])
                   : SingleChildScrollView(
                   child: ResponsiveWidget(
-                    portraitLayout: isSearching
-                        ? _portraitSearchingStack()
-                        : isMyAlgorithms
-                        ? _portraitMyAlgoStack()
+                    portraitLayout: isMyAlgorithms
+                        ? globals.darkModeOn
+                        ? _portraitMyAlgoStackDark()
+                        : _portraitMyAlgoStack()
+                        : globals.darkModeOn
+                        ? _portraitStackDark()
                         : _portraitStack(),
                     landscapeLayout: isMyAlgorithms
                         ? _landscapeMyAlgoStack()
@@ -308,109 +271,7 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
-  Widget _portraitSearchingStack() {
-    focusNode.requestFocus();
-    return Stack(
-      children: <Widget>[
-        Container(
-            height: 50,
-            width: MediaQuery
-                .of(context)
-                .size
-                .width - 20,
-            margin: EdgeInsets.only(left: 10, right: 10, top: 10),
-            decoration: BoxDecoration(
-                color: Colors.white
-            ),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-              elevation: 20,
-              child: TextField(
-                focusNode: focusNode,
-                onChanged: (searchValue) {
-                  print(searchValue);
-                  startSearch(searchValue);
-                },
-                onTap: () {
-                  setState(() {
-                    isSearching = true;
-                  });
-//                      print("value of isSearching : " + isSearching.toString());
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Icon(
-                    Icons.search,
-                    size: 3 * SizeConfig.heightMultiplier,
-                  ),
-                  border: InputBorder.none,
-                  hintText: "Search here",
-                ),
-                style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 20,
-                    fontFamily: "Livvic"),
-              ),
-            )
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 100),
-          height: 500,
-          width: MediaQuery
-              .of(context)
-              .size
-              .width,
-          child: ListView(
-            children: tempStorage.map((value) {
-              return Container(
-                  height: 60,
-                  padding: EdgeInsets.only(left: 20, top: 20),
-                  width: MediaQuery
-                      .of(context)
-                      .size
-                      .width,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-//                    border: Border(
-//
-//                      bottom: BorderSide(
-//                        width: 1,color: Colors.grey
-//                      ),
-//                    )
 
-                  ),
-                  child: FlatButton(
-                    onPressed: () {
-                      globals.selectedAlgo = value;
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => Content()));
-                    },
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.grey,
-                          size: 24,
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        Text(value['name'], style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: "Livvic",
-                        ),
-                          textAlign: TextAlign.start,),
-                      ],
-                    ),
-                  )
-              );
-            }).toList(),
-          ),
-        )
-      ],
-    );
-  }
 
   Widget _portraitMyAlgoStack() {
     return Column(
@@ -573,6 +434,191 @@ class _DashBoardState extends State<DashBoard>
                               icon: Icon(
                                 Icons.chevron_right,
                                 color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _portraitMyAlgoStackDark() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: globals.darkModeOn ? Colors.grey[800] : Colors.white,
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
+            ),
+          ),
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
+              ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: globals.darkModeOn ? Colors.grey[800] : Color(0xFFFFF7BC),
+          ),
+          child: ListView(
+            children: List.generate(globals.myAlgoList.length, (int index) {
+              Algorithms algorithm = globals.myAlgoList[index];
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 25, horizontal: 20),
+                height: 270,
+                width: 320,
+                child: Card(
+                  color: globals.darkModeOn ? Colors.grey : Colors.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25)),
+                  elevation: 8,
+                  child: Stack(
+                    children: <Widget>[
+                      Positioned(
+                        top: 20,
+                        left: 15,
+                        child: CachedNetworkImage(
+                          imageBuilder: (context, imageProvider) =>
+                              Container(
+                                width: 90.0,
+                                height: 90.0,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  image: DecorationImage(
+                                      image: imageProvider, fit: BoxFit.cover),
+                                ),
+                              ),
+                          placeholder: (context, url) =>
+                              CircularProgressIndicator(),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          imageUrl: algorithm.imageUrl,
+                          width: 10 * SizeConfig.imageSizeMultiplier,
+                          height: 10 * SizeConfig.imageSizeMultiplier,
+                        ),
+                      ),
+                      Positioned(
+                          top: 20,
+                          left: 120,
+                          child: Container(
+                            width: 185,
+                            height: 100,
+                            child: Text(
+                              algorithm.name,
+                              style: TextStyle(
+                                  color: globals.darkModeOn
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 35,
+                                  fontFamily: "Livvic"),
+                              softWrap: true,
+                            ),
+                          )),
+                      Positioned(
+                        left: 20,
+                        top: 120,
+                        child: Text(
+                          "Progress : " + algorithm.progress.toString() + "%",
+                          style: TextStyle(
+                              fontFamily: "Livvic",
+                              color: globals.darkModeOn ? Colors.white : Colors
+                                  .black,
+                              fontSize: 20),
+                        ),
+                      ),
+                      Positioned(
+                        right: 15,
+                        top: 125,
+                        child: RatingBar(
+                          itemSize: 20,
+                          unratedColor: Colors.white12,
+                          initialRating: algorithm.difficulty.toDouble(),
+                          minRating: algorithm.difficulty.toDouble(),
+                          maxRating: algorithm.difficulty.toDouble(),
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
+                          itemBuilder: (context, _) =>
+                              Icon(
+                                Icons.star,
+                                color: Colors.pink,
+                              ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                          },
+                        ),
+                      ),
+                      Positioned(
+                        top: 150,
+                        left: 20,
+                        child: SizedBox(
+                          width: 310,
+                          child: LinearProgressIndicator(
+                            backgroundColor: Colors.white,
+                            valueColor:
+                            AlwaysStoppedAnimation<Color>(
+                                globals.darkModeOn ? Colors.orange : Colors
+                                    .blue),
+                            value: algorithm.progress.toDouble() / 100.0,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 20,
+                        top: 170,
+                        child: SizedBox(
+                          width: 310,
+                          child: Divider(
+                            color: Colors.black,
+                            thickness: 2.0,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 190,
+                        right: 40,
+                        child: Container(
+                          width: 55,
+                          height: 55,
+                          decoration: BoxDecoration(
+                            color: Colors.pink,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.chevron_right,
+                                color: globals.darkModeOn
+                                    ? Colors.white
+                                    : Colors.black,
                               ),
                             ),
                           ),
@@ -776,7 +822,7 @@ class _DashBoardState extends State<DashBoard>
                       padding: EdgeInsets.symmetric(
                           vertical: 1 * SizeConfig.heightMultiplier),
                       decoration: BoxDecoration(
-                        color: Colors.black,
+                        color: globals.darkModeOn ? Colors.pink : Colors.black,
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(
                               3.0 * SizeConfig.heightMultiplier),
@@ -810,7 +856,8 @@ class _DashBoardState extends State<DashBoard>
           borderRadius: const BorderRadius.vertical(
             bottom: Radius.circular(24.0),
           ),
-          color: AppTheme.topBarBackgroundColor,
+          color: globals.darkModeOn ? Colors.black : AppTheme
+              .topBarBackgroundColor,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -903,10 +950,10 @@ class _DashBoardState extends State<DashBoard>
                                   print(searchValue);
                                 },
                                 onTap: () {
-                                  setState(() {
-                                    isSearching = true;
-                                    focusNode.requestFocus();
-                                  });
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                        return Searching();
+                                      }));
                                   print("value of isSearching : " +
                                       isSearching.toString());
                                 },
@@ -932,7 +979,8 @@ class _DashBoardState extends State<DashBoard>
                         padding: EdgeInsets.symmetric(
                             vertical: 1 * SizeConfig.heightMultiplier),
                         decoration: BoxDecoration(
-                          color: Colors.black,
+                          color: globals.darkModeOn ? Colors.pink : Colors
+                              .black,
                           borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(
                                 4.0 * SizeConfig.heightMultiplier),
@@ -966,18 +1014,20 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
+
   Widget _loadingDialog() {
     return AlertDialog(
         shape:
         RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
-        backgroundColor: Colors.white,
+        backgroundColor: globals.darkModeOn ? Colors.grey[800] : Colors.white,
         content: Container(
             height: 60,
             child: Center(
               child: Row(
                 children: <Widget>[
                   CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                        globals.darkModeOn ? Colors.orange : Colors.blue),
                   ),
                   SizedBox(
                     width: 20,
@@ -985,7 +1035,11 @@ class _DashBoardState extends State<DashBoard>
                   Text(
                     "Loading Data...",
                     style: TextStyle(
-                        fontFamily: "Livvic", fontSize: 23, letterSpacing: 1),
+                        fontFamily: "Livvic",
+                        fontSize: 23,
+                        letterSpacing: 1,
+                        color: globals.darkModeOn ? Colors.white : Colors
+                            .black),
                   )
                 ],
               ),
@@ -1017,7 +1071,9 @@ class _DashBoardState extends State<DashBoard>
                 child: Text(
                   "Algorithms",
                   style: TextStyle(
-                    color: isMyAlgorithms ? Colors.black : Colors.white,
+                    color: isMyAlgorithms ? globals.darkModeOn
+                        ? Colors.white
+                        : Colors.black : Colors.white,
                     fontFamily: "Livvic",
                     fontSize: 3 * SizeConfig.textMultiplier,
                   ),
@@ -1052,7 +1108,9 @@ class _DashBoardState extends State<DashBoard>
                   style: TextStyle(
                       fontSize: isMyAlgorithms ? 25 : 20,
                       fontFamily: "Livvic",
-                      color: isMyAlgorithms ? Colors.white : Colors.black),
+                      color: isMyAlgorithms ? Colors.white : globals.darkModeOn
+                          ? Colors.white
+                          : Colors.black),
                 ),
               ),
             ),
@@ -1136,6 +1194,83 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 
+  Widget _portraitStackDark() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[800],
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
+            ),
+          ),
+          constraints: BoxConstraints(
+              maxHeight: 40 *
+                  (SizeConfig.isMobilePortrait
+                      ? SizeConfig.heightMultiplier
+                      : SizeConfig.widthMultiplier)),
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              FractionallySizedBox(
+                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
+                alignment: Alignment.bottomCenter,
+                child: _tabs(context),
+              ),
+              ResponsiveWidget(
+                portraitLayout: _topContainerPortrait(context),
+                landscapeLayout: _topContainerLandscape(context),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          constraints:
+          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
+          decoration: BoxDecoration(
+            color: globals.darkModeOn ? Colors.grey[800] : AppTheme
+                .appBackgroundColor,
+          ),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 28.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Algorithm Types",
+                    style: TextStyle(
+                      fontFamily: "Livvic",
+                      fontSize: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                _algorithmTypeCards(context),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.0 * SizeConfig.widthMultiplier,
+                    vertical: 3 * SizeConfig.heightMultiplier,
+                  ),
+                  child: Text(
+                    "Learn an Algorithm",
+                    style: TextStyle(
+                        fontFamily: "Livvic",
+                        fontSize: 30,
+                        color: Colors.white
+                    ),
+                  ),
+                ),
+                _algorithmCards(context),
+              ]),
+        ),
+      ],
+    );
+  }
+
   Widget _profileImage(BuildContext context) {
     return CachedNetworkImage(
       imageBuilder: (context, imageProvider) =>
@@ -1196,7 +1331,8 @@ class _DashBoardState extends State<DashBoard>
           constraints:
           BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
           decoration: BoxDecoration(
-            color: AppTheme.appBackgroundColor,
+            color: globals.darkModeOn ? Colors.grey[800] : AppTheme
+                .appBackgroundColor,
           ),
           child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1431,3 +1567,20 @@ class _DashBoardState extends State<DashBoard>
     );
   }
 }
+
+
+// def knapSack(W, wt, val, n):
+// # Base Case  \n\t    if n == 0 or W == 0 :
+// return 0
+// # If weight of the nth item is more than Knapsack of capacity
+// # W, then this item cannot be included in the optimal solution
+// if (wt[n-1] > W):\n\t
+//   return knapSack(W, wt, val, n-1)
+// # return the maximum of two cases:
+// # (1) nth item included
+// # (2) not included
+// else:
+//   return max(val[n-1] + knapSack(W-wt[n-1], wt, val, n-1), knapSack(W, wt, val, n-1))
+// # end of function knapSack
+// # To test above function  val = [60, 100, 120]  wt = [10, 20, 30]  W = 50 n = len(val)
+// print knapSack(W, wt, val, n)

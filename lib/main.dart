@@ -10,13 +10,19 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'content.dart';
 import 'login.dart';
 
-void main() => runApp(Phoenix(child: MyApp()));
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) {
+    runApp(Phoenix(child: MyApp()));
+  });
+}
 
 bool firstRun = true;
 bool userValue;
@@ -33,7 +39,9 @@ class MyApp extends StatelessWidget {
             SizeConfig().init(constraints, orientation);
             return MaterialApp(
               title: 'Varithms',
-              theme: ThemeData(
+              theme: globals.darkModeOn ? ThemeData(
+                primarySwatch: Colors.orange,
+              ) : ThemeData(
                 primarySwatch: Colors.blue,
               ),
               home: StreamBuilder(
@@ -45,6 +53,7 @@ class MyApp extends StatelessWidget {
                     globals.user.dp = user.photoUrl;
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
+
                   }
                   return SplashScreen();
                 },
@@ -92,7 +101,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   startTime() async {
-    return new Timer(new Duration(milliseconds: 3950), navigator);
+    return new Timer(new Duration(milliseconds: 3950), navigator); //3950
   }
 
   navigator() {
