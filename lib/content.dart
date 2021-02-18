@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:Varithms/dashboard.dart';
 import 'package:Varithms/firebase_database.dart' as fdb;
@@ -38,6 +40,10 @@ class _ContentState extends State<Content> {
   bool ansSelected = false;
   var answers = [];
   double progress;
+  var i2;
+  var i1;
+  Widget m1;
+  Widget m2;
   TextEditingController _answerController = new TextEditingController();
 
   MaskFilter _blur = MaskFilter.blur(BlurStyle.outer, 10.0);
@@ -117,6 +123,39 @@ class _ContentState extends State<Content> {
     initCompletionListener();
     setSpeechPitch(pitch);
     setSpeechSpeed(speed);
+    net();
+  }
+
+  net() async {
+    await dd(globals.selectedAlgo.implInJava);
+    await ddp(globals.selectedAlgo.implInPython);
+  }
+
+  Future<void> dd(String url) async {
+    HttpClient client = new HttpClient();
+    String data = "";
+    client.getUrl(Uri.parse(url)).then((HttpClientRequest request) {
+      return request.close();
+    }).then((HttpClientResponse response) {
+      response.transform(utf8.decoder).listen((contents) {
+        m1 = Text(contents);
+      });
+    });
+  }
+
+  Future<void> ddp(String url) async {
+    HttpClient client = new HttpClient();
+    String data = "";
+    client.getUrl(Uri.parse(url)).then((HttpClientRequest request) {
+      return request.close();
+    }).then((HttpClientResponse response) {
+      response.transform(utf8.decoder).listen((contents) {
+        data = contents;
+        setState(() {
+          m2 = Text(contents);
+        });
+      });
+    });
   }
 
   _addInMyAlgo() async {
@@ -690,10 +729,7 @@ class _ContentState extends State<Content> {
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    child: Text(
-                      globals.selectedAlgo.implInJava.replaceAll("\n", '\n'),
-                      textAlign: TextAlign.justify,
-                    ),
+                    child: m1,
                   )),
             )),
         SizedBox(
@@ -732,10 +768,7 @@ class _ContentState extends State<Content> {
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
-                    child: Text(
-                      globals.selectedAlgo.implInPython,
-                      textAlign: TextAlign.justify,
-                    ),
+                    child: m2,
                   )),
             )),
         SizedBox(
@@ -1096,8 +1129,7 @@ class _ContentState extends State<Content> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text(
-                      globals.selectedAlgo.implInJava.replaceAll("\n", '\n'),
-                      textAlign: TextAlign.justify,
+                      i1.toString(),
                       style: TextStyle(color: Colors.white),
 
                     ),
@@ -1143,8 +1175,7 @@ class _ContentState extends State<Content> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Text(
-                      globals.selectedAlgo.implInPython,
-                      textAlign: TextAlign.justify,
+                      i2.toString(),
                       style: TextStyle(color: Colors.white),
                     ),
                   )),

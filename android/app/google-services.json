@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "731937585222-k2s6tlr4gerr5eag72nb0crrj5p1m2er.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tech.vstfiz.varithms",
+            "certificate_hash": "163645b89e3a1b6ffe0735509ff91482b8118bbc"
+          }
+        },
+        {
           "client_id": "731937585222-p6fg96i9i40glnfiiifb410mao3qrm9t.apps.googleusercontent.com",
           "client_type": 3
         }

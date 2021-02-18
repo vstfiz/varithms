@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:Varithms/algorithm.dart';
 import 'package:Varithms/algorithm_type.dart';
 import 'package:Varithms/fill_details.dart';
@@ -6,7 +9,9 @@ import 'package:Varithms/question.dart';
 import 'package:Varithms/users.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'dashboard.dart';
 
@@ -54,7 +59,7 @@ class FirebaseDB {
     Firestore firestore = Firestore.instance;
     var ref = firestore.collection('users');
     QuerySnapshot querySnapshot =
-        await ref.where("uid", isEqualTo: globals.user.uid).getDocuments();
+    await ref.where("uid", isEqualTo: globals.user.uid).getDocuments();
     String ds = querySnapshot.documents.single.documentID;
     ref = firestore.collection('users/${ds}/myAlgorithms');
     querySnapshot = await ref.getDocuments();
@@ -247,12 +252,48 @@ class FirebaseDB {
   static Future<bool> _checkAlgoInMine(name, userId) async {
     Firestore firestore = Firestore.instance;
     print("user id is : " + globals.user.uid);
-    var ref =
-    firestore.collection('users/${userId}/myAlgorithms').where(
-        'name', isEqualTo: name);
+    var ref = firestore
+        .collection('users/${userId}/myAlgorithms')
+        .where('name', isEqualTo: name);
     QuerySnapshot querySnapshot = await ref.getDocuments();
     List<DocumentSnapshot> documentSnapshot = querySnapshot.documents;
     _check = (documentSnapshot.length == 0);
     return false;
+  }
+
+  static var httpClient = new HttpClient();
+
+  static Future<File> _downloadFile(String url, String filename) async {
+    var request = await httpClient.getUrl(Uri.parse(url));
+    var response = await request.close();
+    var bytes = await consolidateHttpClientResponseBytes(response);
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    File file = new File('$dir/$filename');
+    await file.writeAsBytes(bytes);
+    return file;
+  }
+
+  static Future<String> readFileJava(String url, String name) async {
+    HttpClient client = new HttpClient();
+    String data = "";
+    client.getUrl(Uri.parse(url)).then((HttpClientRequest request) {
+      return request.close();
+    }).then((HttpClientResponse response) {
+      response.transform(utf8.decoder).listen((contents) {
+        print(contents);
+        data = contents;
+      });
+    });
+    return data;
+  }
+
+  static Future<List<String>> readFilePython(String url, String name) async {
+    File impPython = await _downloadFile(url, "Python" + name);
+    List<String> data = [];
+    impPython.readAsString().then((String contents) {
+      globals.hk = contents;
+    });
+    print(globals.hk);
+    return data;
   }
 }

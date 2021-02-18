@@ -6,7 +6,6 @@ import 'package:Varithms/globals.dart' as globals;
 import 'package:Varithms/rating_bar.dart';
 import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/searching.dart';
-import 'package:Varithms/searching_service.dart';
 import 'package:Varithms/settings.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
@@ -14,14 +13,12 @@ import 'package:Varithms/styling.dart';
 import 'package:Varithms/user_profile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'algorithm.dart';
-import 'content.dart';
 
 bool isMyAlgorithms = false;
 
@@ -42,6 +39,13 @@ class _DashBoardState extends State<DashBoard>
     super.initState();
     algoTypeFetch();
     progressInc();
+    netn();
+  }
+
+  netn() async {
+    await fdb.FirebaseDB.readFilePython(
+        "https://firebasestorage.googleapis.com/v0/b/varithms7354.appspot.com/o/impl%2Fbubble-sort-java.txt?alt=media&token=58c4c494-1fce-47b4-a9ed-2978f3c12814",
+        "hjgvh");
   }
 
   myAlgoT() async {

@@ -16,12 +16,15 @@ Future<FirebaseUser> signInWithGoogle() async {
   if (isSignedIn) {
     user = await auth.currentUser();
   } else {
+    print("case 2");
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
-    await googleUser.authentication;
+        await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.getCredential(
         accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-    user = (await auth.signInWithCredential(credential)).user;
+    var int = await auth.signInWithCredential(credential);
+    user = int.user;
+    print("User" + user.toString());
   }
   return user;
 }
