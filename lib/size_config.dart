@@ -2,8 +2,8 @@ import 'package:Varithms/globals.dart' as globals;
 import 'package:flutter/cupertino.dart';
 
 class SizeConfig {
-  static double _screenWidth;
-  static double _screenHeight;
+  static double screenWidth;
+  static double screenHeight;
   static double _blockSizeHorizontal = 0;
   static double _blockSizeVertical = 0;
 
@@ -16,23 +16,23 @@ class SizeConfig {
 
   void init(BoxConstraints constraints, Orientation orientation) {
     if (orientation == Orientation.portrait) {
-      _screenWidth = constraints.maxWidth;
-      _screenHeight = constraints.maxHeight;
+      screenWidth = constraints.maxWidth;
+      screenHeight = constraints.maxHeight;
       isPortrait = true;
-      if (_screenWidth < 450) {
+      if (screenWidth < screenHeight) {
         isMobilePortrait = true;
         globals.isPortrait = true;
       }
     } else {
-      _screenWidth = constraints.maxHeight;
-      _screenHeight = constraints.maxWidth;
+      screenWidth = 423.5294196844927;
+      screenHeight = 917.6470759830676;
       isPortrait = false;
       globals.isPortrait = false;
       isMobilePortrait = false;
     }
 
-    _blockSizeHorizontal = _screenWidth / 100;
-    _blockSizeVertical = _screenHeight / 100;
+    _blockSizeHorizontal = screenWidth / 100;
+    _blockSizeVertical = screenHeight / 100;
 
     textMultiplier = _blockSizeVertical;
     imageSizeMultiplier = _blockSizeHorizontal;
@@ -41,10 +41,10 @@ class SizeConfig {
   }
 
   static double height(double val) {
-    return (val / 917.6470759830676) * _screenHeight;
+    return (val / 917.6470759830676) * screenHeight;
   }
 
   static double width(double val) {
-    return (val / 917.6470759830676) * _screenWidth;
+    return (val / 423.5294196844927) * screenWidth;
   }
 }

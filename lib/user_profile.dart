@@ -847,7 +847,14 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Widget _landscapeStack(BuildContext context) {
-    return SizedBox();
+    return Container(
+      height: 917.6470759830676,
+      width: 423.5294196844927,
+      child: _portraitStack(context),
+      margin: EdgeInsets.only(
+          left: (MediaQuery.of(context).size.width - 423.5294196844927) / 2,
+          top: (MediaQuery.of(context).size.width - 917.6470759830676) / 2),
+    );
   }
 
   Widget _loadingLandscapeStack(BuildContext context) {

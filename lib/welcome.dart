@@ -1,3 +1,4 @@
+import 'package:Varithms/responsiveui.dart';
 import 'package:Varithms/size_config.dart';
 import 'package:Varithms/strings.dart';
 import 'package:Varithms/styling.dart' as style;
@@ -85,13 +86,29 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               Expanded(
                 flex: 4,
                 child: Align(
-                    alignment: Alignment.center, child: WelcomeContentWidget()),
+                    alignment: Alignment.center,
+                    child: ResponsiveWidget(
+                      portraitLayout: WelcomeContentWidget(),
+                      landscapeLayout: WelcomeContentWidgetLand(),
+                    )),
               ),
               ButtonWidget(),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class WelcomeContentWidgetLand extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 917.6470759830676,
+      width: 423.5294196844927,
+      child: WelcomeContentWidget(),
+      // margin: EdgeInsets.symmetric(horizontal:(MediaQuery.of(context).size.width-423.5294196844927)/2,vertical:(MediaQuery.of(context).size.width-917.6470759830676)/2),
     );
   }
 }
@@ -132,7 +149,7 @@ class WelcomeContentWidget extends StatelessWidget {
                 .size
                 .width - SizeConfig.width(150),
             margin: EdgeInsets.symmetric(
-                  vertical: 1 * SizeConfig.heightMultiplier),
+                vertical: 1 * SizeConfig.heightMultiplier),
             child: Image.asset(
               'assets/back_login.png',
               fit: BoxFit.fill,
@@ -148,7 +165,7 @@ class WelcomeContentWidget extends StatelessWidget {
               child: FittedBox(
                 child: Padding(
                   padding:
-                      EdgeInsets.only(bottom: 2 * SizeConfig.heightMultiplier),
+                  EdgeInsets.only(bottom: 2 * SizeConfig.heightMultiplier),
                   child: Text(
                     Strings.welcomeScreenSubTitle,
                     style: TextStyle(

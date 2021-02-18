@@ -84,8 +84,8 @@ class _LoginState extends State<Login> {
             builder: (context) =>
                 ResponsiveWidget(
                   portraitLayout: PortraitStack(context),
-                  landscapeLayout: PortraitStack(context),
-                ),
+              landscapeLayout: LandscapeStack(context),
+            ),
           ),
         ),
       ),
@@ -757,61 +757,17 @@ class _LoginState extends State<Login> {
   }
 
   Widget LandscapeStack(BuildContext context) {
-    return SingleChildScrollView(
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            child: Card(
-              elevation: 10,
-              child: Text("Information Dialog"),
-            ),
-          ),
-          Center(
-            child: Text("SCreen Start"),
-          ),
-          Positioned(
-              bottom: SizeConfig.height(20),
-              left: SizeConfig.width(10),
-              right: SizeConfig.width(10),
-              child: SizedBox(
-                height: SizeConfig.height(60),
-                width: SizeConfig.width(340),
-                child: FlatButton(
-                  textColor: Colors.white,
-                  child: Center(
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "Livvic",
-                          fontSize: 20),
-                    ),
-                  ),
-                  splashColor: Colors.white,
-                  onPressed: () {
-                    signInWithGoogle().whenComplete(() {
-                      if (user != null) {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return DashBoard();
-                            },
-                          ),
-                        );
-                      } else {
-                        Fluttertoast.showToast(
-                            msg: "Error", toastLength: Toast.LENGTH_LONG);
-                      }
-                    });
-                  },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  color: Color(0xFF2D3E50),
-                ),
-              )),
-        ],
-      ),
+    return Container(
+      height: 917.6470759830676,
+      width: 423.5294196844927,
+      child: PortraitStack(context),
+      margin: EdgeInsets.only(left: (MediaQuery
+          .of(context)
+          .size
+          .width - 423.5294196844927) / 2, top: (MediaQuery
+          .of(context)
+          .size
+          .width - 917.6470759830676) / 2),
     );
   }
 

@@ -1294,77 +1294,15 @@ class _DashBoardState extends State<DashBoard>
   }
 
   Widget _landscapeStack() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(3.0 * SizeConfig.heightMultiplier),
-            ),
-          ),
-          constraints: BoxConstraints(
-              maxHeight: 40 *
-                  (SizeConfig.isMobilePortrait
-                      ? SizeConfig.heightMultiplier
-                      : SizeConfig.widthMultiplier)),
-          child: Stack(
-            fit: StackFit.expand,
-            children: <Widget>[
-              FractionallySizedBox(
-                heightFactor: SizeConfig.isMobilePortrait ? 0.25 : 0.35,
-                alignment: Alignment.bottomCenter,
-                child: _tabs(context),
-              ),
-              ResponsiveWidget(
-                portraitLayout: _topContainerPortrait(context),
-                landscapeLayout: _topContainerLandscape(context),
-              ),
-            ],
-          ),
-        ),
-        Container(
-          constraints:
-          BoxConstraints(maxHeight: 100 * SizeConfig.heightMultiplier),
-          decoration: BoxDecoration(
-            color: globals.darkModeOn ? Colors.grey[800] : AppTheme
-                .appBackgroundColor,
-          ),
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 28.0 * SizeConfig.widthMultiplier,
-                    vertical: 3 * SizeConfig.heightMultiplier,
-                  ),
-                  child: Text(
-                    "Algorithm Types",
-                    style: TextStyle(
-                      fontFamily: "Livvic",
-                      fontSize: 30,
-                    ),
-                  ),
-                ),
-                _algorithmTypeCards(context),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.0 * SizeConfig.widthMultiplier,
-                    vertical: 3 * SizeConfig.heightMultiplier,
-                  ),
-                  child: Text(
-                    "Learn an Algorithm",
-                    style: TextStyle(
-                      fontFamily: "Livvic",
-                      fontSize: 30,
-                    ),
-                  ),
-                ),
-                _algorithmCards(context),
-              ]),
-        ),
-      ],
+    Container(
+      height: 917.6470759830676,
+      width: 423.5294196844927,
+      child: _portraitStack(),
+      margin: EdgeInsets.symmetric(
+          horizontal:
+              (MediaQuery.of(context).size.width - 423.5294196844927) / 2,
+          vertical:
+              (MediaQuery.of(context).size.width - 917.6470759830676) / 2),
     );
   }
 

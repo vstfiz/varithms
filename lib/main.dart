@@ -47,13 +47,14 @@ class MyApp extends StatelessWidget {
               home: StreamBuilder(
                 stream: auth.onAuthStateChanged,
                 builder: (context, snapshot) {
+                  print(SizeConfig.screenHeight);
+                  print(SizeConfig.screenWidth);
                   if (snapshot.hasData) {
                     user = snapshot.data;
                     globals.user.email = user.email;
                     globals.user.dp = user.photoUrl;
                     globals.user.uid = user.uid;
                     globals.user.name = user.displayName;
-
                   }
                   return SplashScreen();
                 },
@@ -211,40 +212,46 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Widget LandscapeStackLight(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Positioned(
-          top: SizeConfig.height(50),
-          left: SizeConfig.width(330),
-          child: SizedBox(
-            height: SizeConfig.height(180),
-            width: SizeConfig.width(250),
-            child: Image.asset('assets/v2.png'),
-          ),
-        ),
-        Positioned(
-          top: SizeConfig.height(300),
-          left: SizeConfig.width(300),
-          child: SizedBox(
-            width: SizeConfig.width(340),
-            child: TyperAnimatedTextKit(
-                speed: new Duration(milliseconds: 350),
-                text: [
-                  "Varithms",
-                ],
-                textStyle: TextStyle(
-                    fontSize: 60.0,
-                    fontFamily: "Aquire",
-                    color: Colors.white,
-                    letterSpacing: 10
-                ),
-                textAlign: TextAlign.start,
-                alignment: AlignmentDirectional
-                    .topStart // or Alignment.topLeft
+    return Container(
+      height: 917.6470759830676,
+      width: 423.5294196844927,
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            top: SizeConfig.height(50),
+            left: SizeConfig.width(180),
+            child: SizedBox(
+              height: SizeConfig.height(250),
+              width: SizeConfig.width(140),
+              child: Image.asset('assets/v2.png'),
             ),
           ),
-        ),
-      ],
+          Positioned(
+            top: SizeConfig.height(300),
+            left: SizeConfig.width(45),
+            child: SizedBox(
+              width: SizeConfig.width(400),
+              child: TyperAnimatedTextKit(
+                  speed: new Duration(milliseconds: 350),
+                  text: [
+                    "Varithms",
+                  ],
+                  textStyle: TextStyle(
+                      fontSize: 60.0,
+                      fontFamily: "Aquire",
+                      color: Colors.white,
+                      letterSpacing: 10),
+                  textAlign: TextAlign.start,
+                  alignment:
+                      AlignmentDirectional.topStart // or Alignment.topLeft
+                  ),
+            ),
+          ),
+        ],
+      ),
+      margin: EdgeInsets.only(
+          left: (MediaQuery.of(context).size.width - 423.5294196844927) / 2,
+          top: (MediaQuery.of(context).size.width - 917.6470759830676) / 2),
     );
   }
 
