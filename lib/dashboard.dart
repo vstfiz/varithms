@@ -39,13 +39,6 @@ class _DashBoardState extends State<DashBoard>
     super.initState();
     algoTypeFetch();
     progressInc();
-    netn();
-  }
-
-  netn() async {
-    await fdb.FirebaseDB.readFilePython(
-        "https://firebasestorage.googleapis.com/v0/b/varithms7354.appspot.com/o/impl%2Fbubble-sort-java.txt?alt=media&token=58c4c494-1fce-47b4-a9ed-2978f3c12814",
-        "hjgvh");
   }
 
   myAlgoT() async {

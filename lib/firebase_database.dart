@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'dashboard.dart';
@@ -263,37 +264,30 @@ class FirebaseDB {
 
   static var httpClient = new HttpClient();
 
-  static Future<File> _downloadFile(String url, String filename) async {
+  static Future<List<String>> _downloadFile(String url, String filename) async {
     var request = await httpClient.getUrl(Uri.parse(url));
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
     File file = new File('$dir/$filename');
     await file.writeAsBytes(bytes);
-    return file;
-  }
-
-  static Future<String> readFileJava(String url, String name) async {
-    HttpClient client = new HttpClient();
-    String data = "";
-    client.getUrl(Uri.parse(url)).then((HttpClientRequest request) {
-      return request.close();
-    }).then((HttpClientResponse response) {
-      response.transform(utf8.decoder).listen((contents) {
-        print(contents);
-        data = contents;
-      });
-    });
-    return data;
-  }
-
-  static Future<List<String>> readFilePython(String url, String name) async {
-    File impPython = await _downloadFile(url, "Python" + name);
     List<String> data = [];
-    impPython.readAsString().then((String contents) {
-      globals.hk = contents;
+    await rootBundle.loadString('$dir/$filename').then((q) {
+      for (String i in LineSplitter().convert(q)) {
+        data.add(i);
+      }
     });
-    print(globals.hk);
+    // print(data);
     return data;
+  }
+
+  static Future<void> readFileJava(String url, String name) async {
+    globals.i1.clear();
+    globals.i1 = await _downloadFile(url, "Java" + name);
+  }
+
+  static Future<void> readFilePython(String url, String name) async {
+    globals.i2.clear();
+    globals.i2 = await _downloadFile(url, "Python" + name);
   }
 }

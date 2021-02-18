@@ -273,6 +273,12 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                     globals.selectedAlgo = algorithm;
                                     _loadingDialog();
                                     await fdb.FirebaseDB.addInMine();
+                                    await fdb.FirebaseDB.readFileJava(
+                                        globals.selectedAlgo.implInJava,
+                                        globals.selectedAlgo.name);
+                                    await fdb.FirebaseDB.readFilePython(
+                                        globals.selectedAlgo.implInPython,
+                                        globals.selectedAlgo.name);
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                     Navigator.push(context,
@@ -461,12 +467,18 @@ class _AlgorithmsListState extends State<AlgorithmsList> {
                                     globals.selectedAlgo = algorithm;
                                     _loadingDialog();
                                     await fdb.FirebaseDB.addInMine();
+                                    await fdb.FirebaseDB.readFileJava(
+                                        globals.selectedAlgo.implInJava,
+                                        globals.selectedAlgo.name);
+                                    await fdb.FirebaseDB.readFilePython(
+                                        globals.selectedAlgo.implInPython,
+                                        globals.selectedAlgo.name);
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      return Content();
-                                    }));
+                                          return Content();
+                                        }));
                                   },
                                   icon: Icon(
                                     Icons.chevron_right,
